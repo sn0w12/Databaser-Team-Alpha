@@ -1,5 +1,7 @@
 module com.teamalpha.teamalphapipergames {
     requires javafx.controls;
+    requires java.sql;
+    requires java.persistence;
     //requires javafx.fxml;
 
 
