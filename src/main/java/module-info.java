@@ -1,10 +1,11 @@
 module com.teamalpha.teamalphapipergames {
+
     requires javafx.controls;
     requires java.sql;
     requires java.persistence;
-    //requires javafx.fxml;
+    requires org.hibernate.orm.core;
+    requires hibernate.entitymanager;
 
-
-    //opens com.teamalpha.teamalphapipergames to javafx.fxml;
     exports com.teamalpha.teamalphapipergames;
+    opens com.teamalpha.teamalphapipergames.model to org.hibernate.orm.core;
 }
