@@ -47,11 +47,7 @@ public class StaffController {
       if(printOut){
         for (Staff staff :
             staffListToReturn) {
-          System.out.println(staff.getId() + ". " + staff.getName());
-          for (Team team :
-              staff.getAllStaff()) {
-            System.out.println("\t - " + team.getName());
-          }
+          System.out.println(staff.getId() + ". " + staff.getFirstName() + " " + staff.getLastName());
         }
       }
       return staffListToReturn;

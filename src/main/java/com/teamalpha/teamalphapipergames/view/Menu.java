@@ -75,6 +75,7 @@ public class Menu {
     space();
     switch (userChoice) {
       case "0":
+        createStaff();
         createPlayersAndTeamsDataForStaff();
         break;
       case "1":
@@ -715,6 +716,195 @@ public class Menu {
     }
   }
 
+  public void showStaffUpdateMenu() {
+    System.out.println("Staff Update Menu");
+    System.out.println("0. Update Everything");
+    System.out.println("1. Update first name");
+    System.out.println("2. Update last name");
+    System.out.println("3. Update nickname");
+    System.out.println("4. Update address");
+    System.out.println("5. Update zip code");
+    System.out.println("6. Update postal address");
+    System.out.println("7. Update country");
+    System.out.println("8. Update email");
+    System.out.println("9. Back to Staff Menu");
+    handleStaffUpdateMenu();
+  }
+
+  public void handleStaffUpdateMenu() {
+    Scanner updateScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = updateScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "0":
+        // update everything
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        int staffIdToUpdate = new Scanner(System.in).nextInt();
+        Staff staffToUpdate = staffController.getStaffById(staffIdToUpdate);
+
+        System.out.println("Change player details:");
+
+        System.out.print("First name from " + staffToUpdate.getFirstName() + " to 💬: ");
+        staffToUpdate.setFirstName(new Scanner(System.in).nextLine());
+
+        System.out.print("Last name from " + staffToUpdate.getLastName() + " to 💬: ");
+        staffToUpdate.setLastName(new Scanner(System.in).nextLine());
+
+        System.out.print("Nickname from " + staffToUpdate.getNickName() + " to 💬: ");
+        staffToUpdate.setNickName(new Scanner(System.in).nextLine());
+
+        System.out.print("Address from " + staffToUpdate.getAddress() + " to 💬: ");
+        staffToUpdate.setAddress(new Scanner(System.in).nextLine());
+
+        System.out.print("Zip code from " + staffToUpdate.getZipCode() + " to 💬: ");
+        staffToUpdate.setZipCode(new Scanner(System.in).nextLine());
+
+        System.out.print("Postal address from " + staffToUpdate.getPostalAddress() + " to 💬: ");
+        staffToUpdate.setPostalAddress(new Scanner(System.in).nextLine());
+
+        System.out.print("Country from " + staffToUpdate.getCountry() + " to 💬: ");
+        staffToUpdate.setCountry(new Scanner(System.in).nextLine());
+
+        System.out.print("Email from " + staffToUpdate.geteMail() + " to 💬: ");
+        staffToUpdate.seteMail(new Scanner(System.in).nextLine());
+
+        if (staffController.updateStaff(staffToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "1":
+        // update firstname
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff firstNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change first name from " + firstNameToUpdate.getFirstName() + " to 💬: ");
+        firstNameToUpdate.setFirstName(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(firstNameToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "2":
+        // update last name
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff lastNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change last name from " + lastNameToUpdate.getLastName() + " to 💬: ");
+        lastNameToUpdate.setLastName(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(lastNameToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "3":
+        // update nickname
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff nickNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change nickname from " + nickNameToUpdate.getNickName() + " to 💬: ");
+        nickNameToUpdate.setNickName(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(nickNameToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "4":
+        // update address
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff addressToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change address from " + addressToUpdate.getAddress() + " to 💬: ");
+        addressToUpdate.setAddress(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(addressToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "5":
+        // update zip code
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff zipCodeToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change zip code from " + zipCodeToUpdate.getZipCode() + " to 💬: ");
+        zipCodeToUpdate.setZipCode(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(zipCodeToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "6":
+        // update postal address
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff postalAddrToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change postal address from " + postalAddrToUpdate.getPostalAddress() + " to 💬: ");
+        postalAddrToUpdate.setPostalAddress(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(postalAddrToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "7":
+        // update country
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff countryToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change country from " + countryToUpdate.getCountry() + " to 💬: ");
+        countryToUpdate.setCountry(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(countryToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+        }
+        showStaffMenu();
+        break;
+      case "8":
+        // update email
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Staff eMailToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
+        System.out.print("Change email from " + eMailToUpdate.geteMail() + " to 💬: ");
+        eMailToUpdate.seteMail(new Scanner(System.in).nextLine());
+        if (staffController.updateStaff(eMailToUpdate)) {
+          System.out.println("✅ Staff updated");
+        } else {
+          System.out.println("❌ Staff update failed");
+
+        }
+        showStaffMenu();
+        break;
+      case "9":
+        showStaffMenu();
+      default:
+        showStaffMenu();
+        break;
+    }
+  }
+
+  public void createStaff() {
+    // Creating staff
+    staffController.save(new Staff("Richard", "Hendricks", "R_Hendricks", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "r_hendricks@piedpiper.com"));
+    staffController.save(new Staff("Bertram", "Gilfoyle", "B_Gilfoyle", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "b_gilfoyle@piedpiper.com"));
+    staffController.save(new Staff("Dinesh", "Chugtai", "D_Chugtai", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "d_chugtai@piedpiper.com"));
+  }
+
   private void createPlayersAndTeamsDataForStaff() {
     List<Game> gamesToAdd = new ArrayList<>();
     List<Team> teamsToAdd = new ArrayList<>();
@@ -1080,30 +1270,34 @@ public class Menu {
     String userChoice = staffScanner.nextLine();
     switch (userChoice) {
       case "1":
-        // Add new Staff
-        System.out.print("Input staffs name 💬: ");
-        if (staffController.save(new Staff(new Scanner(System.in).nextLine()))) {
-          System.out.println("✅ New Staff member added");
-          showStaffMenu();
+        System.out.println("Add Staff member");
+        System.out.print("Input first name 💬: ");
+        String firstName = staffScanner.nextLine();
+        System.out.print("Input last name 💬: ");
+        String lastName = staffScanner.nextLine();
+        System.out.print("Input nickname 💬: ");
+        String nickName = staffScanner.nextLine();
+        System.out.print("Input address 💬: ");
+        String address = staffScanner.nextLine();
+        System.out.print("Input zip code 💬: ");
+        String zipCode = staffScanner.nextLine();
+        System.out.print("Input postal address 💬: ");
+        String postalAddress = staffScanner.nextLine();
+        System.out.print("Input country 💬: ");
+        String country = staffScanner.nextLine();
+        System.out.print("Input email 💬: ");
+        String eMail = staffScanner.nextLine();
+
+        if (staffController.save(new Staff(firstName, lastName, nickName, address, zipCode, postalAddress, country, eMail))) {
+          System.out.println("✅ staff added");
         } else {
-          System.out.println("❌ Could not add staff member");
-          showStaffMenu();
+          System.out.println("❌ Could not save team");
         }
+        showStaffMenu();
         break;
       case "2":
         // Update staff member
-        staffController.getAll(true);
-        System.out.print("Input id 💬: ");
-        Staff staffToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
-        System.out.print("Change name from " + staffToUpdate.getName() + " to 💬: ");
-        staffToUpdate.setName(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(staffToUpdate)) {
-          System.out.println("✅ Staff member updated");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Staff member update failed");
-          showStaffMenu();
-        }
+        showStaffUpdateMenu();
         break;
       case "3":
         // Delete staff
