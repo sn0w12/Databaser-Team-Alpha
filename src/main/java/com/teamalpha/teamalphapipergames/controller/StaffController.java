@@ -1,27 +1,26 @@
 package com.teamalpha.teamalphapipergames.controller;
 
-import com.teamalpha.teamalphapipergames.model.Player;
+import com.teamalpha.teamalphapipergames.model.Staff;
+import com.teamalpha.teamalphapipergames.model.Team;
+import com.teamalpha.teamalphapipergames.model.Game;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class PlayerController {
+public class StaffController {
 
   public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
   // CREATE
-  public boolean save(Player player) {
-    // "Boiler plate" of code, recurring code throughout the code
+  public boolean save(Object staff) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      entityManager.persist(player);
+      entityManager.persist(staff);
       transaction.commit();
       return true;
     } catch (Exception e){
@@ -35,21 +34,27 @@ public class PlayerController {
     return false;
   }
   // READ
-  public List<Player> getAll(boolean printOut){
+  public List<Staff> getAll(boolean printOut){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
+    List<Staff> staffListToReturn = new ArrayList<>();
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      List<Player> listToReturn = new ArrayList<>(entityManager.createQuery("FROM Player", Player.class).getResultList());
+      TypedQuery<Staff> resultList = entityManager.createQuery("FROM Staff", Staff.class);
+      staffListToReturn.addAll(resultList.getResultList());
       transaction.commit();
       if(printOut){
-        for (Player player :
-            listToReturn) {
-          System.out.println(player.getId() + ". " + player.getNickName());
+        for (Staff staff :
+            staffListToReturn) {
+          System.out.println(staff.getId() + ". " + staff.getName());
+          for (Team team :
+              staff.getAllStaff()) {
+            System.out.println("\t - " + team.getName());
+          }
         }
       }
-      return listToReturn;
+      return staffListToReturn;
     } catch (Exception e){
       if(transaction != null){
         transaction.rollback();
@@ -60,17 +65,16 @@ public class PlayerController {
     }
     return null;
   }
-
-  // READ 1 -- NEW
-  public Player getPlayerById(int id){
+  // READ 1
+  public Staff getStaffById(int id){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      Player playerToReturn = entityManager.find(Player.class, id);
+      Staff staffToReturn = entityManager.find(Staff.class, id);
       transaction.commit();
-      return playerToReturn;
+      return staffToReturn;
     } catch (Exception e){
       if(transaction != null){
         transaction.rollback();
@@ -81,15 +85,35 @@ public class PlayerController {
     }
     return null;
   }
-
   // UPDATE
-  public boolean updatePlayer(Player player){
+  public boolean updateStaff(Staff staff){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      entityManager.merge(player);
+      entityManager.merge(staff);
+      transaction.commit();
+      return true;
+    } catch (Exception e){
+      if(transaction != null){
+        transaction.rollback();
+      }
+      e.printStackTrace();
+    } finally {
+      entityManager.close();
+    }
+    return false;
+  }
+  // DELETE
+  public boolean deleteStaff(Staff staff){
+    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    EntityTransaction transaction = null;
+    try {
+      transaction = entityManager.getTransaction();
+      transaction.begin();
+      // If the entity is attached then remove customer, else merge(attach/update) entity and then remove
+      entityManager.remove(entityManager.contains(staff) ? staff :entityManager.merge(staff));
       transaction.commit();
       return true;
     } catch (Exception e){
@@ -103,28 +127,23 @@ public class PlayerController {
     return false;
   }
 
-  public boolean deletePlayerById(int id) {
+  public boolean deleteStaffById(int id) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
 
-      // Retrieve the Game entity using EntityManager.find
-      Player playerToDelete = entityManager.find(Player.class, id);
+      // Retrieve the Staff entity using EntityManager.find
+      Staff staffToDelete = entityManager.find(Staff.class, id);
 
       // Check if the entity is found
-      if (playerToDelete != null) {
-        if (playerToDelete.getTeam() != null) {
-          System.out.println("❌ Remove player from its team first.");
-          return false;
-        }
-
-        entityManager.remove(playerToDelete);
+      if (staffToDelete != null) {
+        entityManager.remove(staffToDelete);
         transaction.commit();
         return true;
       } else {
-        System.out.println("Player not found with id: " + id);
+        System.out.println("Staff not found with id: " + id);
       }
     } catch (Exception e) {
       if (transaction != null) {

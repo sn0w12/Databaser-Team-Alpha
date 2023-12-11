@@ -8,11 +8,13 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <properties>
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://127.0.0.1:3306/piper_games?serverTimezone=UTC"/>
-            <property name="javax.persistence.jdbc.user" value="jenny"/>
-            <property name="javax.persistence.jdbc.password" value="olsson"/>
+                      value="jdbc:mysql://localhost:3306/piper_games?serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="qwerty123"/>
             <property name="hibernate.show_sql" value="false"/> <!-- Ändra denna till true för att se sql-kommandon -->
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <!-- behöver denna för att köra på mac // fredrik -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
         </properties>
     </persistence-unit>
 </persistence>
