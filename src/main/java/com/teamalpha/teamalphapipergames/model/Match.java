@@ -44,19 +44,26 @@ public class Match {
 
 
     @Column(name = "finished")
-    private boolean finished;
+    private boolean finished= false;
 
     @Column(name = "match_results")
-    private String results;
+    private String results=null;
+
+
+    @Column (name =" team_game")
+    private boolean teamGame;
 
 
     //har lagt in den här själv, finns inte i vårt schema
 //    @Column(name = "team_game")
 //    private boolean teamGame;
 //
-//    //ändrar från date till String men har inte ändrat det i schema
+    //ändrar från date till String men har inte ändrat det i schema
 //    @Column(name = "match_date")
 //    private String match_date;
+//
+    @Column(name="matchDate")
+    private String match_date;
     //joins
 /*
 vilken sida är ägar sidan?
@@ -82,6 +89,20 @@ game- manyToOne       en match kan bara ha ett spel
 //    @ManyToOne
 //    @JoinColumn(name ="player2_id")
 //    private Player player2;
+//
+//
+//    @ManyToOne
+//    @JoinColumn(name="team1_id")
+//    private Team team1;
+//
+//    @ManyToOne
+//    @JoinColumn(name="team2_id")
+//    private Team team2;
+//
+//
+//    @ManyToOne
+//    @JoinColumn(name="game_id")
+//    private Game game;
 
 
     //constructors
@@ -92,9 +113,11 @@ game- manyToOne       en match kan bara ha ett spel
         this.matchId = id;
     }
 
-    public Match(int game_id, boolean teamGame, int teamOrPlayer1_id, int teamOrPlayer2_id, String matchDate) {
-        this.game_id = game_id;
-
+    public Match(boolean teamGame, int gameId, int teamOrPlayer1_id, int teamOrPlayer2_id, boolean finished, String matchDate) {
+        this.teamGame=teamGame;
+        this.finished=finished;
+        this.game_id=gameId;
+        this.match_date=matchDate;
         if (teamGame) {
             this.team1_id = teamOrPlayer1_id;
             this.team2_id = teamOrPlayer2_id;
@@ -175,7 +198,7 @@ game- manyToOne       en match kan bara ha ett spel
 //        this.match_date = match_date;
 //    }
 
-    public boolean isFinished() {
+    public boolean getFinished() {
         return finished;
     }
 
@@ -189,5 +212,13 @@ game- manyToOne       en match kan bara ha ett spel
 
     public void setResults(String results) {
         this.results = results;
+    }
+
+    public boolean getTeamGame() {
+        return teamGame;
+    }
+
+    public void setTeamGame(boolean teamGame) {
+        this.teamGame = teamGame;
     }
 }
