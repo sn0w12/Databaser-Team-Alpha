@@ -63,7 +63,7 @@ public class Menu {
     System.out.println("3. Players");
     System.out.println("4. Matches X");
     System.out.println("5. Tournament X");
-    System.out.println("6. Staff X");
+    System.out.println("6. Staff");
     System.out.println("9. Log out from staff (main menu)");
     handleStaffMenu();
   }
