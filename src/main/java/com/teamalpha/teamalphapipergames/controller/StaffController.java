@@ -6,6 +6,7 @@ import com.teamalpha.teamalphapipergames.model.Game;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,33 +35,72 @@ public class StaffController {
     return false;
   }
   // READ
-  public List<Staff> getAll(boolean printOut){
+  public List<Staff> getAll(boolean printOut) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     List<Staff> staffListToReturn = new ArrayList<>();
+    List<String> staffNamesToReturn = new ArrayList<>();
+
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
       TypedQuery<Staff> resultList = entityManager.createQuery("FROM Staff", Staff.class);
       staffListToReturn.addAll(resultList.getResultList());
+
+      for (Staff staff : staffListToReturn) {
+        staffNamesToReturn.add(staff.getFirstName() + " " + staff.getLastName());
+      }
+
       transaction.commit();
-      if(printOut){
-        for (Staff staff :
-            staffListToReturn) {
+
+      if (printOut) {
+        for (Staff staff : staffListToReturn) {
           System.out.println(staff.getId() + ". " + staff.getFirstName() + " " + staff.getLastName());
         }
       }
+
       return staffListToReturn;
-    } catch (Exception e){
-      if(transaction != null){
+    } catch (Exception e) {
+      if (transaction != null) {
         transaction.rollback();
       }
       e.printStackTrace();
     } finally {
       entityManager.close();
     }
-    return null;
+
+    return Collections.emptyList();
   }
+
+
+  // OLD
+//  public List<Staff> getAll(boolean printOut){
+//    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+//    EntityTransaction transaction = null;
+//    List<Staff> staffListToReturn = new ArrayList<>();
+//    try {
+//      transaction = entityManager.getTransaction();
+//      transaction.begin();
+//      TypedQuery<Staff> resultList = entityManager.createQuery("FROM Staff", Staff.class);
+//      staffListToReturn.addAll(resultList.getResultList());
+//      transaction.commit();
+//      if(printOut){
+//        for (Staff staff :
+//            staffListToReturn) {
+//          System.out.println(staff.getId() + ". " + staff.getFirstName() + " " + staff.getLastName());
+//        }
+//      }
+//      return staffListToReturn;
+//    } catch (Exception e){
+//      if(transaction != null){
+//        transaction.rollback();
+//      }
+//      e.printStackTrace();
+//    } finally {
+//      entityManager.close();
+//    }
+//    return null;
+//  }
   // READ 1
   public Staff getStaffById(int id){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();

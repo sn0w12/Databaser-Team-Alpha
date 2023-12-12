@@ -2,7 +2,9 @@ package com.teamalpha.teamalphapipergames.model;
 
 import javax.persistence.*;
 
+// @Entity, we want this class to have persistence in the database
 @Entity
+// @Table, we can rename this to suit our needs, or else Hibernate takes charge.
 @Table(name = "players")
 public class Player {
   // We declare where the primary key is
@@ -33,6 +35,11 @@ public class Player {
   @JoinColumn(name = "team_id")  // This is the owning side of the relation
   private Team team;
 
+  // Connection to Game
+  @ManyToOne
+  @JoinColumn(name = "game_id")  // This is the owning side of the relation
+  private Game game;
+
   // Matches
   @ManyToOne
   @JoinColumn(name = "match_id")
@@ -42,7 +49,7 @@ public class Player {
   public Player() {
   }
 
-  // for registering with only first name, last name and nickname
+  // constructor for creating player with firstname, lastname, nickname
   public Player(String firstName, String lastName, String nickName) {
     this.firstName = firstName;
     this.lastName = lastName;
@@ -167,6 +174,14 @@ public class Player {
 
   public void setTeam(Team team) {
     this.team = team;
+  }
+
+  public Game getGame() {
+    return game;
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
   }
 
   public Match getMatch() {

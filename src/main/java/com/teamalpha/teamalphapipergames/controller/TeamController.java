@@ -52,10 +52,10 @@ public class TeamController {
       if(printOut){
         for (Team team :
             listToReturn) {
-          System.out.println(team.getId() + ". " + team.getName());
+          System.out.println(team.getId() + ". 👾 " + team.getName());
           for (Player player :
               team.getOwnedPlayers()) {
-            System.out.println("\t - " + player.getNickName());
+            System.out.println("\t - 🪪: " + player.getId() + ", " + player.getNickName());
           }
         }
       }

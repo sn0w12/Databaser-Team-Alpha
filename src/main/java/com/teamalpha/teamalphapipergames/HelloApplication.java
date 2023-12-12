@@ -3,6 +3,7 @@ package com.teamalpha.teamalphapipergames;
 import com.teamalpha.teamalphapipergames.controller.GameController;
 import com.teamalpha.teamalphapipergames.controller.MatchController;
 import com.teamalpha.teamalphapipergames.model.Match;
+import com.teamalpha.teamalphapipergames.view.MainWindow;
 import com.teamalpha.teamalphapipergames.view.Menu;
 import com.teamalpha.teamalphapipergames.view.MatchGraphics;
 import javafx.application.Application;
@@ -23,16 +24,18 @@ import java.text.SimpleDateFormat;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        MatchGraphics matchGraphics = new MatchGraphics();
-        matchGraphics.start(new Stage());
+//        MatchGraphics matchGraphics = new MatchGraphics();
+//        matchGraphics.start(new Stage());
+        MainWindow mainWindow = new MainWindow();
+        mainWindow.start(new Stage());
     }
 
     public static void main(String[] args) {
 
-        // start for menu to test in console while coding
-        GameController controller = new GameController();
-        Menu menu = new Menu(controller);
-        menu.showMainMenu();
+//         start for menu to test in console while coding
+//        GameController controller = new GameController();
+//        Menu menu = new Menu(controller);
+//        menu.showMainMenu();
 
 
         MatchController matchController = new MatchController();

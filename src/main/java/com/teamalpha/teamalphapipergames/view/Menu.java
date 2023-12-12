@@ -5,10 +5,11 @@ import com.teamalpha.teamalphapipergames.model.*;
 import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
+/**
+ * Simple menu, gets the job done
+ */
 public class Menu {
   private GameController gameController;
   private TeamController teamController;
@@ -24,12 +25,15 @@ public class Menu {
     matchController = new MatchController();
   }
 
+  // ----------------------------------------
+
   // Main menu
   public void showMainMenu() {
     System.out.println("Main menu");
     System.out.println("1. STAFF (login)");
     System.out.println("2. Visitor");
     System.out.println("9. Exit program");
+//    createStaff();
     handleMainMenu();
   }
 
@@ -40,10 +44,87 @@ public class Menu {
     space();
     switch (userChoice) {
       case "1":
-        showStaffMenu();
+        staffController.getAll(true);
+        System.out.print("Input id to log in as staff 💬: ");
+        Optional<Staff> fetchedStaff = Optional.ofNullable(staffController.getStaffById(new Scanner(System.in).nextInt()));
+        if (fetchedStaff.isPresent()) {
+          String flagIcon = "";
+          if (fetchedStaff.get().getCountry().equals("Australia")) {
+            flagIcon = "🇦🇺";
+          } else if (fetchedStaff.get().getCountry().equals("Belgium")) {
+            flagIcon = "🇧🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Brazil")) {
+            flagIcon = "🇧🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Bulgaria")) {
+            flagIcon = "🇧🇬";
+          } else if (fetchedStaff.get().getCountry().equals("Canada")) {
+            flagIcon = "🇨🇦";
+          } else if (fetchedStaff.get().getCountry().equals("Czechia")) {
+            flagIcon = "🇨🇿";
+          } else if (fetchedStaff.get().getCountry().equals("Denmark")) {
+            flagIcon = "🇩🇰";
+          } else if (fetchedStaff.get().getCountry().equals("England")) {
+            flagIcon = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
+          } else if (fetchedStaff.get().getCountry().equals("Finland")) {
+            flagIcon = "🇫🇮";
+          } else if (fetchedStaff.get().getCountry().equals("France")) {
+            flagIcon = "🇫🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Germany")) {
+            flagIcon = "🇩🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Greece")) {
+            flagIcon = "🇬🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Hungary")) {
+            flagIcon = "🇭🇺";
+          } else if (fetchedStaff.get().getCountry().equals("India")) {
+            flagIcon = "🇮🇳";
+          } else if (fetchedStaff.get().getCountry().equals("Israel")) {
+            flagIcon = "🇮🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Italy")) {
+            flagIcon = "🇮🇹";
+          } else if (fetchedStaff.get().getCountry().equals("Kazakhstan")) {
+            flagIcon = "🇰🇿";
+          } else if (fetchedStaff.get().getCountry().equals("Latvia")) {
+            flagIcon = "🇱🇻";
+          } else if (fetchedStaff.get().getCountry().equals("Lithuania")) {
+            flagIcon = "🇱🇹";
+          } else if (fetchedStaff.get().getCountry().equals("Montenegro")) {
+            flagIcon = "🇲🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Netherlands")) {
+            flagIcon = "🇳🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Norway")) {
+            flagIcon = "🇳🇴";
+          } else if (fetchedStaff.get().getCountry().equals("Poland")) {
+            flagIcon = "🇵🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Romania")) {
+            flagIcon = "🇷🇴";
+          } else if (fetchedStaff.get().getCountry().equals("Russia")) {
+            flagIcon = "🇷🇺";
+          } else if (fetchedStaff.get().getCountry().equals("Slovenia")) {
+            flagIcon = "🇸🇮";
+          } else if (fetchedStaff.get().getCountry().equals("South Africa")) {
+            flagIcon = "🇿🇦";
+          } else if (fetchedStaff.get().getCountry().equals("South Korea")) {
+            flagIcon = "🇰🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Spain")) {
+            flagIcon = "🇪🇸";
+          } else if (fetchedStaff.get().getCountry().equals("Sweden")) {
+            flagIcon = "🇸🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Ukraine")) {
+            flagIcon = "🇺🇦";
+          } else if (fetchedStaff.get().getCountry().equals("USA")) {
+            flagIcon = "🇺🇸";
+          }
+          System.out.println("✅ Logged in as: " + flagIcon + " " + fetchedStaff.get().getFirstName() + " " + fetchedStaff.get().getLastName());
+          System.out.println(""); // Radbryt
+          showCrudMenu();
+        } else {
+          System.out.println("❌ Could not find staff");
+          System.out.println(""); // Radbryt
+          showMainMenu();
+        }
         break;
       case "2":
-        showVisitorMenu();
+        System.out.println("⚠️ UNDER CONSTRUCTION ⚠️");
         break;
       case "9":
         System.out.println("Exiting program...");
@@ -54,206 +135,293 @@ public class Menu {
     }
   }
 
-  // Staff Menu
-  public void showStaffMenu() {
-    System.out.println("Staff menu");
-    System.out.println("0. Auto exec games and teams");
-    System.out.println("1. Games");
-    System.out.println("2. Teams");
-    System.out.println("3. Players");
-    System.out.println("4. Matches X");
-    System.out.println("5. Tournament X");
-    System.out.println("6. Staff");
-    System.out.println("9. Log out from staff (main menu)");
-    handleStaffMenu();
+  // new menu CRUD
+  public void showCrudMenu() {
+    System.out.println("CRUD menu");
+    System.out.println("0. Auto exec games, teams and players");
+    System.out.println("1. Create");
+    System.out.println("2. Read (List, Add to Game,Team etc / Remove from Game, Team etc)");
+    System.out.println("3. Update");
+    System.out.println("4. Delete");
+    System.out.println("9. Log out - back to main menu");
+    handleCrudMenu();
   }
 
-  public void handleStaffMenu() {
-    Scanner staffScanner = new Scanner(System.in);
+  public void handleCrudMenu() {
+    Scanner crudScanner = new Scanner(System.in);
     System.out.print("Input choice 💬: ");
-    String userChoice = staffScanner.nextLine();
+    String userChoice = crudScanner.nextLine();
     space();
     switch (userChoice) {
       case "0":
-        createStaff();
         createPlayersAndTeamsDataForStaff();
+        showCrudMenu();
         break;
       case "1":
-        showStaffGamesMenu();
+        showCreateMenu();
         break;
       case "2":
-        showStaffTeamsMenu();
+        showReadMenu();
         break;
       case "3":
-        showStaffPlayersMenu();
+        showUpdateMenu();
         break;
       case "4":
-        showStaffMatchesMenu();
-        break;
-      case "5":
-        showStaffTournamentsMenu();
-        break;
-      case "6":
-        showStaffStaffsMenu();
+        showDeleteMenu();
         break;
       case "9":
         showMainMenu();
         break;
       default:
-        showStaffMenu();
-        break;
+        showCrudMenu();
     }
   }
 
-  public void showStaffGamesMenu() {
-    System.out.println("Games Menu");
-    System.out.println("1. Add new game");
-    System.out.println("2. Update existing game");
-    System.out.println("3. Delete game");
-    System.out.println("4. List all games");
-    System.out.println("5. List specific game by id");
-    System.out.println("9. Back to Staff Menu");
-    handleStaffGamesMenu();
+  // CREATE
+  public void showCreateMenu() {
+    System.out.println("Create Menu");
+    System.out.println("1. Create new Game");
+    System.out.println("2. Create new Team");
+    System.out.println("3. Create new Player");
+    System.out.println("4. Create new Match");
+    System.out.println("5. Create new Tournament");
+    System.out.println("6. Create new Staff");
+    System.out.println("9. Back to CRUD Menu");
+    handleCreateMenu();
   }
 
-  public void handleStaffGamesMenu() {
-    Scanner gameScanner = new Scanner(System.in);
+  public void handleCreateMenu() {
+    Scanner createScanner = new Scanner(System.in);
     System.out.print("Input choice 💬: ");
-    String userChoice = gameScanner.nextLine();
+    String userChoice = createScanner.nextLine();
     space();
     switch (userChoice) {
       case "1":
-        // Add game
+        // create new game
         System.out.print("Game title 💬: ");
-        String gameName = new Scanner(System.in).nextLine();
-        if (gameController.save(new Game(gameName))) {
-          System.out.println("✅ " + gameName + " added");
-          showStaffMenu();
+        String gameNameGame = new Scanner(System.in).nextLine();
+        if (gameController.save(new Game(gameNameGame))) {
+          System.out.println("✅ " + gameNameGame + " added");
         } else {
-          System.out.println("❌ Failed to add game");
-          showStaffMenu();
+          System.out.println("❌ Failed to add Game");
         }
+        showCrudMenu();
         break;
       case "2":
-        // Update game (change of name)
-        gameController.getAll(true);
-        System.out.print("Input id 💬: ");
-        Game gameToUpdate = gameController.getGameById(new Scanner(System.in).nextInt());
-        System.out.print("Change name from " + gameToUpdate.getName() + " to 💬: ");
-        gameToUpdate.setName(new Scanner(System.in).nextLine());
-        if (gameController.updateGame(gameToUpdate)) {
-          System.out.println("✅ Game updated");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Game update failed");
-          showStaffMenu();
-        }
-
-        break;
-      case "3":
-        // Delete game
-        gameController.getAll(true);
-        System.out.print("Input id 💬: ");
-        if (gameController.deleteGameById(new Scanner(System.in).nextInt())) {
-          System.out.println("✅ Game deleted");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Failed to delete game");
-          showStaffMenu();
-        }
-        break;
-      case "4":
-        // Print all games
-        System.out.println("List of Games");
-        gameController.getAll(true);
-        showStaffMenu();
-        break;
-      case "5":
-        // Test to fetch a specific post from database
-        gameController.getAll(true);
-        System.out.print("Input id of game to fetch 💬: ");
-        Optional<Game> fetchedGame = Optional.ofNullable(gameController.getGameById(new Scanner(System.in).nextInt()));
-        if (fetchedGame.isPresent()) {
-          System.out.println("✅ Game " + fetchedGame.get().getName() + " fetched successfully");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Could not fetch game");
-          showStaffMenu();
-        }
-        break;
-      case "9":
-        showStaffMenu();
-        break;
-      default:
-        showStaffMenu();
-        break;
-    }
-  }
-
-  public void showStaffTeamsMenu() {
-    System.out.println("Teams Menu");
-    System.out.println("1. Add new team");
-    System.out.println("2. Update existing team");
-    System.out.println("3. Delete team");
-    System.out.println("4. List all Teams");
-    System.out.println("5. List specific team by id");
-    System.out.println("6. Add team to game");
-    System.out.println("7. Remove team from game");
-    System.out.println("9. Back to Staff Menu");
-    handleStaffTeamsMenu();
-  }
-
-  public void handleStaffTeamsMenu() {
-    Scanner teamScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = teamScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // add a team
+        // create new team
         System.out.print("Input team name 💬: ");
         if (teamController.save(new Team(new Scanner(System.in).nextLine()))) {
           System.out.println("✅ Team added");
-          showStaffMenu();
         } else {
-          System.out.println("❌ Could not save team");
-          showStaffMenu();
+          System.out.println("❌ Could not save Team");
         }
-        break;
-      case "2":
-        // Update team
-        teamController.getAll(true);
-        System.out.print("Input id 💬: ");
-        Team teamToUpdate = teamController.getTeamById(new Scanner(System.in).nextInt());
-        System.out.print("Change name from " + teamToUpdate.getName() + " to 💬: ");
-        teamToUpdate.setName(new Scanner(System.in).nextLine());
-        if (teamController.updateTeam(teamToUpdate)) {
-          System.out.println("✅ Team updated");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Team update failed");
-          showStaffMenu();
-        }
+        showCrudMenu();
         break;
       case "3":
-        // Delete team
-        teamController.getAll(true);
-        System.out.print("Input id 💬: ");
-        if (teamController.deleteTeamById(new Scanner(System.in).nextInt())) {
-          System.out.println("✅ Team deleted");
-          showStaffMenu();
+        // create new player
+        System.out.println("Add Player");
+        System.out.print("Input first name 💬: ");
+        String firstNamePlayer = createScanner.nextLine();
+        System.out.print("Input last name 💬: ");
+        String lastNamePlayer = createScanner.nextLine();
+        System.out.print("Input nickname 💬: ");
+        String nickNamePlayer = createScanner.nextLine();
+
+        if (playerController.save(new Player(firstNamePlayer, lastNamePlayer, nickNamePlayer))) {
+          System.out.println("✅ Player added");
         } else {
-          System.out.println("❌ Failed to delete team");
-          showStaffMenu();
+          System.out.println("❌ Could not save Player");
         }
+        showCrudMenu();
         break;
       case "4":
-        // List all teams
-        System.out.println("Team list");
-        teamController.getAll(true);
-        showStaffMenu();
+        // create new match
+        System.out.println("⚠️ MATCH IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
         break;
       case "5":
+        // create new tournament
+        System.out.println("⚠️ TOURNAMENT IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "6":
+        // create new staff
+        System.out.println("Add Staff member");
+        System.out.print("Input first name 💬: ");
+        String firstNameStaff = createScanner.nextLine();
+        System.out.print("Input last name 💬: ");
+        String lastNameStaff = createScanner.nextLine();
+        System.out.print("Input nickname 💬: ");
+        String nickNameStaff = createScanner.nextLine();
+        System.out.print("Input address 💬: ");
+        String addressStaff = createScanner.nextLine();
+        System.out.print("Input zip code 💬: ");
+        String zipCodeStaff = createScanner.nextLine();
+        System.out.print("Input postal address 💬: ");
+        String postalAddressStaff = createScanner.nextLine();
+        System.out.print("Input country 💬: ");
+        String countryStaff = createScanner.nextLine();
+        System.out.print("Input email 💬: ");
+        String eMailStaff = createScanner.nextLine();
+
+        if (staffController.save(new Staff(firstNameStaff, lastNameStaff, nickNameStaff, addressStaff, zipCodeStaff, postalAddressStaff, countryStaff, eMailStaff))) {
+          System.out.println("✅ Staff added");
+        } else {
+          System.out.println("❌ Could not save Staff");
+        }
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  // READ
+  public void showReadMenu() {
+    System.out.println("Read Menu (List)");
+    System.out.println("1. Read Games Menu");
+    System.out.println("2. Read Team Menu");
+    System.out.println("3. Read Player Menu");
+    System.out.println("4. ⚠️ Read Match Menu ⚠️");
+    System.out.println("5. ⚠️ Read Tournament Menu ⚠️");
+    System.out.println("6. Read Staff Menu");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadMenu();
+  }
+
+  public void handleReadMenu() {
+    Scanner readScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // read game
+        showReadGameMenu();
+        break;
+      case "2":
+        // read team
+        showReadTeamMenu();
+        break;
+      case "3":
+        // read player
+        showReadPlayerMenu();
+        break;
+      case "4":
+        // read match
+        showReadMatchMenu();
+        showCrudMenu();
+        break;
+      case "5":
+        // read touranment
+        showReadTournamentMenu();
+        showCrudMenu();
+        break;
+      case "6":
+        // read staff
+        showReadStaffMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  public void showReadGameMenu() {
+    System.out.println("Read Games (List)");
+    System.out.println("1. List all Games");
+    System.out.println("2. List specific Game by ID");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadGameMenu();
+  }
+
+  public void handleReadGameMenu() {
+    Scanner readGameScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readGameScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // Print all games
+        System.out.println("List of Games");
+        gameController.getAll(true);
+        showCrudMenu();
+        break;
+      case "2":
+        // List Game by specific ID
+        Scanner fetchGameScanner = new Scanner(System.in);
+        // Test to fetch a specific post from database
+        gameController.getAll(true);
+        System.out.print("Input id of game to fetch 💬: ");
+        int inputtedGameId = fetchGameScanner.nextInt();
+        Optional<Game> fetchedGame = Optional.ofNullable(gameController.getGameById(inputtedGameId));
+        if (fetchedGame.isPresent()) {
+          System.out.println("✅ Game " + fetchedGame.get().getName() + " fetched successfully");
+          System.out.println(""); // Radbryt
+
+          System.out.println("🪪 ID: " + fetchedGame.get().getId());
+          System.out.println("🎮 Game: " + fetchedGame.get().getName());
+          System.out.println("🎮 Number of Teams: " + fetchedGame.get().getOwnedTeams().size());
+
+          System.out.println(""); // Radbryt
+
+          // If there are teams added to game, print out list
+          if (fetchedGame.get().getOwnedTeams() != null && !fetchedGame.get().getOwnedTeams().isEmpty()) {
+            System.out.println("Teams list: ");
+            for (Team team : fetchedGame.get().getOwnedTeams()) {
+              System.out.println("📝 Signed Team: " + team.getName());
+            }
+          }
+
+          System.out.println(""); // radbrytning
+
+          // if there are individual players added to game, print out list
+          if (fetchedGame.get().getIndividualPlayers() != null && !fetchedGame.get().getIndividualPlayers().isEmpty()) {
+            System.out.println("Individual players list:");
+            for (Player player : fetchedGame.get().getIndividualPlayers()) {
+              if (player.getGame() != null) {
+                System.out.println("📝 Player: " + player.getNickName());
+              }
+            }
+          }
+
+          System.out.println(""); // radbrytning
+
+        } else {
+          System.out.println("❌ Could not fetch Game");
+        }
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  public void showReadTeamMenu() {
+    System.out.println("Read Teams (List, Add to Game/Remove from Game)");
+    System.out.println("1. List all Teams");
+    System.out.println("2. List specific Team by ID");
+    System.out.println("3. Add Team to Game");
+    System.out.println("4. Remove Team from Game");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadTeamMenu();
+  }
+
+  public void handleReadTeamMenu() {
+    Scanner readTeamScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readTeamScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // List all teams
+        System.out.println("List of Teams");
+        gameController.getAll(true);
+        showCrudMenu();
+        break;
+      case "2":
         // List specific team by id
         teamController.getAll(true);
         System.out.print("Input id of team to fetch 💬: ");
@@ -278,203 +446,176 @@ public class Menu {
           }
 
           System.out.println(""); // radbryt
-
         } else {
           System.out.println("❌ Could not fetch team");
           System.out.println(""); // radbryt
-
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "6":
+      case "3":
         // add team to game
         gameController.getAll(true);
         System.out.print("Pick Game ID 💬: ");
         int gameId = new Scanner(System.in).nextInt();
         teamController.getAll(true);
-        System.out.println("Pick team " + gameController.getAll(false).get(gameId - 1).getName());
+        System.out.println("Pick Team " + gameController.getAll(false).get(gameId - 1).getName());
         int teamId = new Scanner(System.in).nextInt();
         if (gameController.addTeamToGame(teamId, gameId)) {
-          System.out.println("✅ Team added to game");
+          System.out.println("✅ Team added to Game");
         } else {
-          System.out.println("❌ Team failed to add to game");
+          System.out.println("❌ Team failed to add to Game");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "7":
+      case "4":
         // Remove Team from Game
         gameController.getAll(true);
         System.out.print("Pick Game ID 💬: ");
         int gamesId = new Scanner(System.in).nextInt();
         teamController.getAll(true);
-        System.out.println("Pick team " + gameController.getAll(false).get(gamesId - 1).getName());
+        System.out.println("Pick Team " + gameController.getAll(false).get(gamesId - 1).getName());
         int teamsId = new Scanner(System.in).nextInt();
         if (gameController.removeTeamFromGame(teamsId, gamesId)) {
-          System.out.println("✅ Team removed from game");
+          System.out.println("✅ Team removed from Game");
         } else {
-          System.out.println("❌ Team failed to be removed from game");
+          System.out.println("❌ Team failed to be removed from Game");
         }
-        showStaffMenu();
-        break;
-      case "9":
-        showStaffMenu();
+        showCrudMenu();
         break;
       default:
-        showStaffMenu();
+        showCrudMenu();
         break;
     }
   }
 
-  public void showStaffPlayersMenu() {
-    System.out.println("Players Menu");
-    System.out.println("1. Add new player");
-    System.out.println("2. Update existing player");
-    System.out.println("3. Delete player");
-    System.out.println("4. List all players");
-    System.out.println("5. List specific player by id");
-    System.out.println("6. Add player to team");
-    System.out.println("7. Remove player from team");
-    System.out.println("9. Back to Staff menu");
-    handleStaffPlayersMenu();
+  public void showReadPlayerMenu() {
+    System.out.println("Read Players (List, Add to Game/Team/Remove from Game/Team)");
+    System.out.println("1. List all Players");
+    System.out.println("2. List specific Player by ID");
+    System.out.println("3. Add Player to Team");
+    System.out.println("4. Remove Player from Team");
+    System.out.println("5. Add Player to Game");
+    System.out.println("6. Remove Player from Game");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadPlayerMenu();
   }
 
-  public void handleStaffPlayersMenu() {
-    Scanner playerScanner = new Scanner(System.in);
+  public void handleReadPlayerMenu() {
+    Scanner readPlayerScanner = new Scanner(System.in);
     System.out.print("Input choice 💬: ");
-    String userChoice = playerScanner.nextLine();
+    String userChoice = readPlayerScanner.nextLine();
     space();
     switch (userChoice) {
       case "1":
-        // add a player
-        System.out.println("Add Player");
-        System.out.print("Input first name 💬: ");
-        String firstName = playerScanner.nextLine();
-        System.out.print("Input last name 💬: ");
-        String lastName = playerScanner.nextLine();
-        System.out.print("Input nickname 💬: ");
-        String nickName = playerScanner.nextLine();
-        System.out.print("Input address 💬: ");
-        String address = playerScanner.nextLine();
-        System.out.print("Input zip code 💬: ");
-        String zipCode = playerScanner.nextLine();
-        System.out.print("Input postal address 💬: ");
-        String postalAddress = playerScanner.nextLine();
-        System.out.print("Input country 💬: ");
-        String country = playerScanner.nextLine();
-        System.out.print("Input email 💬: ");
-        String eMail = playerScanner.nextLine();
-
-        if (playerController.save(new Player(firstName, lastName, nickName, address, zipCode, postalAddress, country, eMail))) {
-          System.out.println("✅ player added");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Could not save team");
-          showStaffMenu();
-        }
-        break;
-      case "2":
-        // Update player
-        showPlayerUpdateMenu();
-        break;
-      case "3":
-        // Delete player
-        playerController.getAll(true);
-        System.out.print("Input id 💬: ");
-        if (playerController.deletePlayerById(new Scanner(System.in).nextInt())) {
-          System.out.println("✅ Player deleted");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Failed to delete player");
-          showStaffMenu();
-        }
-        break;
-      case "4":
         // List all players
         System.out.println("Player list");
+        teamController.getAll(true);
+        System.out.println(""); // radbryt
+        System.out.println("Individual players (teamless)");
         playerController.getAll(true);
-        showStaffMenu();
+        System.out.println(""); // radbryt
+        showCrudMenu();
         break;
-      case "5":
+      case "2":
         // List specific player by id
         playerController.getAll(true);
-        System.out.print("Input id of player to fetch 💬: ");
+        System.out.print("Input ID of Player to fetch 💬: ");
         Optional<Player> fetchedPlayer = Optional.ofNullable(playerController.getPlayerById(new Scanner(System.in).nextInt()));
         if (fetchedPlayer.isPresent()) {
           String flagIcon = "";
-          if (fetchedPlayer.get().getCountry().equals("Australia")) {
-            flagIcon = "🇦🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Belgium")) {
-            flagIcon = "🇧🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Brazil")) {
-            flagIcon = "🇧🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Bulgaria")) {
-            flagIcon = "🇧🇬";
-          } else if (fetchedPlayer.get().getCountry().equals("Canada")) {
-            flagIcon = "🇨🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("Czechia")) {
-            flagIcon = "🇨🇿";
-          } else if (fetchedPlayer.get().getCountry().equals("Denmark")) {
-            flagIcon = "🇩🇰";
-          } else if (fetchedPlayer.get().getCountry().equals("England")) {
-            flagIcon = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
-          } else if (fetchedPlayer.get().getCountry().equals("Finland")) {
-            flagIcon = "🇫🇮";
-          } else if (fetchedPlayer.get().getCountry().equals("France")) {
-            flagIcon = "🇫🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Germany")) {
-            flagIcon = "🇩🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Greece")) {
-            flagIcon = "🇬🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Hungary")) {
-            flagIcon = "🇭🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Israel")) {
-            flagIcon = "🇮🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Italy")) {
-            flagIcon = "🇮🇹";
-          } else if (fetchedPlayer.get().getCountry().equals("Kazakhstan")) {
-            flagIcon = "🇰🇿";
-          } else if (fetchedPlayer.get().getCountry().equals("Latvia")) {
-            flagIcon = "🇱🇻";
-          } else if (fetchedPlayer.get().getCountry().equals("Lithuania")) {
-            flagIcon = "🇱🇹";
-          } else if (fetchedPlayer.get().getCountry().equals("Montenegro")) {
-            flagIcon = "🇲🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Netherlands")) {
-            flagIcon = "🇳🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Norway")) {
-            flagIcon = "🇳🇴";
-          } else if (fetchedPlayer.get().getCountry().equals("Poland")) {
-            flagIcon = "🇵🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Romania")) {
-            flagIcon = "🇷🇴";
-          } else if (fetchedPlayer.get().getCountry().equals("Russia")) {
-            flagIcon = "🇷🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Slovenia")) {
-            flagIcon = "🇸🇮";
-          } else if (fetchedPlayer.get().getCountry().equals("South Africa")) {
-            flagIcon = "🇿🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("South Korea")) {
-            flagIcon = "🇰🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Spain")) {
-            flagIcon = "🇪🇸";
-          } else if (fetchedPlayer.get().getCountry().equals("Sweden")) {
-            flagIcon = "🇸🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Ukraine")) {
-            flagIcon = "🇺🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("USA")) {
-            flagIcon = "🇺🇸";
+          if (fetchedPlayer.get().getCountry() != null) {
+            if (fetchedPlayer.get().getCountry().equals("Australia")) {
+              flagIcon = "🇦🇺";
+            } else if (fetchedPlayer.get().getCountry().equals("Belgium")) {
+              flagIcon = "🇧🇪";
+            } else if (fetchedPlayer.get().getCountry().equals("Brazil")) {
+              flagIcon = "🇧🇷";
+            } else if (fetchedPlayer.get().getCountry().equals("Bulgaria")) {
+              flagIcon = "🇧🇬";
+            } else if (fetchedPlayer.get().getCountry().equals("Canada")) {
+              flagIcon = "🇨🇦";
+            } else if (fetchedPlayer.get().getCountry().equals("Czechia")) {
+              flagIcon = "🇨🇿";
+            } else if (fetchedPlayer.get().getCountry().equals("Denmark")) {
+              flagIcon = "🇩🇰";
+            } else if (fetchedPlayer.get().getCountry().equals("England")) {
+              flagIcon = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
+            } else if (fetchedPlayer.get().getCountry().equals("Finland")) {
+              flagIcon = "🇫🇮";
+            } else if (fetchedPlayer.get().getCountry().equals("France")) {
+              flagIcon = "🇫🇷";
+            } else if (fetchedPlayer.get().getCountry().equals("Germany")) {
+              flagIcon = "🇩🇪";
+            } else if (fetchedPlayer.get().getCountry().equals("Greece")) {
+              flagIcon = "🇬🇷";
+            } else if (fetchedPlayer.get().getCountry().equals("Hungary")) {
+              flagIcon = "🇭🇺";
+            } else if (fetchedPlayer.get().getCountry().equals("Israel")) {
+              flagIcon = "🇮🇱";
+            } else if (fetchedPlayer.get().getCountry().equals("Italy")) {
+              flagIcon = "🇮🇹";
+            } else if (fetchedPlayer.get().getCountry().equals("Kazakhstan")) {
+              flagIcon = "🇰🇿";
+            } else if (fetchedPlayer.get().getCountry().equals("Latvia")) {
+              flagIcon = "🇱🇻";
+            } else if (fetchedPlayer.get().getCountry().equals("Lithuania")) {
+              flagIcon = "🇱🇹";
+            } else if (fetchedPlayer.get().getCountry().equals("Montenegro")) {
+              flagIcon = "🇲🇪";
+            } else if (fetchedPlayer.get().getCountry().equals("Netherlands")) {
+              flagIcon = "🇳🇱";
+            } else if (fetchedPlayer.get().getCountry().equals("Norway")) {
+              flagIcon = "🇳🇴";
+            } else if (fetchedPlayer.get().getCountry().equals("Poland")) {
+              flagIcon = "🇵🇱";
+            } else if (fetchedPlayer.get().getCountry().equals("Romania")) {
+              flagIcon = "🇷🇴";
+            } else if (fetchedPlayer.get().getCountry().equals("Russia")) {
+              flagIcon = "🇷🇺";
+            } else if (fetchedPlayer.get().getCountry().equals("Slovenia")) {
+              flagIcon = "🇸🇮";
+            } else if (fetchedPlayer.get().getCountry().equals("South Africa")) {
+              flagIcon = "🇿🇦";
+            } else if (fetchedPlayer.get().getCountry().equals("South Korea")) {
+              flagIcon = "🇰🇷";
+            } else if (fetchedPlayer.get().getCountry().equals("Spain")) {
+              flagIcon = "🇪🇸";
+            } else if (fetchedPlayer.get().getCountry().equals("Sweden")) {
+              flagIcon = "🇸🇪";
+            } else if (fetchedPlayer.get().getCountry().equals("Ukraine")) {
+              flagIcon = "🇺🇦";
+            } else if (fetchedPlayer.get().getCountry().equals("USA")) {
+              flagIcon = "🇺🇸";
+            }
           }
+
           System.out.println("✅ Player " + fetchedPlayer.get().getNickName() + " fetched successfully");
 
           System.out.println(""); // radbrytning
 
           System.out.println("🪪 ID: " + fetchedPlayer.get().getId());
           System.out.println("ℹ️ Name: " + fetchedPlayer.get().getFirstName() + " '" + fetchedPlayer.get().getNickName() + "' " + fetchedPlayer.get().getLastName());
-          System.out.println("📍 Adress: " + fetchedPlayer.get().getAddress() + ", " + fetchedPlayer.get().getId() + " " + fetchedPlayer.get().getPostalAddress());
-          System.out.println(flagIcon + " Country: " + fetchedPlayer.get().getCountry());
-          System.out.println("✉️ E-mail: " + fetchedPlayer.get().geteMail());
+          if (fetchedPlayer.get().getAddress() != null) {
+            System.out.println("📍 Address: " + fetchedPlayer.get().getAddress() + ", " + fetchedPlayer.get().getZipCode() + " " + fetchedPlayer.get().getPostalAddress());
+          }
+          if (fetchedPlayer.get().getCountry() != null) {
+            System.out.println(flagIcon + " Country: " + fetchedPlayer.get().getCountry());
+          }
+          if (fetchedPlayer.get().geteMail() != null) {
+            System.out.println("✉️ E-mail: " + fetchedPlayer.get().geteMail());
+          }
 
-          if (fetchedPlayer.get().getTeam() != null) {
+          // if player does not have team, post the game if person is connected to game
+          if (fetchedPlayer.get().getTeam() == null) {
+            if (fetchedPlayer.get().getGame() != null) {
+              System.out.println("🎮 Game: " + fetchedPlayer.get().getGame().getName());
+            }
+
+            System.out.println("🟢 Team status: Not signed");
+            System.out.println("Currently a Free Agent");
+            System.out.println(""); // radbrytning
+          } // else if player has team, print team game
+          else {
             if (fetchedPlayer.get().getTeam().getGame() != null) {
               System.out.println("🎮 Game: " + fetchedPlayer.get().getTeam().getGame().getName());
             }
@@ -482,35 +623,31 @@ public class Menu {
             System.out.println("🔴 Team status: Signed");
             System.out.println("Representing: " + fetchedPlayer.get().getTeam().getName());
             System.out.println(""); // radbrytning
-          } else {
-            System.out.println("🟢 Team status: Not signed");
-            System.out.println("Currently a Free Agent");
-            System.out.println(""); // radbrytning
           }
+
         } else {
-          System.out.println("❌ Could not fetch player");
+          System.out.println("❌ Could not fetch Player");
 
           System.out.println(""); // radbrytning
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "6":
+      case "3":
         // add player to team
         teamController.getAll(true);
-        System.out.print("Pick Game ID 💬: ");
+        System.out.print("Pick Team ID 💬: ");
         int teamId = new Scanner(System.in).nextInt();
         playerController.getAll(true);
-        System.out.println("Pick player " + teamController.getAll(false).get(teamId - 1).getName());
+        System.out.println("Pick Player " + teamController.getAll(false).get(teamId - 1).getName());
         int playerId = new Scanner(System.in).nextInt();
         if (teamController.addPlayerToTeam(playerId, teamId)) {
-          System.out.println("✅ Player added to team");
-          showStaffMenu();
+          System.out.println("✅ Player added to Team");
         } else {
-          System.out.println("❌ Player failed to add to team");
-          showStaffMenu();
+          System.out.println("❌ Player failed to add to Team");
         }
+        showCrudMenu();
         break;
-      case "7":
+      case "4":
         // Remove Player from Team
         teamController.getAll(true);
         System.out.print("Pick Team ID 💬: ");
@@ -523,13 +660,334 @@ public class Menu {
         } else {
           System.out.println("❌ Player failed to be removed from Team");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "9":
-        showStaffMenu();
+      case "5":
+        // add player to game
+        gameController.getAll(true);
+        System.out.print("Pick Game ID 💬: ");
+        int gameId = new Scanner(System.in).nextInt();
+        playerController.getAll(true);
+        System.out.println("Pick Player " + gameController.getAll(false).get(gameId - 1).getName());
+        int playerId_to_game = new Scanner(System.in).nextInt();
+        if (gameController.addPlayerToGame(playerId_to_game, gameId)) {
+          System.out.println("✅ Player added to Game");
+        } else {
+          System.out.println("❌ Player failed to be added to Game");
+        }
+        showCrudMenu();
+        break;
+      case "6":
+        // Remove Player from Game
+        gameController.getAll(true);
+        System.out.print("Pick Game ID 💬: ");
+        int gamesId = new Scanner(System.in).nextInt();
+        playerController.getAll(true);
+        System.out.println("Pick Player " + gameController.getAll(false).get(gamesId - 1).getName());
+        int playerId_remov_game = new Scanner(System.in).nextInt();
+        if (gameController.removePlayerFromGame(playerId_remov_game, gamesId)) {
+          System.out.println("✅ Player removed from Game");
+        } else {
+          System.out.println("❌ Player failed to be removed from Game");
+        }
+        showCrudMenu();
         break;
       default:
-        showStaffMenu();
+        showCrudMenu();
+        break;
+    }
+  }
+
+  public void showReadMatchMenu() {
+    System.out.println("⚠️ Read Match Menu (List, Add to Match/Remove from Match ⚠️");
+    System.out.println("1. ⚠️ List all Matches ⚠️");
+    System.out.println("2. ⚠️ List specific Match by ID ⚠️");
+    System.out.println("3. ⚠️ Add Team to Match ⚠️");
+    System.out.println("4. ⚠️ Remove Team from Match ⚠️");
+    System.out.println("5. ⚠️ Add Player from Match ⚠️");
+    System.out.println("6. ⚠️ Remove Player from Match ⚠️");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadMatchMenu();
+  }
+
+  public void handleReadMatchMenu() {
+    Scanner readMatchScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readMatchScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // List all Matches
+        System.out.println("⚠️ List all Matches IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "2":
+        // List specific Match by ID
+        System.out.println("⚠️ List specific Match by ID IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "3":
+        // Add Team to Match
+        System.out.println("⚠️ Add Team to Match IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "4":
+        // Remove Team from Match
+        System.out.println("⚠️ Remove Team from Match IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "5":
+        // Add player to match
+        System.out.println("⚠️ Add Player to Match IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "6":
+        // Remove player from match
+        System.out.println("⚠️ Remove Player from Match IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  public void showReadTournamentMenu() {
+    System.out.println("⚠️ Read Tournament Menu (List, Add to Tournament/Remove from Tournament ⚠️");
+    System.out.println("1. ⚠️ List all Tournaments ⚠️");
+    System.out.println("2. ⚠️ List specific Tournament by ID ⚠️");
+    System.out.println("3. ⚠️ Add Team to Tournament ⚠️");
+    System.out.println("4. ⚠️ Remove Team from Tournament ⚠️");
+    System.out.println("5. ⚠️ Add Player from Tournament ⚠️");
+    System.out.println("6. ⚠️ Remove Player from Tournament ⚠️");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadTournamentMenu();
+  }
+
+  public void handleReadTournamentMenu() {
+    Scanner readTournamentScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readTournamentScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // List all Tournaments
+        System.out.println("⚠️ List all Tournaments IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "2":
+        // List specific Tournament by ID
+        System.out.println("⚠️ List specific Tournament by ID IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "3":
+        // Add Team to Tournament
+        System.out.println("⚠️ Add Team to Tournament IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "4":
+        // Remove Team from Tournament
+        System.out.println("⚠️ Remove Team from Tournament IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "5":
+        // Add player to Tournament
+        System.out.println("⚠️ Add Player to Tournaent IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "6":
+        // Remove player from Tournament
+        System.out.println("⚠️ Remove Player from Tournament IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  public void showReadStaffMenu() {
+    System.out.println("Read Staff Menu (List)");
+    System.out.println("1. List all Staff");
+    System.out.println("2. List specific Staff by ID");
+    System.out.println("9. Back to CRUD Menu");
+    handleReadStaffMenu();
+  }
+
+  public void handleReadStaffMenu() {
+    Scanner readStaffScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = readStaffScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // List all staff
+        System.out.println("Staff list");
+        staffController.getAll(true);
+        showCrudMenu();
+        break;
+      case "2":
+        // List staff by id
+        staffController.getAll(true);
+        System.out.print("Input id of staff to fetch 💬: ");
+        Optional<Staff> fetchedStaff = Optional.ofNullable(staffController.getStaffById(new Scanner(System.in).nextInt()));
+        if (fetchedStaff.isPresent()) {
+          String flagIcon = "";
+          if (fetchedStaff.get().getCountry().equals("Australia")) {
+            flagIcon = "🇦🇺";
+          } else if (fetchedStaff.get().getCountry().equals("Belgium")) {
+            flagIcon = "🇧🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Brazil")) {
+            flagIcon = "🇧🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Bulgaria")) {
+            flagIcon = "🇧🇬";
+          } else if (fetchedStaff.get().getCountry().equals("Canada")) {
+            flagIcon = "🇨🇦";
+          } else if (fetchedStaff.get().getCountry().equals("Czechia")) {
+            flagIcon = "🇨🇿";
+          } else if (fetchedStaff.get().getCountry().equals("Denmark")) {
+            flagIcon = "🇩🇰";
+          } else if (fetchedStaff.get().getCountry().equals("England")) {
+            flagIcon = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
+          } else if (fetchedStaff.get().getCountry().equals("Finland")) {
+            flagIcon = "🇫🇮";
+          } else if (fetchedStaff.get().getCountry().equals("France")) {
+            flagIcon = "🇫🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Germany")) {
+            flagIcon = "🇩🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Greece")) {
+            flagIcon = "🇬🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Hungary")) {
+            flagIcon = "🇭🇺";
+          } else if (fetchedStaff.get().getCountry().equals("India")) {
+            flagIcon = "🇮🇳";
+          } else if (fetchedStaff.get().getCountry().equals("Israel")) {
+            flagIcon = "🇮🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Italy")) {
+            flagIcon = "🇮🇹";
+          } else if (fetchedStaff.get().getCountry().equals("Kazakhstan")) {
+            flagIcon = "🇰🇿";
+          } else if (fetchedStaff.get().getCountry().equals("Latvia")) {
+            flagIcon = "🇱🇻";
+          } else if (fetchedStaff.get().getCountry().equals("Lithuania")) {
+            flagIcon = "🇱🇹";
+          } else if (fetchedStaff.get().getCountry().equals("Montenegro")) {
+            flagIcon = "🇲🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Netherlands")) {
+            flagIcon = "🇳🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Norway")) {
+            flagIcon = "🇳🇴";
+          } else if (fetchedStaff.get().getCountry().equals("Poland")) {
+            flagIcon = "🇵🇱";
+          } else if (fetchedStaff.get().getCountry().equals("Romania")) {
+            flagIcon = "🇷🇴";
+          } else if (fetchedStaff.get().getCountry().equals("Russia")) {
+            flagIcon = "🇷🇺";
+          } else if (fetchedStaff.get().getCountry().equals("Slovenia")) {
+            flagIcon = "🇸🇮";
+          } else if (fetchedStaff.get().getCountry().equals("South Africa")) {
+            flagIcon = "🇿🇦";
+          } else if (fetchedStaff.get().getCountry().equals("South Korea")) {
+            flagIcon = "🇰🇷";
+          } else if (fetchedStaff.get().getCountry().equals("Spain")) {
+            flagIcon = "🇪🇸";
+          } else if (fetchedStaff.get().getCountry().equals("Sweden")) {
+            flagIcon = "🇸🇪";
+          } else if (fetchedStaff.get().getCountry().equals("Ukraine")) {
+            flagIcon = "🇺🇦";
+          } else if (fetchedStaff.get().getCountry().equals("USA")) {
+            flagIcon = "🇺🇸";
+          }
+          System.out.println("✅ Staff " + fetchedStaff.get().getNickName() + " fetched successfully");
+
+          System.out.println(""); // radbrytning
+
+          System.out.println("🪪 ID: " + fetchedStaff.get().getId());
+          System.out.println("ℹ️ Name: " + fetchedStaff.get().getFirstName() + " '" + fetchedStaff.get().getNickName() + "' " + fetchedStaff.get().getLastName());
+          System.out.println("📍 Adress: " + fetchedStaff.get().getAddress() + ", " + fetchedStaff.get().getId() + " " + fetchedStaff.get().getPostalAddress());
+          System.out.println(flagIcon + " Country: " + fetchedStaff.get().getCountry());
+          System.out.println("✉️ E-mail: " + fetchedStaff.get().geteMail());
+
+          System.out.println(""); // Radbryt
+        } else {
+          System.out.println("❌ Could not find staff");
+          System.out.println(""); // Radbryt
+        }
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  // UPDATE
+  public void showUpdateMenu() {
+    System.out.println("Update Menu");
+    System.out.println("1. Update Game");
+    System.out.println("2. Update Team");
+    System.out.println("3. Update Player");
+    System.out.println("4. Update Match");
+    System.out.println("5. Update Tournament");
+    System.out.println("6. Update Staff");
+    System.out.println("9. Back to CRUD Menu");
+    handleUpdateMenu();
+  }
+
+  public void handleUpdateMenu() {
+    Scanner updateScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = updateScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // update game
+        gameController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Game gameToUpdate = gameController.getGameById(new Scanner(System.in).nextInt());
+        System.out.print("Change name from " + gameToUpdate.getName() + " to 💬: ");
+        gameToUpdate.setName(new Scanner(System.in).nextLine());
+        if (gameController.updateGame(gameToUpdate)) {
+          System.out.println("✅ Game updated");
+        } else {
+          System.out.println("❌ Game update failed");
+        }
+        showCrudMenu();
+        break;
+      case "2":
+        // update team
+        teamController.getAll(true);
+        System.out.print("Input id 💬: ");
+        Team teamToUpdate = teamController.getTeamById(new Scanner(System.in).nextInt());
+        System.out.print("Change name from " + teamToUpdate.getName() + " to 💬: ");
+        teamToUpdate.setName(new Scanner(System.in).nextLine());
+        if (teamController.updateTeam(teamToUpdate)) {
+          System.out.println("✅ Team updated");
+        } else {
+          System.out.println("❌ Team update failed");
+        }
+        showCrudMenu();
+        break;
+      case "3":
+        // update player
+        showPlayerUpdateMenu();
+        break;
+      case "4":
+        // update match
+        System.out.println("⚠️ MATCH IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "5":
+        // update tournament
+        System.out.println("⚠️ TOURNAMENT IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "6":
+        // update staff
+        showStaffUpdateMenu();
+        break;
+      default:
+        showCrudMenu();
         break;
     }
   }
@@ -593,7 +1051,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "1":
         // update firstname
@@ -607,7 +1065,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "2":
         // update last name
@@ -621,7 +1079,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "3":
         // update nickname
@@ -635,7 +1093,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "4":
         // update address
@@ -649,7 +1107,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "5":
         // update zip code
@@ -663,7 +1121,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "6":
         // update postal address
@@ -677,7 +1135,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "7":
         // update country
@@ -691,7 +1149,7 @@ public class Menu {
         } else {
           System.out.println("❌ Player update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "8":
         // update email
@@ -706,12 +1164,10 @@ public class Menu {
           System.out.println("❌ Player update failed");
 
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "9":
-        showStaffMenu();
       default:
-        showStaffMenu();
+        showCrudMenu();
         break;
     }
   }
@@ -775,7 +1231,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "1":
         // update firstname
@@ -789,7 +1245,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "2":
         // update last name
@@ -803,7 +1259,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "3":
         // update nickname
@@ -817,7 +1273,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "4":
         // update address
@@ -831,7 +1287,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "5":
         // update zip code
@@ -845,7 +1301,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "6":
         // update postal address
@@ -859,7 +1315,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "7":
         // update country
@@ -873,7 +1329,7 @@ public class Menu {
         } else {
           System.out.println("❌ Staff update failed");
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
       case "8":
         // update email
@@ -888,27 +1344,109 @@ public class Menu {
           System.out.println("❌ Staff update failed");
 
         }
-        showStaffMenu();
+        showCrudMenu();
         break;
-      case "9":
-        showStaffMenu();
       default:
-        showStaffMenu();
+        showCrudMenu();
         break;
     }
   }
 
+  // DELETE
+  public void showDeleteMenu() {
+    System.out.println("Delete Menu");
+    System.out.println("1. Delete Game");
+    System.out.println("2. Delete Team");
+    System.out.println("3. Delete Player");
+    System.out.println("4. Delete Match");
+    System.out.println("5. Delete Tournament");
+    System.out.println("6. Delete Staff");
+    System.out.println("9. Back to CRUD Menu");
+    handleDeleteMenu();
+  }
+
+  public void handleDeleteMenu() {
+    Scanner deleteScanner = new Scanner(System.in);
+    System.out.print("Input choice 💬: ");
+    String userChoice = deleteScanner.nextLine();
+    space();
+    switch (userChoice) {
+      case "1":
+        // Delete game
+        gameController.getAll(true);
+        System.out.print("Input id 💬: ");
+        if (gameController.deleteGameById(new Scanner(System.in).nextInt())) {
+          System.out.println("✅ Game deleted");
+        } else {
+          System.out.println("❌ Failed to delete Game");
+        }
+        showCrudMenu();
+        break;
+      case "2":
+        // Delete Team
+        teamController.getAll(true);
+        System.out.print("Input id 💬: ");
+        if (teamController.deleteTeamById(new Scanner(System.in).nextInt())) {
+          System.out.println("✅ Team deleted");
+        } else {
+          System.out.println("❌ Failed to delete Team");
+        }
+        showCrudMenu();
+        break;
+      case "3":
+        // Delete Player
+        playerController.getAll(true);
+        System.out.print("Input id 💬: ");
+        if (playerController.deletePlayerById(new Scanner(System.in).nextInt())) {
+          System.out.println("✅ Player deleted");
+        } else {
+          System.out.println("❌ Failed to delete Player");
+        }
+        showCrudMenu();
+        break;
+      case "4":
+        // Delete Match
+        System.out.println("⚠️ MATCH IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "5":
+        // Delete Tournament
+        System.out.println("⚠️ TOURNAMENT IS UNDER CONSTRUCTION ⚠️");
+        showCrudMenu();
+        break;
+      case "6":
+        // Delete Staff
+        staffController.getAll(true);
+        System.out.print("Input id 💬: ");
+        if (staffController.deleteStaffById(new Scanner(System.in).nextInt())) {
+          System.out.println("✅ Staff deleted");
+        } else {
+          System.out.println("❌ Failed to delete Staff");
+        }
+        showCrudMenu();
+        break;
+      default:
+        showCrudMenu();
+        break;
+    }
+  }
+
+  // Create assets
   public void createStaff() {
-    // Creating staff
-    staffController.save(new Staff("Richard", "Hendricks", "R_Hendricks", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "r_hendricks@piedpiper.com"));
-    staffController.save(new Staff("Bertram", "Gilfoyle", "B_Gilfoyle", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "b_gilfoyle@piedpiper.com"));
-    staffController.save(new Staff("Dinesh", "Chugtai", "D_Chugtai", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "d_chugtai@piedpiper.com"));
+    // if there are no staff
+    if (staffController.getAll(false).isEmpty()) {
+      // Creating staff
+      staffController.save(new Staff("Richard", "Hendricks", "R_Hendricks", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "r_hendricks@piedpiper.com"));
+      staffController.save(new Staff("Bertram", "Gilfoyle", "B_Gilfoyle", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "b_gilfoyle@piedpiper.com"));
+      staffController.save(new Staff("Dinesh", "Chugtai", "D_Chugtai", "5230 Newell Rd", "NONE", "Palo Alto", "India", "d_chugtai@piedpiper.com"));
+    }
   }
 
   private void createPlayersAndTeamsDataForStaff() {
     List<Game> gamesToAdd = new ArrayList<>();
     List<Team> teamsToAdd = new ArrayList<>();
     List<Player> playersToAdd = new ArrayList<>();
+
 
     gamesToAdd.addAll(List.of(
         // Games
@@ -1042,6 +1580,7 @@ public class Menu {
         new Player("Ilias", "Bizriken", "nuc", "11 rue Saint Germain", "92230", "ÎLE-DE-FRANCE", "France", "nuc@bds.com"),
         new Player("Jus", "Marusic", "Crownshot", "Kolodvorska 56", "6001", "KOPER", "Slovenia", "crownshot@bds.com"),
         new Player("Labros", "Papoutsakis", "Labrov", "Pomerio 7", "51000", "RIJEKA", "Greece", "labrov@bds.com")));
+
 
     for (Game game : gamesToAdd) {
       if (gameController.save(game)) {
@@ -1249,508 +1788,6 @@ public class Menu {
       teamController.updateTeam(cloud9LoLTeam);
       System.out.println("Team renamed to Cloud9");
     }
-
-    // back to menu
-    showStaffMenu();
-  }
-
-  public void showStaffStaffsMenu() {
-    System.out.println("Staff Menu");
-    System.out.println("1. Add new staff");
-    System.out.println("2. Update existing staff");
-    System.out.println("3. Delete staff");
-    System.out.println("4. List all staff");
-    System.out.println("9. Back to Staff Main Menu");
-    handleStaffStaffsMenu();
-  }
-
-  public void handleStaffStaffsMenu() {
-    Scanner staffScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = staffScanner.nextLine();
-    switch (userChoice) {
-      case "1":
-        System.out.println("Add Staff member");
-        System.out.print("Input first name 💬: ");
-        String firstName = staffScanner.nextLine();
-        System.out.print("Input last name 💬: ");
-        String lastName = staffScanner.nextLine();
-        System.out.print("Input nickname 💬: ");
-        String nickName = staffScanner.nextLine();
-        System.out.print("Input address 💬: ");
-        String address = staffScanner.nextLine();
-        System.out.print("Input zip code 💬: ");
-        String zipCode = staffScanner.nextLine();
-        System.out.print("Input postal address 💬: ");
-        String postalAddress = staffScanner.nextLine();
-        System.out.print("Input country 💬: ");
-        String country = staffScanner.nextLine();
-        System.out.print("Input email 💬: ");
-        String eMail = staffScanner.nextLine();
-
-        if (staffController.save(new Staff(firstName, lastName, nickName, address, zipCode, postalAddress, country, eMail))) {
-          System.out.println("✅ staff added");
-        } else {
-          System.out.println("❌ Could not save team");
-        }
-        showStaffMenu();
-        break;
-      case "2":
-        // Update staff member
-        showStaffUpdateMenu();
-        break;
-      case "3":
-        // Delete staff
-        staffController.getAll(true);
-        System.out.print("Input id 💬: ");
-        if (staffController.deleteStaffById(new Scanner(System.in).nextInt())) {
-          System.out.println("✅ Staff member deleted");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Failed to delete staff member");
-          showStaffMenu();
-        }
-        break;
-      case "4":
-        // List all staff
-        System.out.println("Staff list");
-        staffController.getAll(true);
-        showStaffMenu();
-        break;
-      case "9":
-        showStaffMenu();
-        break;
-      default:
-        showStaffMenu();
-        break;
-    }
-  }
-
-  // Under construction
-  public void showStaffMatchesMenu() {
-    System.out.println("Matches menu");
-    System.out.println("1. Create new match");
-    System.out.println("2. Update existing match");
-    System.out.println("3. Delete match");
-    System.out.println("4. List all matches");
-    System.out.println("5. List specific match by id");
-    System.out.println("6. Add teams to match");
-    System.out.println("7. Add players to match");
-    System.out.println("8. Set match result");
-    System.out.println("9. Back to Staff menu");
-    handleStaffMatchesMenu();
-  }
-
-  public void handleStaffMatchesMenu() {
-    Scanner matchScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = matchScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // Create new match
-        showStaffMenu();
-        break;
-      case "2":
-        // Update existing match
-        showStaffMenu();
-        break;
-      case "3":
-        // delete match
-        matchController.getAllMatches(true);
-        System.out.print("Input id 💬: ");
-        if (matchController.deleteMatch(new Scanner(System.in).nextInt())) {
-          System.out.println("✅ Match deleted");
-          showStaffMenu();
-        } else {
-          System.out.println("❌ Failed to delete match");
-          showStaffMenu();
-        }
-        break;
-      case "4":
-        // List all matches
-        System.out.println("Match list");
-        matchController.getAllMatches(true);
-        showStaffMenu();
-        break;
-      case "5":
-        // List specific match by id
-        showStaffMenu();
-        break;
-      case "6":
-        // add teams to match (team vs team)
-        showStaffMenu();
-        break;
-      case "7":
-        // add players to match (pvp)
-        showStaffMenu();
-        break;
-      case "8":
-        showStaffMatchResultMenu();
-        break;
-      case "9":
-        showStaffMenu();
-        break;
-      default:
-        showStaffMenu();
-        break;
-    }
-    showStaffMenu();
-  }
-
-  public void showStaffMatchResultMenu() {
-    System.out.println("Match result menu");
-    System.out.println("1. Set result for team vs team");
-    System.out.println("2. Set result for player vs player");
-    System.out.println("3. See results");
-    System.out.println("9. Back to Staff menu");
-    handleStaffMatchResultMenu();
-  }
-
-  public void handleStaffMatchResultMenu() {
-
-    Scanner matchMenuScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = matchMenuScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // set result for team vs team
-        showStaffMenu();
-        break;
-      case "2":
-        // set result for player vs player
-        showStaffMenu();
-        break;
-      case "3":
-        // see results
-
-      case "9":
-        showStaffMenu();
-        break;
-      default:
-        showStaffMenu();
-        break;
-    }
-  }
-
-
-
-  public void showStaffTournamentsMenu() {
-    System.out.println("Tournaments menu");
-    System.out.println("1. Add new tournament");
-    System.out.println("2. Update existing tournament");
-    System.out.println("3. Delete tournament");
-    System.out.println("4. List all tournaments");
-    System.out.println("5. List specific tournament by id");
-    System.out.println("6. Add teams to tournament");
-    System.out.println("9. Back to Staff menu");
-    handleStaffTournamentsMenu();
-  }
-
-  public void handleStaffTournamentsMenu() {
-    System.out.println("UNDER CONSTRUCTION - BACK TO STAFF MENU");
-    showStaffMenu();
-  }
-
-  // Visitor menu
-  public void showVisitorMenu() {
-    System.out.println("Menu");
-    System.out.println("1. Games");
-    System.out.println("2. Teams");
-    System.out.println("3. Players ");
-    System.out.println("4. Matches X");
-    System.out.println("5. Tournament X");
-    System.out.println("9. Back to Main Menu");
-    handleVisitorMenu();
-  }
-
-  public void handleVisitorMenu() {
-    Scanner visitorScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = visitorScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        showVisitorGamesMenu();
-        break;
-      case "2":
-        showVisitorTeamsMenu();
-        break;
-      case "3":
-        showVisitorPlayersMenu();
-        break;
-      case "4":
-        // showVisitorMatchesMenu
-        break;
-      case "5":
-        // showVisitorTournamentsMenu
-        break;
-      case "9":
-        showMainMenu();
-        break;
-      default:
-        showVisitorMenu();
-    }
-  }
-
-  public void showVisitorGamesMenu() {
-    System.out.println("Games Menu");
-    System.out.println("1. List all games");
-    System.out.println("2. List specific game by id");
-    System.out.println("9. Back to Visitor Menu");
-    handleVisitorGamesMenu();
-  }
-
-  public void handleVisitorGamesMenu() {
-    Scanner visitorGameScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = visitorGameScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // List all games
-        System.out.println("List of Games");
-        gameController.getAll(true);
-        showVisitorMenu();
-        break;
-      case "2":
-        // Test to fetch a specific post from database
-        gameController.getAll(true);
-        System.out.print("Input id of game to fetch 💬: ");
-        Optional<Game> fetchedGame = Optional.ofNullable(gameController.getGameById(new Scanner(System.in).nextInt()));
-        if (fetchedGame.isPresent()) {
-          System.out.println("✅ Game " + fetchedGame.get().getName() + " fetched successfully");
-        } else {
-          System.out.println("❌ Could not fetch game");
-        }
-        showVisitorMenu();
-        break;
-      case "9":
-        showVisitorMenu();
-        break;
-      default:
-        showVisitorMenu();
-        break;
-    }
-  }
-
-  public void showVisitorTeamsMenu() {
-    System.out.println("Teams menu");
-    System.out.println("1. List all Teams");
-    System.out.println("2. List specific team by id");
-    System.out.println("9. Back to Visitor menu");
-    handleVisitorTeamsMenu();
-  }
-
-  public void handleVisitorTeamsMenu() {
-    Scanner visitorTeamScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = visitorTeamScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // List all teams
-        System.out.println("Team list");
-        teamController.getAll(true);
-        showVisitorMenu();
-        break;
-      case "2":
-        // List specific team by id
-        teamController.getAll(true);
-        System.out.print("Input id of team to fetch 💬: ");
-
-        System.out.println(""); // radbrytning
-
-        Optional<Team> fetchedTeam = Optional.ofNullable(teamController.getTeamById(new Scanner(System.in).nextInt()));
-        if (fetchedTeam.isPresent()) {
-          System.out.println("✅ Team " + fetchedTeam.get().getName() + " fetched successfully");
-          System.out.println(""); // radbrytning
-          System.out.println("🪪 ID: " + fetchedTeam.get().getId());
-          System.out.println("👾 Team: " + fetchedTeam.get().getName());
-
-          // If team is assigned to game print game
-          if (fetchedTeam.get().getGame() != null) {
-            System.out.println("🎮 Game: " + fetchedTeam.get().getGame().getName());
-          }
-
-          System.out.println("🎮 Player status: " + fetchedTeam.get().getOwnedPlayers().size());
-          for (Player players : fetchedTeam.get().getOwnedPlayers()) {
-            System.out.println("📝 Signed player: " + players.getNickName());
-          }
-
-          System.out.println(""); // radbryt
-
-        } else {
-          System.out.println("❌ Could not fetch team");
-          System.out.println(""); // radbryt
-
-        }
-        showVisitorMenu();
-        break;
-      case "9":
-        showVisitorMenu();
-        break;
-      default:
-        showVisitorMenu();
-        break;
-    }
-  }
-
-  public void showVisitorPlayersMenu() {
-    System.out.println("Players Menu");
-    System.out.println("1. List all players");
-    System.out.println("2. List specific player by id");
-    System.out.println("9. Back to Visitor Menu");
-    handleVisitorPlayersMenu();
-  }
-
-  public void handleVisitorPlayersMenu() {
-    Scanner visitorPlayerScanner = new Scanner(System.in);
-    System.out.print("Input choice 💬: ");
-    String userChoice = visitorPlayerScanner.nextLine();
-    space();
-    switch (userChoice) {
-      case "1":
-        // List all players
-        System.out.println("Player list");
-        playerController.getAll(true);
-        showVisitorMenu();
-        break;
-      case "2":
-        // List specific player by id
-        playerController.getAll(true);
-        System.out.print("Input id of player to fetch 💬: ");
-        Optional<Player> fetchedPlayer = Optional.ofNullable(playerController.getPlayerById(new Scanner(System.in).nextInt()));
-        if (fetchedPlayer.isPresent()) {
-          String flagIcon = "";
-          if (fetchedPlayer.get().getCountry().equals("Australia")) {
-            flagIcon = "🇦🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Belgium")) {
-            flagIcon = "🇧🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Brazil")) {
-            flagIcon = "🇧🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Bulgaria")) {
-            flagIcon = "🇧🇬";
-          } else if (fetchedPlayer.get().getCountry().equals("Canada")) {
-            flagIcon = "🇨🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("Czechia")) {
-            flagIcon = "🇨🇿";
-          } else if (fetchedPlayer.get().getCountry().equals("Denmark")) {
-            flagIcon = "🇩🇰";
-          } else if (fetchedPlayer.get().getCountry().equals("England")) {
-            flagIcon = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
-          } else if (fetchedPlayer.get().getCountry().equals("Finland")) {
-            flagIcon = "🇫🇮";
-          } else if (fetchedPlayer.get().getCountry().equals("France")) {
-            flagIcon = "🇫🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Germany")) {
-            flagIcon = "🇩🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Greece")) {
-            flagIcon = "🇬🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Hungary")) {
-            flagIcon = "🇭🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Israel")) {
-            flagIcon = "🇮🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Italy")) {
-            flagIcon = "🇮🇹";
-          } else if (fetchedPlayer.get().getCountry().equals("Kazakhstan")) {
-            flagIcon = "🇰🇿";
-          } else if (fetchedPlayer.get().getCountry().equals("Latvia")) {
-            flagIcon = "🇱🇻";
-          } else if (fetchedPlayer.get().getCountry().equals("Lithuania")) {
-            flagIcon = "🇱🇹";
-          } else if (fetchedPlayer.get().getCountry().equals("Montenegro")) {
-            flagIcon = "🇲🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Netherlands")) {
-            flagIcon = "🇳🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Norway")) {
-            flagIcon = "🇳🇴";
-          } else if (fetchedPlayer.get().getCountry().equals("Poland")) {
-            flagIcon = "🇵🇱";
-          } else if (fetchedPlayer.get().getCountry().equals("Romania")) {
-            flagIcon = "🇷🇴";
-          } else if (fetchedPlayer.get().getCountry().equals("Russia")) {
-            flagIcon = "🇷🇺";
-          } else if (fetchedPlayer.get().getCountry().equals("Slovenia")) {
-            flagIcon = "🇸🇮";
-          } else if (fetchedPlayer.get().getCountry().equals("South Africa")) {
-            flagIcon = "🇿🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("South Korea")) {
-            flagIcon = "🇰🇷";
-          } else if (fetchedPlayer.get().getCountry().equals("Spain")) {
-            flagIcon = "🇪🇸";
-          } else if (fetchedPlayer.get().getCountry().equals("Sweden")) {
-            flagIcon = "🇸🇪";
-          } else if (fetchedPlayer.get().getCountry().equals("Ukraine")) {
-            flagIcon = "🇺🇦";
-          } else if (fetchedPlayer.get().getCountry().equals("USA")) {
-            flagIcon = "🇺🇸";
-          }
-          System.out.println("✅ Player " + fetchedPlayer.get().getNickName() + " fetched successfully");
-
-          System.out.println(""); // radbrytning
-
-          System.out.println("🪪 ID: " + fetchedPlayer.get().getId());
-          System.out.println("ℹ️ Name: " + fetchedPlayer.get().getFirstName() + " '" + fetchedPlayer.get().getNickName() + "' " + fetchedPlayer.get().getLastName());
-          System.out.println("📍 Adress: " + fetchedPlayer.get().getAddress() + ", " + fetchedPlayer.get().getId() + " " + fetchedPlayer.get().getPostalAddress());
-          System.out.println(flagIcon + " Country: " + fetchedPlayer.get().getCountry());
-          System.out.println("✉️ E-mail: " + fetchedPlayer.get().geteMail());
-
-          if (fetchedPlayer.get().getTeam() != null) {
-            if (fetchedPlayer.get().getTeam().getGame() != null) {
-              System.out.println("🎮 Game: " + fetchedPlayer.get().getTeam().getGame().getName());
-            }
-
-            System.out.println("🔴 Team status: Signed");
-            System.out.println("Representing: " + fetchedPlayer.get().getTeam().getName());
-            System.out.println(""); // radbrytning
-          } else {
-            System.out.println("🟢 Team status: Not signed");
-            System.out.println("Currently a Free Agent");
-            System.out.println(""); // radbrytning
-          }
-        } else {
-          System.out.println("❌ Could not fetch player");
-
-          System.out.println(""); // radbrytning
-        }
-        showVisitorMenu();
-        break;
-      case "9":
-        showVisitorMenu();
-        break;
-      default:
-        showVisitorMenu();
-        break;
-    }
-  }
-
-  // Under constructor
-  public void showVisitorMatchesMenu() {
-    System.out.println("Matches menu");
-    System.out.println("1. List all matches");
-    System.out.println("2. List specific match by id");
-    System.out.println("9. Back to Visitor menu");
-    handleVisitorMatchesMenu();
-  }
-
-  public void handleVisitorMatchesMenu() {
-    System.out.println("UNDER CONSTRUCTION - BACK TO VISITOR MENU");
-    showVisitorMenu();
-  }
-
-  public void showVisitorTournamentsMenu() {
-    System.out.println("Tournaments menu");
-    System.out.println("1. List all tournaments");
-    System.out.println("2. List specific tournament by id");
-    System.out.println("9. Back to Visitor menu");
-    handleVisitorTournamentsMenu();
-  }
-
-  public void handleVisitorTournamentsMenu() {
-    System.out.println("UNDER CONSTRUCTION - BACK TO VISITOR MENU");
-    showVisitorMenu();
   }
 
   // misc
@@ -1759,7 +1796,6 @@ public class Menu {
       System.out.println();
     }
   }
-
 }
 
 

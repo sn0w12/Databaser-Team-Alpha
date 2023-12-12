@@ -1,5 +1,6 @@
 package com.teamalpha.teamalphapipergames.controller;
 
+import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 import com.teamalpha.teamalphapipergames.model.Game;
 import javax.persistence.*;
@@ -54,6 +55,12 @@ public class GameController {
           for (Team team :
               game.getOwnedTeams()) {
             System.out.println("\t - " + team.getName());
+
+            // individual players
+            for (Player player :
+                game.getIndividualPlayers()) {
+              System.out.println("\t - " + player.getNickName());
+            }
           }
         }
       }
@@ -69,25 +76,36 @@ public class GameController {
     return null;
   }
   // READ 1
-  public Game getGameById(int id){
+  public Game getGameById(int id) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
+    Game gameToReturn = null;
+
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      Game gameToReturn = entityManager.find(Game.class, id);
+
+      // Use LEFT JOIN FETCH to eagerly fetch the ownedTeams collection
+      gameToReturn = entityManager.createQuery(
+              "SELECT g FROM Game g LEFT JOIN FETCH g.ownedTeams WHERE g.id = :id",
+              Game.class
+          ).setParameter("id", id)
+          .getSingleResult();
+
       transaction.commit();
-      return gameToReturn;
-    } catch (Exception e){
-      if(transaction != null){
+    } catch (Exception e) {
+      if (transaction != null) {
         transaction.rollback();
       }
       e.printStackTrace();
     } finally {
       entityManager.close();
     }
-    return null;
+
+    return gameToReturn;
   }
+
+
   // UPDATE
   public boolean updateGame(Game game){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -187,6 +205,35 @@ public class GameController {
     return false;
   }
 
+  // Assign player to game
+  public boolean addPlayerToGame(int playerId, int gameId){
+    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    EntityTransaction transaction = null;
+    Game game;
+    try {
+      transaction = entityManager.getTransaction();
+      transaction.begin();
+      Optional<Player> possiblyAPlayer = Optional.ofNullable(entityManager.find(Player.class,playerId));
+      Optional<Game> possiblyAGame = Optional.ofNullable(entityManager.find(Game.class, gameId));
+      if(possiblyAGame.isPresent() && possiblyAPlayer.isPresent()){
+        System.out.println("Both exist");
+        Player player = possiblyAPlayer.get();
+        game = possiblyAGame.get();
+        game.addPlayer(player);
+      }
+      transaction.commit();
+      return true;
+    } catch (Exception e){
+      if(transaction != null){
+        transaction.rollback();
+      }
+      e.printStackTrace();
+    } finally {
+      entityManager.close();
+    }
+    return false;
+  }
+
   // New for automatic add
   public Game getGameByName(String gameName) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -236,5 +283,39 @@ public class GameController {
     return false;
   }
 
+  // Remove Player from Game
+  public boolean removePlayerFromGame(int playerId, int gameId) {
+    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    EntityTransaction transaction = null;
+
+    try {
+      transaction = entityManager.getTransaction();
+      transaction.begin();
+
+      // Find the Player and Game entities
+      Player player = entityManager.find(Player.class, playerId);
+      Game game = entityManager.find(Game.class, gameId);
+
+      if (player != null && game != null) {
+        // Remove the player from the game
+        game.getIndividualPlayers().remove(player);
+        player.setGame(null); // Remove the association from the player
+
+        transaction.commit();
+        return true;
+      } else {
+        System.out.println("Player or Game not found.");
+      }
+    } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
+      e.printStackTrace();
+    } finally {
+      entityManager.close();
+    }
+
+    return false;
+  }
 }
 

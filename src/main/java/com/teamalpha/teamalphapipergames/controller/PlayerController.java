@@ -2,15 +2,11 @@ package com.teamalpha.teamalphapipergames.controller;
 
 import com.teamalpha.teamalphapipergames.model.Player;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerController {
-
   public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
   // CREATE
@@ -46,7 +42,10 @@ public class PlayerController {
       if(printOut){
         for (Player player :
             listToReturn) {
-          System.out.println(player.getId() + ". " + player.getNickName());
+          if (player.getTeam() == null) {
+            System.out.println(player.getId() + ". " + player.getNickName());
+          }
+
         }
       }
       return listToReturn;

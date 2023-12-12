@@ -1,5 +1,8 @@
 package com.teamalpha.teamalphapipergames.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,12 @@ public class Game {
   // mappedBy actually prevents this side from creating an extra table for relational mapping
   // mappedBy tells hibernate that the opposite side of this relation has control, no need to create extra tables
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+  @Fetch(FetchMode.SUBSELECT)
   private List<Team> ownedTeams = new ArrayList<>();
+
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+  @Fetch(FetchMode.SUBSELECT)
+  private List<Player> individualPlayers = new ArrayList<>();
 
   public Game() {
   }
@@ -38,6 +46,11 @@ public class Game {
   public void addTeam(Team team){
     team.setGame(this);
     ownedTeams.add(team);
+  }
+
+  public void addPlayer(Player player) {
+    player.setGame(this);
+    individualPlayers.add(player);
   }
 
   public int getId() {
@@ -64,5 +77,11 @@ public class Game {
     this.ownedTeams = ownedTeams;
   }
 
+  public List<Player> getIndividualPlayers() {
+    return individualPlayers;
+  }
 
+  public void setIndividualPlayers(List<Player> individualPlayers) {
+    this.individualPlayers = individualPlayers;
+  }
 }
