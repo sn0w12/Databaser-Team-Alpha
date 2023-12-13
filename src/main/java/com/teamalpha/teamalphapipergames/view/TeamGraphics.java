@@ -261,6 +261,10 @@ public class TeamGraphics {
                         }
                     } else {
                         // Show an error message
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setHeaderText("Edit Failed");
+                        errorAlert.setContentText("The team could not be edited.");
+                        errorAlert.showAndWait();
                     }
                 });
             }
@@ -270,7 +274,6 @@ public class TeamGraphics {
         removeTeamButton.setOnAction(event -> {
             Team selectedTeam = teamTableView.getSelectionModel().getSelectedItem();
             if (selectedTeam != null) {
-                // Remove team logic, assuming a method in teamController
                 boolean success = teamController.deleteTeam(selectedTeam.getTeamId());
                 if (success) {
                     teamList.remove(selectedTeam);
@@ -303,10 +306,7 @@ public class TeamGraphics {
                 String lowerCaseFilter = newValue.toLowerCase();
                 if (team.getName().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches team name
-                } else if (String.valueOf(team.getGameId()).contains(lowerCaseFilter)) {
-                    return true; // Filter matches game ID
-                }
-                return false; // Does not match
+                } else return String.valueOf(team.getGameId()).contains(lowerCaseFilter);
             });
         });
 
@@ -349,5 +349,35 @@ public class TeamGraphics {
         primaryStage.setTitle("Team Management");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public Dialog<Team> createTeamDialog(Team selectedTeam, String name) {
+        Dialog<Team> dialog = new Dialog<>();
+        dialog.setTitle(name);
+
+        // Set up the dialog components
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGameId()));
+        gameIdField.setPromptText("Game ID");
+        TextField nameField = new TextField(selectedTeam.getName());
+        nameField.setPromptText("Team Name");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Game ID:"), 0, 0);
+        grid.add(gameIdField, 1, 0);
+        grid.add(new Label("Team Name:"), 0, 1);
+        grid.add(nameField, 1, 1);
+
+        dialogPane.setContent(grid);
+
+        // Disable the OK button initially if gameIdField is empty or non-numeric
+        Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
+        okButton.setDisable(false);
+
+        return dialog;
     }
 }
