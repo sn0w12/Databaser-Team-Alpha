@@ -21,14 +21,48 @@ public class TeamGraphics {
     private TeamController teamController;
 
     public TeamGraphics() {
-        teamController = new TeamController(); // Assuming TeamController exists
+        teamController = new TeamController();
+    }
+
+    public void initializeTeams() {
+        // Counter-Strike: Global Offensive teams (gameId = 1)
+        teamController.createTeam(1, "NaVi");
+        teamController.createTeam(1, "ENCE");
+        teamController.createTeam(1, "Cloud9");
+        teamController.createTeam(1, "FaZe");
+        teamController.createTeam(1, "Heroic");
+        teamController.createTeam(1, "Complexity");
+        teamController.createTeam(1, "Vitality");
+        teamController.createTeam(1, "MOUZ");
+
+        // EA Sports FC 24 teams (gameId = 2)
+        teamController.createTeam(2, "AFC Ajax Brazil");
+        teamController.createTeam(2, "Team Gullit");
+        teamController.createTeam(2, "DUX America");
+        teamController.createTeam(2, "RBLZ Gaming");
+        teamController.createTeam(2, "Team FUTWIZ");
+        teamController.createTeam(2, "Atlanta United FC");
+        teamController.createTeam(2, "TG NIP");
+        teamController.createTeam(2, "Team Exeed");
+
+        // League of Legends teams (gameId = 3)
+        teamController.createTeam(3, "NRG eSports");
+        teamController.createTeam(3, "G2 eSports");
+        teamController.createTeam(3, "Fnatic");
+        teamController.createTeam(3, "MAD Lions");
+        teamController.createTeam(3, "Cloud9");
+        teamController.createTeam(3, "LOUD");
+        teamController.createTeam(3, "Team Liquid");
+        teamController.createTeam(3, "Team BDS");
     }
 
     public void displayTeamUI() {
         Stage primaryStage = new Stage();
 
+        initializeTeams();
+
         // Retrieve all teams
-        List<Team> teamList = teamController.getAllTeams(); // Assuming this method exists in TeamController
+        List<Team> teamList = teamController.getAllTeams();
 
         // TableView for displaying teams
         TableView<Team> teamTableView = new TableView<>();
@@ -37,25 +71,36 @@ public class TeamGraphics {
         // Define columns
         TableColumn<Team, Integer> teamIdCol = new TableColumn<>("Team ID");
         teamIdCol.setCellValueFactory(new PropertyValueFactory<>("teamId"));
+        teamIdCol.setMinWidth(65);
+        teamIdCol.setMaxWidth(100);
 
         TableColumn<Team, Integer> gameIdCol = new TableColumn<>("Game ID");
         gameIdCol.setCellValueFactory(new PropertyValueFactory<>("gameId"));
+        gameIdCol.setMinWidth(65);
+        gameIdCol.setMaxWidth(100);
 
         TableColumn<Team, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setMinWidth(400);
+
+        teamTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        teamTableView.setMinWidth(400);
+        teamTableView.setMaxWidth(Double.MAX_VALUE);
+        teamTableView.setMinHeight(300);
+        teamTableView.setMaxHeight(Double.MAX_VALUE);
 
         teamTableView.getColumns().addAll(teamIdCol, gameIdCol, nameCol);
         Button addTeamButton = new Button("Add Team");
         Button removeTeamButton = new Button("Remove Team");
         Button editTeamButton = new Button("Edit Team");
-        Button exitButton = new Button("Exit");
+        Button backButton = new Button("Back");
 
         editTeamButton.setDisable(true); // Disabled initially until a team is selected
         removeTeamButton.setDisable(true);
 
         // Create an HBox for horizontal layout
-        HBox buttonLayout = new HBox(10); // 10 is the spacing between buttons
-        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton);
+        HBox buttonLayout = new HBox(10);
+        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton, backButton);
 
         teamTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             editTeamButton.setDisable(newSelection == null);
@@ -223,9 +268,9 @@ public class TeamGraphics {
             }
         });
 
-        exitButton.setOnAction(event -> primaryStage.close());
+        backButton.setOnAction(event -> primaryStage.close());
 
-        VBox vbox = new VBox(buttonLayout, teamTableView, exitButton);
+        VBox vbox = new VBox(buttonLayout, teamTableView);
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
         Scene scene = new Scene(vbox, 600, 400);
