@@ -25,6 +25,8 @@ public class TeamGraphics {
     }
 
     public void initializeTeams() {
+        System.out.println("Adding Teams");
+
         // Counter-Strike: Global Offensive teams (gameId = 1)
         teamController.createTeam(1, "NaVi");
         teamController.createTeam(1, "ENCE");
@@ -59,11 +61,11 @@ public class TeamGraphics {
     public void displayTeamUI() {
         Stage primaryStage = new Stage();
 
-        initializeTeams();
+        if(teamController.getAllTeams().isEmpty())
+            initializeTeams();
 
         ObservableList<Team> teamList = FXCollections.observableArrayList(teamController.getAllTeams());
         FilteredList<Team> filteredData = new FilteredList<>(teamList, p -> true);
-
 
         // TableView for displaying teams
         TableView<Team> teamTableView = new TableView<>();
