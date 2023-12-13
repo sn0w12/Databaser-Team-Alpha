@@ -327,14 +327,4 @@ public class TeamGraphics {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-    private int getTeamIdFromName(String selectedName, List<Team> teamList) {
-        for (Team team : teamList) {
-            String teamName = "Team ID: " + team.getTeamId() + ", Game ID: " + team.getGameId() + ", Name: " + team.getName();
-            if (selectedName.equals(teamName)) {
-                return team.getTeamId();
-            }
-        }
-        return -1;
-    }
 }
