@@ -1,5 +1,6 @@
 package com.teamalpha.teamalphapipergames.controller;
 
+import com.teamalpha.teamalphapipergames.model.Staff;
 import com.teamalpha.teamalphapipergames.model.Team;
 import javax.persistence.*;
 import java.util.List;
@@ -8,7 +9,7 @@ public class TeamController {
     public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
     // Method to create a new team
-    public boolean createTeam(int gameId, String name) {
+    public Team createTeam(int gameId, String name) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -17,13 +18,13 @@ public class TeamController {
             Team newTeam = new Team(0, gameId, name);  // Assuming ID is auto-generated
             entityManager.persist(newTeam);
             transaction.commit();
-            return true;
+            return newTeam;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
             entityManager.close();
         }
@@ -105,6 +106,26 @@ public class TeamController {
         } finally {
             entityManager.close();
         }
+    }
+
+    public List<Team> getAllTeams() {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        List<Team> teamList = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            teamList = entityManager.createQuery("FROM Team", Team.class).getResultList();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+        return teamList;
     }
 
     // Close EntityManagerFactory when the application ends

@@ -2,6 +2,7 @@
 package com.teamalpha.teamalphapipergames;
 
 import com.teamalpha.teamalphapipergames.view.StaffGraphics;
+import com.teamalpha.teamalphapipergames.view.TeamGraphics;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -14,7 +15,9 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         StaffGraphics staffGraphics = new StaffGraphics();
-        staffGraphics.displayStaffUI();
+        TeamGraphics teamGraphics = new TeamGraphics();
+        teamGraphics.displayTeamUI();
+        //staffGraphics.displayStaffUI();
     }
 }
 
