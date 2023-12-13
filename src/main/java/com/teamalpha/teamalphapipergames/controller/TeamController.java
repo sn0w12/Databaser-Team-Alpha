@@ -3,10 +3,6 @@ package com.teamalpha.teamalphapipergames.controller;
 import com.teamalpha.teamalphapipergames.model.Staff;
 import com.teamalpha.teamalphapipergames.model.Team;
 import javax.persistence.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 public class TeamController {
@@ -19,23 +15,18 @@ public class TeamController {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-
-            Team newTeam = new Team();  // Assuming you have a default constructor
-            newTeam.setGameId(gameId);
-            newTeam.setName(name);
-
-            entityManager.persist(newTeam);  // Persist the new team to the database
-            transaction.commit();  // Commit the transaction
-
-            return newTeam;  // The newTeam object should now have an auto-generated ID
+            Team newTeam = new Team(0, gameId, name);  // Assuming ID is auto-generated
+            entityManager.persist(newTeam);
+            transaction.commit();
+            return newTeam;
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Rollback in case of an exception
+                transaction.rollback();
             }
             e.printStackTrace();
             return null;
         } finally {
-            entityManager.close();  // Always close the EntityManager
+            entityManager.close();
         }
     }
 
