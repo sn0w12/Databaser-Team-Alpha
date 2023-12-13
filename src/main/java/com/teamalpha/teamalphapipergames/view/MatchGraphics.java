@@ -262,7 +262,6 @@ public class MatchGraphics extends Application {
 
     }
 
-
     public void showPlayedMatches() {
         Stage matchStage = new Stage();
         matchStage.setTitle("Played Matches");
