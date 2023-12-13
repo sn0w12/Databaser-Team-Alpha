@@ -4,14 +4,14 @@ import com.teamalpha.teamalphapipergames.controller.TeamController;
 import com.teamalpha.teamalphapipergames.model.Team;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.collections.transformation.SortedList;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,12 +61,12 @@ public class TeamGraphics {
 
         initializeTeams();
 
-        // Retrieve all teams
-        List<Team> teamList = teamController.getAllTeams();
+        ObservableList<Team> teamList = FXCollections.observableArrayList(teamController.getAllTeams());
+        FilteredList<Team> filteredData = new FilteredList<>(teamList, p -> true);
+
 
         // TableView for displaying teams
         TableView<Team> teamTableView = new TableView<>();
-        teamTableView.setItems(FXCollections.observableArrayList(teamList));
 
         // Define columns
         TableColumn<Team, Integer> teamIdCol = new TableColumn<>("Team ID");
@@ -95,16 +95,35 @@ public class TeamGraphics {
         Button editTeamButton = new Button("Edit Team");
         Button backButton = new Button("Back");
 
-        editTeamButton.setDisable(true); // Disabled initially until a team is selected
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search for teams...");
+
+        // Disabled initially until a team is selected
+        editTeamButton.setDisable(true);
         removeTeamButton.setDisable(true);
 
-        // Create an HBox for horizontal layout
         HBox buttonLayout = new HBox(10);
-        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton, backButton);
+        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton, backButton, searchField);
+
+        HBox searchLayout = new HBox(10);
+        searchLayout.getChildren().addAll(searchField);
+
+        // Spacer to push the search box to the right
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        spacer.setMinSize(10, 1);
+
+        // Parent HBox that contains both the buttonLayout and searchLayout
+        HBox parentLayout = new HBox();
+        parentLayout.getChildren().addAll(buttonLayout, spacer, searchLayout);
+
+        Label selectedTeamLabel = new Label("No team selected");
 
         teamTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             editTeamButton.setDisable(newSelection == null);
             removeTeamButton.setDisable(newSelection == null);
+            selectedTeamLabel.setText("Selected team name: " + newSelection.getName() + ", team id: " + newSelection.getTeamId() + ", game id: " + newSelection.getGameId());
         });
 
         addTeamButton.setOnAction(event -> {
@@ -155,7 +174,7 @@ public class TeamGraphics {
                     try {
                         int gameId = Integer.parseInt(gameIdField.getText().trim());
                         String name = nameField.getText().trim();
-                        return new Team(0, gameId, name); // Assuming ID is auto-generated
+                        return new Team(0, gameId, name);
                     } catch (NumberFormatException e) {
                         // Handle invalid number input
                         return null;
@@ -169,8 +188,7 @@ public class TeamGraphics {
             result.ifPresent(newTeam -> {
                 Team createdTeam = teamController.createTeam(newTeam.getGameId(), newTeam.getName());
                 if (createdTeam != null) {
-                    // Add the new team to the TableView
-                    teamTableView.getItems().add(createdTeam);
+                    teamList.add(createdTeam);
                 } else {
                     // Show an error message
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -234,8 +252,10 @@ public class TeamGraphics {
                 result.ifPresent(editedTeam -> {
                     boolean success = teamController.updateTeam(editedTeam.getTeamId(), editedTeam.getGameId(), editedTeam.getName());
                     if (success) {
-                        // Update the TableView
-                        teamTableView.getItems().set(teamTableView.getSelectionModel().getSelectedIndex(), editedTeam);
+                        int selectedIndex = teamTableView.getSelectionModel().getSelectedIndex();
+                        if (selectedIndex >= 0) {
+                            teamList.set(selectedIndex, editedTeam);
+                        }
                     } else {
                         // Show an error message
                     }
@@ -250,7 +270,7 @@ public class TeamGraphics {
                 // Remove team logic, assuming a method in teamController
                 boolean success = teamController.deleteTeam(selectedTeam.getTeamId());
                 if (success) {
-                    teamTableView.getItems().remove(selectedTeam);
+                    teamList.remove(selectedTeam);
                 } else {
                     // Show an error message if removal fails
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -268,9 +288,37 @@ public class TeamGraphics {
             }
         });
 
+        // Update the predicate whenever the filter changes
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(team -> {
+                // If filter text is empty, display all teams
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Compare team name and ID with filter text
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (team.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches team name
+                } else if (String.valueOf(team.getGameId()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches game ID
+                }
+                return false; // Does not match
+            });
+        });
+
+        // Wrap the FilteredList in a SortedList
+        SortedList<Team> sortedData = new SortedList<>(filteredData);
+
+        // Bind the SortedList comparator to the TableView comparator
+        sortedData.comparatorProperty().bind(teamTableView.comparatorProperty());
+
+        // Add data to the table
+        teamTableView.setItems(sortedData);
+
         backButton.setOnAction(event -> primaryStage.close());
 
-        VBox vbox = new VBox(buttonLayout, teamTableView);
+        VBox vbox = new VBox(parentLayout, selectedTeamLabel, teamTableView);
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
         Scene scene = new Scene(vbox, 600, 400);
@@ -278,24 +326,6 @@ public class TeamGraphics {
         primaryStage.setTitle("Team Management");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    private void showTabsForTeam(int teamId, Stage primaryStage) {
-        Stage teamStage = new Stage();
-        TabPane tabPane = new TabPane();
-
-        Tab teamTab = new Tab("Team Details");
-        // Add other tabs if needed
-
-        // Add tabs to the TabPane
-        tabPane.getTabs().addAll(teamTab /*, otherTabs */);
-
-        // Logic to fill teamTab with relevant content (e.g., team details)
-
-        Scene teamScene = new Scene(tabPane, 800, 600);
-        teamStage.setTitle("Team Options");
-        teamStage.setScene(teamScene);
-        teamStage.show();
     }
 
     private int getTeamIdFromName(String selectedName, List<Team> teamList) {
