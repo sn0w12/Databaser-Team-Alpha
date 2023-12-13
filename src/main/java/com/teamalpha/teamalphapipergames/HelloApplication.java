@@ -17,7 +17,7 @@ public class HelloApplication extends Application {
         StaffGraphics staffGraphics = new StaffGraphics();
         TeamGraphics teamGraphics = new TeamGraphics();
         teamGraphics.displayTeamUI();
-        //staffGraphics.displayStaffUI();
+        staffGraphics.displayStaffUI();
     }
 }
 

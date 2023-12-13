@@ -128,6 +128,29 @@ public class TeamController {
         return teamList;
     }
 
+    public void resetTeamIdCount() {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            // Replace 'teams' with your actual table name
+            // This is for MySQL. The SQL might differ for other databases
+            entityManager.createNativeQuery("ALTER TABLE teams AUTO_INCREMENT = 1").executeUpdate();
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+
     // Close EntityManagerFactory when the application ends
     public void closeEntityManagerFactory() {
         ENTITY_MANAGER_FACTORY.close();

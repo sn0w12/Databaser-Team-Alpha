@@ -96,7 +96,8 @@ public class TeamGraphics {
         Button removeTeamButton = new Button("Remove Team");
         Button editTeamButton = new Button("Edit Team");
         Button backButton = new Button("Back");
-
+        Button truncateButton = new Button("Clear table");
+        truncateButton.setStyle("-fx-background-color: #fc0303");
 
         TextField searchField = new TextField();
         searchField.setPromptText("Search for teams...");
@@ -106,7 +107,7 @@ public class TeamGraphics {
         removeTeamButton.setDisable(true);
 
         HBox buttonLayout = new HBox(10);
-        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton, backButton, searchField);
+        buttonLayout.getChildren().addAll(addTeamButton, editTeamButton, removeTeamButton, truncateButton, backButton);
 
         HBox searchLayout = new HBox(10);
         searchLayout.getChildren().addAll(searchField);
@@ -306,6 +307,26 @@ public class TeamGraphics {
                     return true; // Filter matches game ID
                 }
                 return false; // Does not match
+            });
+        });
+
+        truncateButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Confirm Clear");
+            alert.setContentText("Are you sure you want to clear this table? You will remove every entry in the database.");
+
+            // Display a confirmation dialog and wait for the user's response
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // If the user selects "OK", close the application
+                    for (Team team : teamList) {
+                        teamController.deleteTeam(team.getTeamId());
+                    }
+                    // Clear the list after deletion
+                    teamController.resetTeamIdCount();
+                    teamList.clear();
+                }
             });
         });
 
