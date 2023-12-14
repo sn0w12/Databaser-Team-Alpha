@@ -1,21 +1,29 @@
+
 package com.teamalpha.teamalphapipergames;
+
 
 import com.teamalpha.teamalphapipergames.controller.MatchController;
 import com.teamalpha.teamalphapipergames.controller.PlayerController;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.view.MatchGraphics;
+=======
+import com.teamalpha.teamalphapipergames.view.StaffGraphics;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class HelloApplication extends Application {
-    @Override
-    public void start(Stage stage) throws Exception {
+
+  
+  
+//     @Override
+//     public void start(Stage stage) throws Exception {
 //        MatchGraphics matchGraphics = new MatchGraphics();
 //        matchGraphics.start(new Stage());
     }
 
 
-    public static void main(String[] args) {
+//     public static void main(String[] args) {
 
 
 //        MatchController matchController = new MatchController();
@@ -46,8 +54,20 @@ public class HelloApplication extends Application {
 //
 //
 //     launch();
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        StaffGraphics staffGraphics = new StaffGraphics();
+        staffGraphics.displayStaffUI();
+
     }
 }
+
 
 
 
