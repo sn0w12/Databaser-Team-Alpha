@@ -285,6 +285,7 @@ public class MatchController {
             if (possiblyAPlayer1.isPresent() && possiblyAPlayer2.isPresent()) {
                 System.out.println("Båda finns");
 
+
                 Match match = new Match();
 
                 player1 = possiblyAPlayer1.get();
