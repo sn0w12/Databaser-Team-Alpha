@@ -311,12 +311,32 @@ public class MatchController {
             if (transaction != null) {
                 transaction.rollback();
             }
+
             e.printStackTrace();
         } finally {
             entityManager.close();
         }
 
 
+//        // dummy code: för att se att spelaren har en lista med matcher utan att vi lägger till det
+//        entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+//        transaction = entityManager.getTransaction();
+//        transaction.begin();
+//        try {
+//            Player playerToTest = entityManager.find(Player.class, 1);
+//            System.out.println("Dessa matcher spelar personen i: ");
+//            for (Match matches :
+//                    playerToTest.getMatches()) {
+//                System.out.println(matches.getMatchId());
+//            }
+//            transaction.commit();
+//        } catch (Exception e) {
+//            if (transaction != null) {
+//                transaction.rollback();
+//            }
+//        } finally {
+//            entityManager.close();
+//        }
         // dummy code: för att se att spelaren har en lista med matcher utan att vi lägger till det
         entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         transaction = entityManager.getTransaction();
