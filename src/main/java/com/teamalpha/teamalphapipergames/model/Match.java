@@ -2,21 +2,18 @@
 package com.teamalpha.teamalphapipergames.model;
 
 
+import com.teamalpha.teamalphapipergames.controller.MatchController;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-//match_id INT PRIMARY KEY AUTO_INCREMENT,
-//        game_id INT,
-//        team_id1 INT,
-//        team_id2 INT,
-//        player_id1 INT,
-//        player_id2 INT,
-//        match_date DATE NOT NULL,
-//        finished BOOLEAN NOT NULL,
-//        match_results TEXT,
+
 @Entity
 @Table(name = "matches")
 public class Match {
@@ -25,7 +22,7 @@ public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "match_id")
-   int matchId;
+    int matchId;
 
     @Column(name = "game_id")
     private int game_id;
@@ -36,74 +33,44 @@ public class Match {
     @Column(name = "team2_id")
     private int team2_id;
 
-    @Column(name = "player1_id")
-    private int player1_id;
+//    @Column(name = "player1_id")
+//    private int player1_id;
 
-    @Column(name = "player2_id")
-    private int player2_id;
+//    @Column(name = "player2_id")
+//    private int player2_id;
 
 
     @Column(name = "finished")
-    private boolean finished= false;
+    private boolean finished = false;
 
     @Column(name = "match_results")
-    private String results=null;
+    private String results = null;
 
 
-    @Column (name =" team_game")
+    @Column(name = " team_game")
     private boolean teamGame;
-
-
     //har lagt in den här själv, finns inte i vårt schema
-//    @Column(name = "team_game")
-//    private boolean teamGame;
-//
-    //ändrar från date till String men har inte ändrat det i schema
-//    @Column(name = "match_date")
-//    private String match_date;
-//
-    @Column(name="matchDate")
+
+//    @Column(name="player1")
+//    private int player_id;
+
+
+    @Column(name = "matchDate")
     private String match_date;
     //joins
-/*
-vilken sida är ägar sidan?
-spelar det någon roll
 
 
-player-manyToOne   en spelare kan ha flera matcher
-                    en match kan bara ha en spelare
-                    --join med player_id
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @JoinTable(name = "player_id",
+//            joinColumns = @JoinColumn(name = "match_id")
+//    )
+    private List<Player> players = new ArrayList<>();
 
-team- manyToOne
-                    --join med team_id
 
-game- manyToOne       en match kan bara ha ett spel
-                        ett spel kan ha flera matcher
-                       -- join med game_id
-* */
-
-//    @ManyToOne
-//    @JoinColumn(name ="player1_id")
-//    private Player player1;
-//
-//    @ManyToOne
-//    @JoinColumn(name ="player2_id")
-//    private Player player2;
-//
-//
-//    @ManyToOne
-//    @JoinColumn(name="team1_id")
-//    private Team team1;
-//
-//    @ManyToOne
-//    @JoinColumn(name="team2_id")
-//    private Team team2;
-//
-//
-//    @ManyToOne
-//    @JoinColumn(name="game_id")
-//    private Game game;
-
+    @Column(name = "player1")
+    private String player1;//= String.valueOf(getPlayers().get(0));
+    @Column(name = "player2")
+    private String player2;//= String.valueOf(getPlayers().get(1));
 
     //constructors
     public Match() {
@@ -113,42 +80,46 @@ game- manyToOne       en match kan bara ha ett spel
         this.matchId = id;
     }
 
-    public Match(boolean teamGame, int gameId, int teamOrPlayer1_id, int teamOrPlayer2_id, boolean finished, String matchDate) {
-        this.teamGame=teamGame;
-        this.finished=finished;
-        this.game_id=gameId;
-        this.match_date=matchDate;
-        if (teamGame) {
-            this.team1_id = teamOrPlayer1_id;
-            this.team2_id = teamOrPlayer2_id;
-        } else {
-            this.player1_id = teamOrPlayer1_id;
-            this.player2_id = teamOrPlayer2_id;
-        }
-
-
-//        this.match_date=matchDate;
+//    public Match(boolean teamGame, int gameId, int teamOrPlayer1_id, int teamOrPlayer2_id, boolean finished, String matchDate) {
+//        MatchController matchController = new MatchController();
+//        this.teamGame = teamGame;
+//        this.finished = finished;
+//        this.game_id = gameId;
+//        this.match_date = matchDate;
+//        if (teamGame) {
+//            //this.team1_id = player1_id.getId();
+//            this.team2_id = teamOrPlayer2_id;
+//        } else {
+//            this.player1=matchController.addPlayerToMatch(teamOrPlayer1_id, matchId);
 //
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//        LocalDate date = LocalDate.parse(match_date, formatter);
+//           // matchController.addPlayerToMatch(teamOrPlayer1_id, matchId);
+//
+//            this.player2_id = teamOrPlayer2_id;
+//        }
+//    }
 
 
-        // SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
-      //  Date date=sdf.parse(match_date);
-//        Date date=sdf.parse(match_date);
-
-
+    public Match(int gameId, boolean teamGame, Player teamOrPlayer1_id, Player teamOrPlayer2_id, String matchDate) {
+        this.teamGame = teamGame;
+        this.game_id = gameId;
+        this.match_date = matchDate;
+        if (teamGame) {
+//            this.team1_id = teamOrPlayer1_id.getId();
+//            this.team2_id = teamOrPlayer2_id;
+        } else {
+            //this.player1_id = teamOrPlayer1_id;
+            this.players.add(teamOrPlayer1_id);
+            this.players.add(teamOrPlayer2_id);
+//            this.player1 = teamOrPlayer1_id;
+//            this.player2 = teamOrPlayer2_id;
+        }
     }
 
 
     //getters and setters
-    public int getId() {
+    public int getMatchId() {
         return matchId;
     }
-
-//    public void setId(int id) {
-//        this.id = id;
-//    }
 
     public int getGame_id() {
         return game_id;
@@ -174,29 +145,6 @@ game- manyToOne       en match kan bara ha ett spel
         this.team2_id = team2_id;
     }
 
-    public int getPlayer1_id() {
-        return player1_id;
-    }
-
-    public void setPlayer1_id(int player1_id) {
-        this.player1_id = player1_id;
-    }
-
-    public int getPlayer2_id() {
-        return player2_id;
-    }
-
-    public void setPlayer2_id(int player2_id) {
-        this.player2_id = player2_id;
-    }
-
-//    public String getMatch_date() {
-//        return match_date;
-//    }
-//
-//    public void setMatch_date(String match_date) {
-//        this.match_date = match_date;
-//    }
 
     public boolean getFinished() {
         return finished;
@@ -221,4 +169,58 @@ game- manyToOne       en match kan bara ha ett spel
     public void setTeamGame(boolean teamGame) {
         this.teamGame = teamGame;
     }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public void setPlayersByIndexInPlayersList(int index, Player player) {
+//            this.players.get(index) = player;
+        this.players.set(index, player);
+    }
+
+//    public String getPlayer1() {
+//        return player1;
+//    }
+//
+//    public void setPlayer1(String player1) {
+//        this.player1 = player1;
+//    }
+
+    public String getPlayer1() {
+        return players.get(0).getFirstName();
+    }
+
+
+    //var här det krånglade när jag inte fick in namnet rätt efter jag ändrat spelare i en match
+    public void setPlayer1(String player1) {
+        this.players.get(0).setFirstName(player1);
+        this.player1 = player1;
+    }
+
+    public String getPlayer2() {
+        return  players.get(1).getFirstName();
+    }
+
+    public void setPlayer2(String player2) {
+        this.players.get(1).setFirstName(player2);
+        this.player2 = player2;
+    }
+
+//    public void removePlayerFromMatch(Player player1, Player player2){
+//        this.players.remove(player1);
+//        this.players.remove(player2);
+//        player1.getMatches().remove(this);
+//        player2.getMatches().remove(this);
+//    }
+//
+//    public List <Player> getPlayerFromMatchId(int matchiiId){
+//        this.matchId=matchiiId;
+//        return this.players;
+//    }
 }
+

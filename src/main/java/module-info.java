@@ -5,7 +5,7 @@ module com.teamalpha.teamalphapipergames {
     requires java.persistence;
     requires org.hibernate.orm.core;
     requires hibernate.entitymanager;
-
+    requires java.desktop;
 
 
     exports com.teamalpha.teamalphapipergames;
