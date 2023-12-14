@@ -116,6 +116,10 @@ public class Match {
     }
 
 
+
+    public void addPlayer(Player player){
+        players.add(player);
+    }
     //getters and setters
     public int getMatchId() {
         return matchId;
