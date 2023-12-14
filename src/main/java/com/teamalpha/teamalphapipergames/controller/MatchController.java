@@ -224,7 +224,7 @@ public class MatchController {
         return false;
     }
 
-    // Remove Player from match
+    // Remove Player from match and vice versa
     public boolean removePlayerFromMatch(int matchId) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -285,6 +285,7 @@ public class MatchController {
             if (possiblyAPlayer1.isPresent() && possiblyAPlayer2.isPresent()) {
                 System.out.println("Båda finns");
 
+
                 Match match = new Match();
 
                 player1 = possiblyAPlayer1.get();
@@ -311,11 +312,51 @@ public class MatchController {
             if (transaction != null) {
                 transaction.rollback();
             }
+
             e.printStackTrace();
         } finally {
             entityManager.close();
         }
 
+
+//        // dummy code: för att se att spelaren har en lista med matcher utan att vi lägger till det
+//        entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+//        transaction = entityManager.getTransaction();
+//        transaction.begin();
+//        try {
+//            Player playerToTest = entityManager.find(Player.class, 1);
+//            System.out.println("Dessa matcher spelar personen i: ");
+//            for (Match matches :
+//                    playerToTest.getMatches()) {
+//                System.out.println(matches.getMatchId());
+//            }
+//            transaction.commit();
+//        } catch (Exception e) {
+//            if (transaction != null) {
+//                transaction.rollback();
+//            }
+//        } finally {
+//            entityManager.close();
+//        }
+        // dummy code: för att se att spelaren har en lista med matcher utan att vi lägger till det
+        entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+        try {
+            Player playerToTest = entityManager.find(Player.class, 1);
+            System.out.println("Dessa matcher spelar personen i: ");
+            for (Match matches :
+                    playerToTest.getMatches()) {
+                System.out.println(matches.getMatchId());
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            entityManager.close();
+        }
 
     }
 

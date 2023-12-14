@@ -48,7 +48,8 @@ public class Player {
 
 
 
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+   // @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "players")
+    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "players")
     private List <Match> matches=new ArrayList<>();
 
 
