@@ -2,8 +2,7 @@ package com.teamalpha.teamalphapipergames.view;
 
 import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.*;
-import org.hibernate.Hibernate;
-import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.*;
 
@@ -33,7 +32,7 @@ public class Menu {
     System.out.println("1. STAFF (login)");
     System.out.println("2. Visitor");
     System.out.println("9. Exit program");
-//    createStaff();
+    createStaff();
     handleMainMenu();
   }
 
