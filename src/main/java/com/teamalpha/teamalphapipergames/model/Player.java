@@ -106,8 +106,7 @@ public class Player {
 
 
     public void addMatch(Match match){
-      //  match.setPlayers(this);
-        matches.add(match);
+       matches.add(match);
     }
 
 

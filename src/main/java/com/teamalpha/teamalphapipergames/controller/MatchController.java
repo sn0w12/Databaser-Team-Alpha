@@ -207,10 +207,10 @@ public class MatchController {
 
             Match matchToDelete = entityManager.find(Match.class, match_id);
 
-            // entityManager.remove(entityManager.contains(matchToDelete) ? matchToDelete : entityManager.merge(matchToDelete));
+            entityManager.remove(entityManager.contains(matchToDelete) ? matchToDelete : entityManager.merge(matchToDelete));
             //matchToDelete.removePlayerFromMatch();
             //removePlayerFromMatch(match_id);
-            entityManager.remove(matchToDelete);
+            // entityManager.remove(matchToDelete);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -233,21 +233,23 @@ public class MatchController {
             transaction = entityManager.getTransaction();
             transaction.begin();
 
-            // Find the Player and Team entities
-
+            // Find the Player and match entities
             Match match = entityManager.find(Match.class, matchId);
             Player player1 = entityManager.find(Player.class, match.getPlayers().get(0).getId());
-            Player player2 = entityManager.find(Player.class, match.getPlayers().get(0).getId());
-            if (player1 != null && match != null) {
-                // Remove the player from the team
-                //team.getOwnedPlayers().remove(player);
+            Player player2 = entityManager.find(Player.class, match.getPlayers().get(1).getId());
+
+            if (player1 != null && player2 != null && match != null) {
+
+                //tar bort matchen ifrån spelarens matchlista och tar bort spelare ifrån matchens spelar lista
                 match.getPlayers().remove(player1);
                 match.getPlayers().remove(player2);
-                player1.setMatches(null);
-                player2.setMatches(null);
+                player1.getMatches().remove(match);
+                player2.getMatches().remove(match);
 
-                // (null); // Remove the association from the player
 
+                entityManager.merge(match);
+                entityManager.merge(player1);
+                entityManager.merge(player2);
                 transaction.commit();
                 return true;
             } else {
@@ -261,9 +263,9 @@ public class MatchController {
         } finally {
             entityManager.close();
         }
-
         return false;
     }
+
 
     // add player to match
     public void addNewMatch(int gameId, boolean teamGame, int player1Id, int player2Id, String date) {
@@ -277,7 +279,6 @@ public class MatchController {
             transaction = entityManager.getTransaction();
             transaction.begin();
 
-
             Optional<Player> possiblyAPlayer1 = Optional.ofNullable(entityManager.find(Player.class, player1Id));
             Optional<Player> possiblyAPlayer2 = Optional.ofNullable(entityManager.find(Player.class, player2Id));
 
@@ -288,18 +289,19 @@ public class MatchController {
 
                 player1 = possiblyAPlayer1.get();
                 player2 = possiblyAPlayer2.get();
-//                player1.addMatch(match);
-//                player2.addMatch(match);
+
+
 //TODO vill vi ha att det ex är hela namnet eller nickname som visas i tabellen så ändrar
 // vi här    match.setPlayer1(player1.getFirstName()); och lägger till typ getLastName    match.setPlayer1(player1.getFirstName()+lastname);
+//                match.getPlayers().add(player1);
+//                match.getPlayers().add(player2);
 
-                match.getPlayers().add(player1);
-                match.getPlayers().add(player2);
+                match.addPlayer(player1);
+                match.addPlayer(player2);
+                //eftersom match och player har en koppling behöver man bara lägga till "saker i den ena sidans lista"
+                // så kan den andra sidan komma åt det via kopplingen
                 match.setGame_id(gameId);
                 match.setTeamGame(teamGame);
-                match.setPlayer1(player1.getFirstName());
-                match.setPlayer2(player2.getFirstName());
-//                match.setPlayer2(String.valueOf(match.getPlayers().get(1)));
                 entityManager.persist(match);
             }
 
@@ -322,33 +324,32 @@ public class MatchController {
         EntityTransaction transaction = null;
 
         Optional<Match> possiblyAMatchToChange = Optional.ofNullable(entityManager.find(Match.class, matchId));
-       // Optional<Player> possiblyAPlayer1ToChange = Optional.ofNullable(entityManager.find(Player.class, possiblyAMatchToChange.get().getPlayer1()));
+        // Optional<Player> possiblyAPlayer1ToChange = Optional.ofNullable(entityManager.find(Player.class, possiblyAMatchToChange.get().getPlayer1()));
         Optional<Player> possiblyAPlayer1ToChangeFrom = Optional.ofNullable(entityManager.find(Player.class, possiblyAMatchToChange.get().getPlayers().get(0)));
         Optional<Player> possiblyAPlayer1ToChangeTo = Optional.ofNullable(entityManager.find(Player.class, possiblyAMatchToChange.get().getPlayers().get(player1ToChangeToId)));
-        if (possiblyAMatchToChange.isPresent() && possiblyAPlayer1ToChangeFrom.isPresent()&&possiblyAPlayer1ToChangeTo.isPresent()) {
-
+        if (possiblyAMatchToChange.isPresent() && possiblyAPlayer1ToChangeFrom.isPresent() && possiblyAPlayer1ToChangeTo.isPresent()) {
 
 
             Player player1 = possiblyAPlayer1ToChangeTo.get();
             Match match = possiblyAMatchToChange.get();
-            match.setPlayersByIndexInPlayersList(0,player1);
+            match.setPlayersByIndexInPlayersList(0, player1);
 
 
-
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            entityManager.merge(match);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            try {
+                transaction = entityManager.getTransaction();
+                transaction.begin();
+                entityManager.merge(match);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
             }
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }}
+        }
         return false;
     }
 
