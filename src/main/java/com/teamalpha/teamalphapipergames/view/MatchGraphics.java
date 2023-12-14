@@ -366,16 +366,18 @@ public class MatchGraphics extends Application {
         alterMatchStage.setHeight(320);
         VBox vBoxAlterMatch = new VBox();
 
-
         Label matchIdLabel = new Label("Enter id for match to change");
         TextField matchIdTextField = new TextField();
-        Label player1Label = new Label("Enter new id for player 1");
+        Label gameIdLabel = new Label("Enter id for new game");
+        TextField gameIdTextField = new TextField();
+        Label player1Label = new Label("Enter new id for player/team 1");
         TextField player1TextField = new TextField();
-        Label player2Label = new Label("Enter new id for player 2");
+        Label player2Label = new Label("Enter new id for player/team 2");
         TextField player2TextField = new TextField();
         Label dateLabel = new Label("Enter new date for match");
         TextField dateTextField = new TextField();
         Button alterMatchButton = new Button("Change match");
+
 
 
         alterMatchButton.setOnAction(event -> {
@@ -384,31 +386,73 @@ public class MatchGraphics extends Application {
             int player2Id;
             String date;
 
-            try {
-                matchId = Integer.parseInt(matchIdTextField.getText());
-                player1Id = Integer.parseInt(player1TextField.getText());
-                System.out.println("changing to id: "+player1Id);
+           matchId= Integer.parseInt(matchIdTextField.getText());
+           Match matchToUpdate=matchController.getMatchById(matchId);
+            System.out.println("matchToUpdate.getTeamGame()"+matchToUpdate.getTeamGame());
+           if (matchToUpdate.getTeamGame()){
+               //TODO ändra för team
+           }
 
-                Match matchToUpdate = matchController.getMatchById(matchId);
-                Player playerToChangeTo=playerController.getPlayerById(player1Id);
+           else {
+               //  ändra spelare 1
 
-                matchToUpdate.setPlayersByIndexInPlayersList(0,playerToChangeTo);
-                System.out.println("matchToUpdate.getPlayer1(): "+matchToUpdate.getPlayer1());
-                System.out.println("matchToUpdate.getPlayers().get(0).getFirstName(): "+matchToUpdate.getPlayers().get(0).getFirstName());
+               try {
+                   //  matchId = Integer.parseInt(matchIdTextField.getText());
+                   player1Id = Integer.parseInt(player1TextField.getText());
+                   System.out.println("changing player1 to id: " + player1Id);
 
-                    if (matchController.updateMatch(matchToUpdate)){
-                        System.out.println("lyckats ändra hoppas jag ");
-                    } else {
-                        System.out.println("nähä inte nu heller");
-                    }
 
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+                   //  Match matchToUpdate = matchController.getMatchById(matchId);
+                   Player playerToChangeTo = playerController.getPlayerById(player1Id);
+
+                   matchToUpdate.setPlayersByIndexInPlayersList(0, playerToChangeTo);
+                   System.out.println("matchToUpdate.getPlayer1(): " + matchToUpdate.getPlayer1());
+                   System.out.println("matchToUpdate.getPlayers().get(0).getFirstName(): " + matchToUpdate.getPlayers().get(0).getFirstName());
+
+                   if (matchController.updateMatch(matchToUpdate)) {
+                       System.out.println("lyckats ändra hoppas jag ");
+                   } else {
+                       System.out.println("nähä inte nu heller");
+                   }
+               } catch (Exception e) {
+                   System.out.println(e);
+               }
+
+               //ändra spelare 2
+               try {
+                   // matchId = Integer.parseInt(matchIdTextField.getText());
+                   player2Id = Integer.parseInt(player2TextField.getText());
+                   System.out.println("changing player2 to id: " + player2Id);
+
+                   //  Match matchToUpdate = matchController.getMatchById(matchId);
+                   Player playerToChangeTo = playerController.getPlayerById(player2Id);
+
+                   matchToUpdate.setPlayersByIndexInPlayersList(1, playerToChangeTo);
+                   System.out.println("matchToUpdate.getPlayer1(): " + matchToUpdate.getPlayer2());
+                   System.out.println("matchToUpdate.getPlayers().get(0).getFirstName(): " + matchToUpdate.getPlayers().get(1).getFirstName());
+
+                   if (matchController.updateMatch(matchToUpdate)) {
+                       System.out.println("lyckats ändra hoppas jag ");
+                   } else {
+                       System.out.println("nähä inte nu heller");
+                   }
+
+               } catch (Exception e) {
+                   System.out.println(e);
+               }
+
+           }
+
+            //TODO lägga till funktion för att ändra spel och datum
 
         });
 
-        vBoxAlterMatch.getChildren().addAll(matchIdLabel, matchIdTextField, player1Label, player1TextField, player2Label, player2TextField,
+
+
+
+
+
+        vBoxAlterMatch.getChildren().addAll(matchIdLabel, matchIdTextField,gameIdLabel,gameIdTextField, player1Label, player1TextField, player2Label, player2TextField,
                 dateLabel, dateTextField, alterMatchButton);
 
         Scene scene = new Scene(vBoxAlterMatch);

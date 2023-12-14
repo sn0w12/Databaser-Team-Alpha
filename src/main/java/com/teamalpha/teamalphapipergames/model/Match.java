@@ -203,10 +203,11 @@ public class Match {
     }
 
     public String getPlayer2() {
-        return player2;
+        return  players.get(1).getFirstName();
     }
 
     public void setPlayer2(String player2) {
+        this.players.get(1).setFirstName(player2);
         this.player2 = player2;
     }
 
