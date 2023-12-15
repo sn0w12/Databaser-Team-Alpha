@@ -3,16 +3,22 @@ package com.teamalpha.teamalphapipergames.model;
 
 
 import com.teamalpha.teamalphapipergames.controller.MatchController;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Collection;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Entity
 @Table(name = "matches")
@@ -27,50 +33,43 @@ public class Match {
     @Column(name = "game_id")
     private int game_id;
 
-    @Column(name = "team1_id")
-    private int team1_id;
-
-    @Column(name = "team2_id")
-    private int team2_id;
-
-//    @Column(name = "player1_id")
-//    private int player1_id;
-
-//    @Column(name = "player2_id")
-//    private int player2_id;
-
-
-    @Column(name = "finished")
-    private boolean finished = false;
-
-    @Column(name = "match_results")
-    private String results = null;
-
-
     @Column(name = " team_game")
     private boolean teamGame;
     //har lagt in den här själv, finns inte i vårt schema
 
-//    @Column(name="player1")
-//    private int player_id;
-
-
-    @Column(name = "matchDate")
-    private String match_date;
-    //joins
-
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinTable(name = "player_id",
-//            joinColumns = @JoinColumn(name = "match_id")
-//    )
-    private List<Player> players = new ArrayList<>();
-
-
-    @Column(name = "player1")
+    @Column(name = "player_1")
     private String player1;//= String.valueOf(getPlayers().get(0));
-    @Column(name = "player2")
+    @Column(name = "player_2")
     private String player2;//= String.valueOf(getPlayers().get(1));
+
+    @Column(name = "team_1")
+    private String team1;
+    @Column(name = "team_2")
+    private String team2;
+    @Column(name = "match_date")
+    private LocalDate matchDate;
+    @Column(name = "match_played")
+    private boolean matchPlayed;
+
+    @Column(name = "match_results")
+    private String results = null;
+
+    @Column(name = "match_winner")
+    private String winner;
+
+    //joins
+    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy="playerMatches"*/)
+    private List<Player> players = new ArrayList<>();
+//    //    @JoinTable(name = "player_id",
+////            joinColumns = @JoinColumn(name = "match_id")
+////    )
+
+
+    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*,mappedBy="teamMatches"*/)
+    private List<Team> teams = new ArrayList<>();
+
 
     //constructors
     public Match() {
@@ -80,46 +79,20 @@ public class Match {
         this.matchId = id;
     }
 
-//    public Match(boolean teamGame, int gameId, int teamOrPlayer1_id, int teamOrPlayer2_id, boolean finished, String matchDate) {
-//        MatchController matchController = new MatchController();
-//        this.teamGame = teamGame;
-//        this.finished = finished;
-//        this.game_id = gameId;
-//        this.match_date = matchDate;
-//        if (teamGame) {
-//            //this.team1_id = player1_id.getId();
-//            this.team2_id = teamOrPlayer2_id;
-//        } else {
-//            this.player1=matchController.addPlayerToMatch(teamOrPlayer1_id, matchId);
-//
-//           // matchController.addPlayerToMatch(teamOrPlayer1_id, matchId);
-//
-//            this.player2_id = teamOrPlayer2_id;
-//        }
-//    }
-
-
-    public Match(int gameId, boolean teamGame, Player teamOrPlayer1_id, Player teamOrPlayer2_id, String matchDate) {
+    public Match(int game_id, boolean teamGame, Player teamOrPlayer1_id, Player teamOrPlayer2_id, Date matchDate) {
+        this.game_id = game_id;
         this.teamGame = teamGame;
-        this.game_id = gameId;
-        this.match_date = matchDate;
-        if (teamGame) {
-//            this.team1_id = teamOrPlayer1_id.getId();
-//            this.team2_id = teamOrPlayer2_id;
-        } else {
-            //this.player1_id = teamOrPlayer1_id;
-            this.players.add(teamOrPlayer1_id);
-            this.players.add(teamOrPlayer2_id);
-//            this.player1 = teamOrPlayer1_id;
-//            this.player2 = teamOrPlayer2_id;
-        }
     }
 
 
-
-    public void addPlayer(Player player){
+    public void addPlayer(Player player) {
         players.add(player);
     }
+
+    public void addTeam(Team team) {
+        teams.add(team);
+    }
+
     //getters and setters
     public int getMatchId() {
         return matchId;
@@ -133,29 +106,17 @@ public class Match {
         this.game_id = game_id;
     }
 
-    public int getTeam1_id() {
-        return team1_id;
+
+    public boolean getMatchPlayed() {
+        if (matchDate.isBefore(LocalDate.now())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void setTeam1_id(int team1_id) {
-        this.team1_id = team1_id;
-    }
-
-    public int getTeam2_id() {
-        return team2_id;
-    }
-
-    public void setTeam2_id(int team2_id) {
-        this.team2_id = team2_id;
-    }
-
-
-    public boolean getFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
+    public void setMatchPlayed(boolean matchPlayed) {
+        this.matchPlayed = matchPlayed;
     }
 
     public String getResults() {
@@ -178,36 +139,37 @@ public class Match {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
+    public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
     public void setPlayersByIndexInPlayersList(int index, Player player) {
-//            this.players.get(index) = player;
         this.players.set(index, player);
     }
 
-//    public String getPlayer1() {
-//        return player1;
-//    }
-//
-//    public void setPlayer1(String player1) {
-//        this.player1 = player1;
-//    }
+
+    public void setTeamsByIndexInTeamsList(int index, Team team) {
+        this.teams.set(index, team);
+    }
 
     public String getPlayer1() {
-        return players.get(0).getFirstName();
+        if (players.isEmpty()) {
+            return "-";
+        } else
+            return players.get(0).getFirstName();
     }
 
 
-    //var här det krånglade när jag inte fick in namnet rätt efter jag ändrat spelare i en match
     public void setPlayer1(String player1) {
         this.players.get(0).setFirstName(player1);
         this.player1 = player1;
     }
 
     public String getPlayer2() {
-        return  players.get(1).getFirstName();
+        if (players.isEmpty()) {
+            return "-";
+        } else
+            return players.get(1).getFirstName();
     }
 
     public void setPlayer2(String player2) {
@@ -215,16 +177,56 @@ public class Match {
         this.player2 = player2;
     }
 
-//    public void removePlayerFromMatch(Player player1, Player player2){
-//        this.players.remove(player1);
-//        this.players.remove(player2);
-//        player1.getMatches().remove(this);
-//        player2.getMatches().remove(this);
-//    }
-//
-//    public List <Player> getPlayerFromMatchId(int matchiiId){
-//        this.matchId=matchiiId;
-//        return this.players;
-//    }
+    public String getTeam1() {
+        if (teams.isEmpty()) {
+            return "-";
+        } else {
+            return teams.get(0).getName();
+        }
+    }
+
+    public void setTeam1(String team1) {
+        this.teams.get(0).setName(team1);
+        this.team1 = team1;
+    }
+
+    public String getTeam2() {
+        if (teams.isEmpty()) {
+            return "-";
+        } else {
+            return teams.get(1).getName();
+        }
+    }
+
+    public void setTeam2(String team2) {
+        this.teams.get(1).setName(team2);
+        this.team2 = team2;
+    }
+
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
+
+    public LocalDate getMatchDate() {
+        return matchDate;
+    }
+
+    public void setMatchDate(LocalDate match_date) {
+        this.matchDate = match_date;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
 }
 

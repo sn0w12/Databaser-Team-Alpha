@@ -1,5 +1,8 @@
 package com.teamalpha.teamalphapipergames.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +52,10 @@ public class Player {
 
 
    // @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "players")
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "players")
-    private List <Match> matches=new ArrayList<>();
+
+
+    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy = "players"*/)
+    private List <Match> playerMatches=new ArrayList<>();
 
 
 
@@ -107,7 +112,7 @@ public class Player {
 
 
     public void addMatch(Match match){
-       matches.add(match);
+       playerMatches.add(match);
     }
 
 
@@ -195,12 +200,12 @@ public class Player {
 //    }
 
     public List<Match> getMatches() {
-        return matches;
+        return playerMatches;
     }
 
     public void setMatches(List <Match> match) {
 
-        this.matches = match;
+        this.playerMatches = match;
     }}
 
 
