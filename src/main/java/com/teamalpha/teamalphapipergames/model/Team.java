@@ -95,4 +95,9 @@ public class Team {
   public void setOwnedPlayers(List<Player> ownedPlayers) {
     this.ownedPlayers = ownedPlayers;
   }
+
+  @Override
+  public String toString() {
+    return getName();
+  }
 }

@@ -191,4 +191,9 @@ public class Player {
   public void setMatch(Match match) {
     this.match = match;
   }
+
+  @Override
+  public String toString() {
+    return getNickName();
+  }
 }
