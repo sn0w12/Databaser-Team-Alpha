@@ -395,6 +395,7 @@ public class MatchGraphics extends Application {
         Button addResults = new Button("Add");
         Label messageLabel = new Label();
 
+
         //när man trycker på add så läggs data som man skrivit i textfielden till och resultatet uppdateras och man stänger fönstret
         addResults.setOnAction(event -> {
             try {
