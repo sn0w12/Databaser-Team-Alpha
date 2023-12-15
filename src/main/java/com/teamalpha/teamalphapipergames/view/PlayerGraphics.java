@@ -72,6 +72,10 @@ public class PlayerGraphics extends Application {
         Button updatePlayer = createUpdatePlayerButton();
         updatePlayer.setOnAction(event -> handleCreateUpdatePlayerButton());
 
+        // Delete player
+        Button deletePlayer = createDeletePlayerButton();
+        deletePlayer.setOnAction(event -> handleDeletePlayerButton());
+
         // Add BACK button
         Button backButton = createBackButton();
         backButton.setOnAction(event -> {
@@ -90,11 +94,12 @@ public class PlayerGraphics extends Application {
         addPlayerToTeam.setPrefWidth(preferredWidth);
         removePlayerFromTeam.setPrefWidth(preferredWidth);
         updatePlayer.setPrefWidth(preferredWidth);
+        deletePlayer.setPrefWidth(preferredWidth);
         backButton.setPrefWidth(preferredWidth);
 
         // Create a vertical layout for buttons
         VBox buttonLayout = new VBox(10); // 10 is the spacing between buttons
-        buttonLayout.getChildren().addAll(createPlayer, listPlayers, listSpecificPlayer, addPlayerToTeam, removePlayerFromTeam, updatePlayer, backButton);
+        buttonLayout.getChildren().addAll(createPlayer, listPlayers, listSpecificPlayer, addPlayerToTeam, removePlayerFromTeam, updatePlayer, deletePlayer, backButton);
         buttonLayout.setAlignment(Pos.CENTER);
 
         // Create a new layout to contain button layout
@@ -214,11 +219,12 @@ public class PlayerGraphics extends Application {
   }
 
   private void handleCreateRemovePlayerFromTeamButton() {
-    System.out.println("open new window and choose player from drop down menu");
+    System.out.println("Player Graphics > button");
+    removePlayerFromTeam();
   }
 
   private Button createUpdatePlayerButton() {
-    Button createUpdatePlayer = new Button("RUPDATE PLAYERM");
+    Button createUpdatePlayer = new Button("UPDATE PLAYER");
     createUpdatePlayer.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
 
     // hover effect
@@ -233,6 +239,24 @@ public class PlayerGraphics extends Application {
   public void handleCreateUpdatePlayerButton() {
     System.out.println("Player Graphics > button");
     updatePlayer();
+  }
+
+  private Button createDeletePlayerButton() {
+    Button createDeletePlayer = new Button("DELETE PLAYER");
+    createDeletePlayer.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+
+    // hover effect
+    createDeletePlayer.setOnMouseEntered(event -> createDeletePlayer.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    // go back to regular color
+    createDeletePlayer.setOnMouseExited(event -> createDeletePlayer.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    createDeletePlayer.setOnAction(event -> handleDeletePlayerButton());
+    return createDeletePlayer;
+  }
+
+  public void handleDeletePlayerButton() {
+    System.out.println("Player Graphics -> button");
+    deletePlayer();
   }
 
   private Button createBackButton() {
@@ -563,7 +587,118 @@ public class PlayerGraphics extends Application {
 
   // REMOVE PLAYER FROM TEAM
   public void removePlayerFromTeam() {
+    Stage createAddPlayerToTeamStage = new Stage();
+    createAddPlayerToTeamStage.setTitle("Remove Player from Team");
+    createAddPlayerToTeamStage.setWidth(300);
+    createAddPlayerToTeamStage.setHeight(350);
 
+    // Wrap VBox in StackPane to center it
+    StackPane stackPane = new StackPane();
+
+    // Existing VBox
+    VBox vBoxCreatePlayer = new VBox();
+    vBoxCreatePlayer.setAlignment(Pos.CENTER);
+
+    Label infoLabel = new Label("Only players who are in a team can be selected");
+    infoLabel.setTextFill(Color.WHITE);
+
+    Label spaceLabel = new Label("");
+
+    Label choosePlayer = new Label("Choose Player");
+    choosePlayer.setTextFill(Color.WHITE);
+
+    ComboBox<Player> playerBox = new ComboBox<>();
+    playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+    List<Player> allPlayers = playerController.getAll(true);
+    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() != null).collect(Collectors.toList());
+
+    ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
+    playerBox.setItems(playerList);
+
+
+
+    Label spaceLabel2 = new Label("");
+
+    Label teamInformation = new Label();
+    teamInformation.setTextFill(Color.WHITE);
+
+    Label spaceLabel3 = new Label("");
+
+    Button createAddToTeamButton = new Button("REMOVE");
+    createAddToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    createAddToTeamButton.setPrefWidth(130);
+    createAddToTeamButton.setOnMouseEntered(event -> createAddToTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    createAddToTeamButton.setOnMouseExited(event -> createAddToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    Button closeWindowButton = new Button("CLOSE");
+    closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    closeWindowButton.setPrefWidth(130);
+    closeWindowButton.setOnMouseEntered(event -> closeWindowButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    closeWindowButton.setOnMouseExited(event -> closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    HBox buttonBox = new HBox(10); // 10 is spacing between buttons
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.getChildren().addAll(createAddToTeamButton, closeWindowButton);
+
+    Label spaceLabel10 = new Label("");
+
+    Label messageLabel = new Label();
+    messageLabel.setTextFill(Color.WHITE);
+
+
+    playerBox.setOnAction(event -> {
+          Player selectedPlayerInBox = playerBox.getSelectionModel().getSelectedItem();
+          if (selectedPlayerInBox != null) {
+            teamInformation.setText(selectedPlayerInBox.getNickName() + " is currently in: " + selectedPlayerInBox.getTeam().getName());
+          } else {
+            teamInformation.setText("Could not fetch team data");
+            teamInformation.setTextFill(Color.RED);
+          }
+        });
+
+
+    // Add buttons, labels, and HBox to VBox
+    vBoxCreatePlayer.getChildren().addAll(
+        infoLabel, spaceLabel, choosePlayer, playerBox, spaceLabel2,
+        teamInformation, spaceLabel3, buttonBox, spaceLabel10, messageLabel
+    );
+
+    stackPane.getChildren().addAll(vBoxCreatePlayer);
+
+    Scene createPlayerScene = new Scene(stackPane);
+    stackPane.setStyle("-fx-background-color: #14373d;");
+
+    createAddPlayerToTeamStage.setScene(createPlayerScene);
+    createAddPlayerToTeamStage.show();
+
+    createAddToTeamButton.setOnAction(event -> {
+      Player selectedPlayer = playerBox.getSelectionModel().getSelectedItem();
+
+      if (selectedPlayer != null) {
+        int playerId = selectedPlayer.getId();
+        int teamId = selectedPlayer.getTeam().getId();
+        String playerTeam = selectedPlayer.getTeam().getName();
+
+        if (teamController.removePlayerFromTeam(playerId, teamId)) {
+          messageLabel.setText(selectedPlayer.getNickName() + " removed from " + playerTeam);
+          messageLabel.setTextFill(Color.LIGHTGREEN);
+          System.out.println("✅ Player removed from Team");
+
+          playerBox.getSelectionModel().clearSelection();
+
+        } else {
+          System.out.println("❌ Player failed to add to Team");
+        }
+      } else {
+        messageLabel.setText("Choose a Player");
+        messageLabel.setTextFill(Color.RED);
+      }
+
+    });
+
+    closeWindowButton.setOnAction(event -> {
+      createAddPlayerToTeamStage.close();
+    });
   }
 
   // UPDATE PLAYER
@@ -792,4 +927,100 @@ public class PlayerGraphics extends Application {
 
   }
 
+  // DELETE PLAYER
+  public void deletePlayer() {
+    Stage createAddPlayerToTeamStage = new Stage();
+    createAddPlayerToTeamStage.setTitle("Delete Player");
+    createAddPlayerToTeamStage.setWidth(300);
+    createAddPlayerToTeamStage.setHeight(200);
+
+    // Wrap VBox in StackPane to center it
+    StackPane stackPane = new StackPane();
+
+    // Existing VBox
+    VBox vBoxCreatePlayer = new VBox();
+    vBoxCreatePlayer.setAlignment(Pos.CENTER);
+
+    Label infoLabel = new Label("Make sure player is teamless in order to delete");
+    infoLabel.setTextFill(Color.WHITE);
+
+    Label spaceLabel = new Label("");
+
+    Label choosePlayer = new Label("Choose Player");
+    choosePlayer.setTextFill(Color.WHITE);
+
+    ComboBox<Player> playerBox = new ComboBox<>();
+    playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+    List<Player> allPlayers = playerController.getAll(true);
+    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() == null).collect(Collectors.toList());
+    ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
+    playerBox.setItems(playerList);
+
+    Label spaceLabel2 = new Label("");
+
+    Button createAddToTeamButton = new Button("DELETE");
+    createAddToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    createAddToTeamButton.setPrefWidth(130);
+    createAddToTeamButton.setOnMouseEntered(event -> createAddToTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    createAddToTeamButton.setOnMouseExited(event -> createAddToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    Button closeWindowButton = new Button("CLOSE");
+    closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    closeWindowButton.setPrefWidth(130);
+    closeWindowButton.setOnMouseEntered(event -> closeWindowButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    closeWindowButton.setOnMouseExited(event -> closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    HBox buttonBox = new HBox(10); // 10 is spacing between buttons
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.getChildren().addAll(createAddToTeamButton, closeWindowButton);
+
+    Label spaceLabel10 = new Label("");
+
+    Label messageLabel = new Label();
+    messageLabel.setTextFill(Color.WHITE);
+
+
+    // Add buttons, labels, and HBox to VBox
+    vBoxCreatePlayer.getChildren().addAll(
+        infoLabel, spaceLabel, choosePlayer, playerBox, spaceLabel2,
+        buttonBox, spaceLabel10, messageLabel
+    );
+
+    stackPane.getChildren().addAll(vBoxCreatePlayer);
+
+    Scene createPlayerScene = new Scene(stackPane);
+    stackPane.setStyle("-fx-background-color: #14373d;");
+
+    createAddPlayerToTeamStage.setScene(createPlayerScene);
+    createAddPlayerToTeamStage.show();
+
+    createAddToTeamButton.setOnAction(event -> {
+      Player selectedPlayer = playerBox.getSelectionModel().getSelectedItem();
+
+      if (selectedPlayer != null) {
+        int playerId = selectedPlayer.getId();
+
+        if (playerController.deletePlayerById(playerId)) {
+          messageLabel.setText(selectedPlayer.getNickName() + " deleted");
+          messageLabel.setTextFill(Color.LIGHTGREEN);
+          System.out.println("✅ Player deleted");
+
+          playerBox.getSelectionModel().clearSelection();
+
+        } else {
+          messageLabel.setText("Failed to delete. Remove player from current team");
+          messageLabel.setTextFill(Color.RED);
+          System.out.println("❌ Player failed to be deleted");
+        }
+      } else {
+        messageLabel.setText("Choose a Player");
+        messageLabel.setTextFill(Color.RED);
+      }
+
+    });
+
+    closeWindowButton.setOnAction(event -> {
+      createAddPlayerToTeamStage.close();
+    });
+  }
 }
