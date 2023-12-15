@@ -269,6 +269,8 @@ class ChooseEmployee {
 
   private void displayProfilePicture(String selectedEmployee, ImageView profilePicture) {
 
+    Image defaultImage = new Image("file:icon_image.png");
+
     if (selectedEmployee != null) {
 
       Image image = null;
@@ -288,7 +290,11 @@ class ChooseEmployee {
       if (image != null) {
         profilePicture.setImage(image);
         makeCircular(profilePicture);
+      } else {
+        profilePicture.setImage(defaultImage);
       }
+    } else {
+      profilePicture.setImage(defaultImage);
     }
   }
 

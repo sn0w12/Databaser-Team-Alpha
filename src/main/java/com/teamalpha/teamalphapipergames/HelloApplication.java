@@ -28,14 +28,16 @@ public class HelloApplication extends Application {
 //        matchGraphics.start(new Stage());
         MainWindow mainWindow = new MainWindow();
         mainWindow.start(new Stage());
+
+        //         start for menu to test in console while coding
+//        GameController controller = new GameController();
+//        Menu menu = new Menu(controller);
+//        menu.showMainMenu();
     }
 
     public static void main(String[] args) {
 
-//         start for menu to test in console while coding
-//        GameController controller = new GameController();
-//        Menu menu = new Menu(controller);
-//        menu.showMainMenu();
+
 
 
         MatchController matchController = new MatchController();

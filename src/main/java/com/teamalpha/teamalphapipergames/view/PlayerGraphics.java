@@ -595,7 +595,7 @@ public class PlayerGraphics extends Application {
     ObservableList<Player> playerList = FXCollections.observableArrayList(allPlayers);
     playerBox.setItems(playerList);
 
-    Player selectedPlayer = playerBox.getSelectionModel().getSelectedItem();
+
 
     Label spaceLabel2 = new Label("");
 
@@ -663,18 +663,6 @@ public class PlayerGraphics extends Application {
     emailTextField.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
     emailTextField.setMaxWidth(200);
 
-    playerBox.setOnAction(event -> {
-      Player selectedPlayerInBox = playerBox.getSelectionModel().getSelectedItem();
-      firstNameTextField.setText(selectedPlayerInBox.getFirstName());
-      lastNameTextField.setText(selectedPlayerInBox.getLastName());
-      nickNameTextField.setText(selectedPlayerInBox.getNickName());
-      addressTextField.setText(selectedPlayerInBox.getAddress());
-      zipCodeTextField.setText(selectedPlayerInBox.getZipCode());
-      postalAddressTextField.setText(selectedPlayerInBox.getPostalAddress());
-      countryTextField.setText(selectedPlayerInBox.getCountry());
-      emailTextField.setText(selectedPlayerInBox.geteMail());
-    });
-
     Label spaceLabel10 = new Label("");
 
     Button createUpdateButton = new Button("UPDATE");
@@ -697,6 +685,24 @@ public class PlayerGraphics extends Application {
 
     Label messageLabel = new Label();
     messageLabel.setTextFill(Color.WHITE);
+
+    playerBox.setOnAction(event -> {
+      Player selectedPlayerInBox = playerBox.getSelectionModel().getSelectedItem();
+      if (selectedPlayerInBox != null) {
+        firstNameTextField.setText(selectedPlayerInBox.getFirstName());
+        lastNameTextField.setText(selectedPlayerInBox.getLastName());
+        nickNameTextField.setText(selectedPlayerInBox.getNickName());
+        addressTextField.setText(selectedPlayerInBox.getAddress());
+        zipCodeTextField.setText(selectedPlayerInBox.getZipCode());
+        postalAddressTextField.setText(selectedPlayerInBox.getPostalAddress());
+        countryTextField.setText(selectedPlayerInBox.getCountry());
+        emailTextField.setText(selectedPlayerInBox.geteMail());
+      } else {
+        messageLabel.setText("Could not fetch data");
+        messageLabel.setTextFill(Color.RED);
+      }
+
+    });
 
     // Add buttons, labels, and HBox to VBox
     vBoxCreatePlayer.getChildren().addAll(
@@ -721,14 +727,69 @@ public class PlayerGraphics extends Application {
     createUpdatePlayerStage.show();
 
     createUpdateButton.setOnAction(event -> {
+      Player selectedPlayer = playerBox.getSelectionModel().getSelectedItem();
 
+      if (selectedPlayer != null) {
+        String firstName = firstNameTextField.getText();
+        String lastName = lastNameTextField.getText();
+        String nickName = nickNameTextField.getText();
+        String address = addressTextField.getText();
+        String zipCode = zipCodeTextField.getText();
+        String postalAddress = postalAddressTextField.getText();
+        String country = countryTextField.getText();
+        String eMail = emailTextField.getText();
+
+        int playerIdToUpdate = playerBox.getSelectionModel().getSelectedItem().getId();
+        System.out.println("playerIdToUpdate: " + playerIdToUpdate);
+        Player managedPlayer = playerController.getPlayerById(playerIdToUpdate);
+
+        if (managedPlayer != null) {
+          managedPlayer.setFirstName(firstName);
+          managedPlayer.setLastName(lastName);
+          managedPlayer.setNickName(nickName);
+          managedPlayer.setAddress(address);
+          managedPlayer.setZipCode(zipCode);
+          managedPlayer.setPostalAddress(postalAddress);
+          managedPlayer.setCountry(country);
+          managedPlayer.seteMail(eMail);
+
+          if (playerController.updatePlayer(managedPlayer)) {
+            messageLabel.setText("Player updated");
+            messageLabel.setTextFill(Color.LIGHTGREEN);
+            System.out.println("✅ Player updated");
+
+            System.out.println("Nickname should have changed to: " + selectedPlayer.getNickName());
+
+            firstNameTextField.clear();
+            lastNameTextField.clear();
+            nickNameTextField.clear();
+            addressTextField.clear();
+            zipCodeTextField.clear();
+            postalAddressTextField.clear();
+            countryTextField.clear();
+            emailTextField.clear();
+          } else {
+            messageLabel.setText("Player failed to be updated");
+            messageLabel.setTextFill(Color.RED);
+            System.out.println("❌ Player update failed");
+          }
+
+
+        } else {
+          System.out.println("player not found");
+        }
+      } else {
+        messageLabel.setText("Choose a Player in order to update");
+        messageLabel.setTextFill(Color.RED);
+      }
 
     });
 
     closeWindowButton.setOnAction(event -> {
       createUpdatePlayerStage.close();
     });
-  }
 
+
+  }
 
 }
