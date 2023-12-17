@@ -571,17 +571,9 @@ public class PlayerGraphics extends Application {
 
     Label viewGamesLabel = new Label("View Games");
     viewGamesLabel.setTextFill(Color.WHITE);
-    List<Game> games = gameController.getAll(false); // Replace this with your actual method to get games
 
     // Create checkboxes dynamically
-    List<CheckBox> checkBoxes = games.stream()
-        .map(game -> {
-          CheckBox checkBox = new CheckBox(game.getName());
-          checkBox.setUserData(String.valueOf(game.getId())); // Set the ID as user data
-          checkBox.setTextFill(Color.WHITE); // Set text fill color to white
-          return checkBox;
-        })
-        .collect(Collectors.toList());
+    List<CheckBox> checkBoxes = createCheckBoxes();
 
     // Add checkboxes to the VBox
     vBox.getChildren().addAll(infoLabel, spaceLabel, viewGamesLabel);
@@ -590,11 +582,10 @@ public class PlayerGraphics extends Application {
     Button applyButton = new Button("APPLY");
     applyButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
     applyButton.setPrefWidth(130);
-    applyButton.setOnMouseEntered(event -> applyButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    applyButton.setOnMouseExited(event -> applyButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
 
     AtomicBoolean filteringSuccessful = new AtomicBoolean(false);
 
+    // Add a listener to the applyButton to update checkboxes when it's clicked
     applyButton.setOnAction(event -> {
       // Get the selected game IDs from checkboxes
       List<String> selectedIds = checkBoxes.stream()
@@ -635,13 +626,14 @@ public class PlayerGraphics extends Application {
 
       // Set filteringSuccessful to true
       filteringSuccessful.set(true);
+
+      // Update checkboxes after filtering
+      updateCheckBoxes(checkBoxes);
     });
 
     Button closeWindowButton = new Button("CLOSE");
     closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
     closeWindowButton.setPrefWidth(130);
-    closeWindowButton.setOnMouseEntered(event -> closeWindowButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    closeWindowButton.setOnMouseExited(event -> closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
 
     HBox buttonBox = new HBox(10); // 10 is spacing between buttons
     buttonBox.setAlignment(Pos.CENTER);
@@ -660,7 +652,29 @@ public class PlayerGraphics extends Application {
 
     closeWindowButton.setOnAction(event -> {
       listViewStage.close();
+      // Update checkboxes after closing the window
+      updateCheckBoxes(checkBoxes);
     });
+  }
+
+  // Method to create checkboxes based on the current list of games
+  private List<CheckBox> createCheckBoxes() {
+    List<Game> games = gameController.getAll(false);
+    return games.stream()
+        .map(game -> {
+          CheckBox checkBox = new CheckBox(game.getName());
+          checkBox.setUserData(String.valueOf(game.getId()));
+          checkBox.setTextFill(Color.WHITE);
+          return checkBox;
+        })
+        .collect(Collectors.toList());
+  }
+
+  // Method to update checkboxes based on the current list of games
+  private void updateCheckBoxes(List<CheckBox> checkBoxes) {
+    List<CheckBox> updatedCheckBoxes = createCheckBoxes();
+    checkBoxes.clear();
+    checkBoxes.addAll(updatedCheckBoxes);
   }
 
   // ADD PLAYER TO TEAM
