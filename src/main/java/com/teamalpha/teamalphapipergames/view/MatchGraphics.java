@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 
 public class MatchGraphics extends Application {
+    Stage stage;
 
     MatchController matchController = new MatchController();
     private final TableView<Match> allMatchesTable = new TableView<>();

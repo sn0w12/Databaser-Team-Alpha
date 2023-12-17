@@ -55,7 +55,13 @@ class StaffMainMenu extends Application {
 
       // Add MATCHES button
       Button matchesButton = createMatchesButton();
-      matchesButton.setOnAction(event -> handleMatchesButton());
+      matchesButton.setOnAction(event -> {
+        try {
+          handleMatchesButton();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
 
       // Add TOURNAMENT button
       Button tournamentsButton = createTournamentsButton();
@@ -185,8 +191,13 @@ class StaffMainMenu extends Application {
     return matchesButton;
   }
 
-  public void handleMatchesButton() {
+  public void handleMatchesButton() throws Exception {
     System.out.println("Launching MATCHES");
+
+    MatchGraphics matchGraphics = new MatchGraphics();
+
+    // start stage
+    matchGraphics.start(stage);
   }
 
   private Button createTournamentsButton() {

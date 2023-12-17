@@ -84,4 +84,9 @@ public class Game {
   public void setIndividualPlayers(List<Player> individualPlayers) {
     this.individualPlayers = individualPlayers;
   }
+
+  @Override
+  public String toString() {
+    return getName();
+  }
 }
