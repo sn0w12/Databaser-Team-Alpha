@@ -33,7 +33,6 @@ public class PlayerGraphics extends Application {
   private StaffController staffController;
 
   // list players table
-  private final TableView<Player> allPlayersTable = new TableView<>();
 
   public PlayerGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
     this.gameController = gameController;
@@ -1352,7 +1351,7 @@ public class PlayerGraphics extends Application {
   public void deletePlayer() {
     Stage createAddPlayerToTeamStage = new Stage();
     createAddPlayerToTeamStage.setTitle("Delete Player");
-    createAddPlayerToTeamStage.setWidth(300);
+    createAddPlayerToTeamStage.setWidth(330);
     createAddPlayerToTeamStage.setHeight(200);
 
     // Wrap VBox in StackPane to center it
@@ -1362,7 +1361,7 @@ public class PlayerGraphics extends Application {
     VBox vBoxCreatePlayer = new VBox();
     vBoxCreatePlayer.setAlignment(Pos.CENTER);
 
-    Label infoLabel = new Label("Make sure player is teamless in order to delete");
+    Label infoLabel = new Label("Make sure player is teamless & gameless in order to delete");
     infoLabel.setTextFill(Color.WHITE);
 
     Label spaceLabel = new Label("");
@@ -1373,7 +1372,7 @@ public class PlayerGraphics extends Application {
     ComboBox<Player> playerBox = new ComboBox<>();
     playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
     List<Player> allPlayers = playerController.getAll(true);
-    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() == null).collect(Collectors.toList());
+    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() == null && player.getGame() == null).collect(Collectors.toList());
     ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
     playerBox.setItems(playerList);
 
