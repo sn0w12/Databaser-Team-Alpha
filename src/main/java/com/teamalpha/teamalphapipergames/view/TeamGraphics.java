@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.collections.transformation.SortedList;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TeamGraphics {
@@ -97,7 +98,7 @@ public class TeamGraphics {
         Button editTeamButton = new Button("Edit Team");
         Button backButton = new Button("Back");
         Button truncateButton = new Button("Clear table");
-        truncateButton.setStyle("-fx-background-color: #fc0303");
+        truncateButton.getStyleClass().add("delete-button");
 
         TextField searchField = new TextField();
         searchField.setPromptText("Search for teams...");
@@ -136,6 +137,7 @@ public class TeamGraphics {
             // Set up the dialog components
             DialogPane dialogPane = dialog.getDialogPane();
             dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
             TextField gameIdField = new TextField();
             gameIdField.setPromptText("Game ID");
@@ -195,6 +197,7 @@ public class TeamGraphics {
                 } else {
                     // Show an error message
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
                     errorAlert.setHeaderText("Creation Failed");
                     errorAlert.setContentText("The team could not be created.");
                     errorAlert.showAndWait();
@@ -211,6 +214,7 @@ public class TeamGraphics {
                 // Set up the dialog components
                 DialogPane dialogPane = dialog.getDialogPane();
                 dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+                dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
                 TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGameId()));
                 gameIdField.setPromptText("Game ID");
@@ -262,6 +266,7 @@ public class TeamGraphics {
                     } else {
                         // Show an error message
                         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
                         errorAlert.setHeaderText("Edit Failed");
                         errorAlert.setContentText("The team could not be edited.");
                         errorAlert.showAndWait();
@@ -272,26 +277,36 @@ public class TeamGraphics {
 
         // Remove Team button action
         removeTeamButton.setOnAction(event -> {
-            Team selectedTeam = teamTableView.getSelectionModel().getSelectedItem();
-            if (selectedTeam != null) {
-                boolean success = teamController.deleteTeam(selectedTeam.getTeamId());
-                if (success) {
-                    teamList.remove(selectedTeam);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Confirm Clear");
+            alert.setContentText("Are you sure you want to clear this table? You will remove every entry in the database.");
+
+            alert.showAndWait().ifPresent(response -> {
+                Team selectedTeam = teamTableView.getSelectionModel().getSelectedItem();
+                if (selectedTeam != null && response == ButtonType.OK) {
+                    boolean success = teamController.deleteTeam(selectedTeam.getTeamId());
+                    if (success) {
+                        teamList.remove(selectedTeam);
+                    } else {
+                        // Show an error message if removal fails
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+                        errorAlert.setHeaderText("Removal Failed");
+                        errorAlert.setContentText("The team could not be removed.");
+                        errorAlert.showAndWait();
+                    }
                 } else {
-                    // Show an error message if removal fails
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setHeaderText("Removal Failed");
-                    errorAlert.setContentText("The team could not be removed.");
+                    // No team selected
+                    Alert errorAlert = new Alert(Alert.AlertType.WARNING);
+                    errorAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+                    errorAlert.setTitle("Warning");
+                    errorAlert.setHeaderText("No team selected");
+                    errorAlert.setContentText("Please select a team to remove.");
                     errorAlert.showAndWait();
                 }
-            } else {
-                // No team selected
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Warning");
-                alert.setHeaderText("No team selected");
-                alert.setContentText("Please select a team to remove.");
-                alert.showAndWait();
-            }
+            });
         });
 
         // Update the predicate whenever the filter changes
@@ -312,6 +327,7 @@ public class TeamGraphics {
 
         truncateButton.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
             alert.setTitle("Confirmation");
             alert.setHeaderText("Confirm Clear");
             alert.setContentText("Are you sure you want to clear this table? You will remove every entry in the database.");
@@ -344,8 +360,9 @@ public class TeamGraphics {
         VBox vbox = new VBox(parentLayout, selectedTeamLabel, teamTableView);
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
+        vbox.getStyleClass().add("vbox-background");
         Scene scene = new Scene(vbox, 600, 400);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
         primaryStage.setTitle("Team Management");
         primaryStage.setScene(scene);
