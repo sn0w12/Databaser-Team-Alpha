@@ -277,8 +277,8 @@ public class TeamGraphics {
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
       alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
       alert.setTitle("Confirmation");
-      alert.setHeaderText("Confirm Clear");
-      alert.setContentText("Are you sure you want to clear this table? You will remove every entry in the database.");
+      alert.setHeaderText("Confirm Deletion");
+      alert.setContentText("Are you sure you want to delete this team?");
 
       alert.showAndWait().ifPresent(response -> {
         Team selectedTeam = teamTableView.getSelectionModel().getSelectedItem();

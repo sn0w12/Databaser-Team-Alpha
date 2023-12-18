@@ -5,6 +5,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 // @Entity, we want this class to have persistence in the database
@@ -46,6 +47,19 @@ public class Game {
   public void addTeam(Team team){
     team.setGame(this);
     ownedTeams.add(team);
+  }
+
+  public void removeTeam(Team team) {
+    if (team != null && ownedTeams != null) {
+      for (Iterator<Team> iterator = ownedTeams.iterator(); iterator.hasNext();) {
+        Team currentTeam = iterator.next();
+        if (currentTeam.equals(team)) {
+          iterator.remove();
+          team.setGame(null); // This is important to dissociate the team from the game
+          break;
+        }
+      }
+    }
   }
 
   public void addPlayer(Player player) {

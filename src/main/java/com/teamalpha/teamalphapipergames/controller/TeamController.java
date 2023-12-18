@@ -2,6 +2,7 @@ package com.teamalpha.teamalphapipergames.controller;
 
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
+import com.teamalpha.teamalphapipergames.model.Game;
 import javax.persistence.*;
 import java.util.List;
 import java.util.function.Function;
@@ -40,6 +41,20 @@ public class TeamController {
       EntityTransaction transaction = entityManager.getTransaction();
       try {
         transaction.begin();
+        Game game = team.getGame();
+        // Check if the team is associated with a game
+        if (game != null) {
+          // Fetch the game from the database to ensure it's managed by the current EntityManager
+          game = entityManager.find(Game.class, game.getId());
+          if (game != null) {
+            // Add the team to the game's team list
+            game.addTeam(team);
+            team.setGame(game);
+            entityManager.persist(game);
+          } else {
+          }
+        }
+        // Persist the team
         entityManager.persist(team);
         transaction.commit();
         return true;
@@ -95,12 +110,19 @@ public class TeamController {
       try {
         transaction.begin();
         Team teamToDelete = entityManager.find(Team.class, id);
-        if (teamToDelete != null && teamToDelete.getGame() == null) {
+        if (teamToDelete != null) {
+          // If the team is associated with a game, handle the association
+          if (teamToDelete.getGame() != null) {
+            // Remove the team from the game's association
+            Game game = teamToDelete.getGame();
+            game.removeTeam(teamToDelete);
+            entityManager.persist(game);
+          }
           entityManager.remove(teamToDelete);
           transaction.commit();
           return true;
         } else {
-          System.out.println("Team not found or associated with a game.");
+          System.out.println("Team not found.");
           return false;
         }
       } catch (Exception e) {
