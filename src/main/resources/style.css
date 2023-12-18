@@ -138,6 +138,7 @@
     -fx-box-border: transparent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .table-view .column-header-background .filler {
