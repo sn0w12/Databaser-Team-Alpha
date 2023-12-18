@@ -8,13 +8,10 @@ import com.teamalpha.teamalphapipergames.controller.TeamController;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.view.MatchGraphics;
 
-import com.teamalpha.teamalphapipergames.view.StaffGraphics;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 
 public class HelloApplication extends Application {
@@ -40,20 +37,18 @@ public class HelloApplication extends Application {
        teamController.createTeam(4, "Anki");
        teamController.createTeam(2, "Pytte");
 
-      //  matchController.addNewMatchTeamOrPlayer(1, false, 1, 2, "sf");
 
 
-        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
-        System.out.println(  matchController.getAllMatches(false).get(0).getMatchDate());
-      //  matchController.addNewWithDate(1,true,1,2,22-06-2001);
-      //  matchController.addNewWithDate(1,true,1,2,2222-06-21);
+        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
+        System.out.println(  matchController.getAllMatches().get(0).getMatchDate());
+
         System.out.println("idag är det den: "+LocalDate.now());
 
 
