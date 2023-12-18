@@ -112,7 +112,7 @@ public class TeamGraphics {
       editTeamButton.setDisable(newSelection == null);
       removeTeamButton.setDisable(newSelection == null);
       if (newSelection != null) {
-        selectedTeamLabel.setText("Selected team name: " + newSelection.getName() + ", team id: " + newSelection.getId() + ", game id: " + newSelection.getGame());
+        selectedTeamLabel.setText("Selected team name: " + newSelection.getName() + ", team id: " + newSelection.getId() + ", game id: " + newSelection.getGame().getId());
       } else {
         selectedTeamLabel.setText("No team selected");
       }
@@ -212,7 +212,7 @@ public class TeamGraphics {
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
-        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGame()));
+        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGame().getId()));
         gameIdField.setPromptText("Game ID");
         TextField nameField = new TextField(selectedTeam.getName());
         nameField.setPromptText("Team Name");
@@ -243,7 +243,8 @@ public class TeamGraphics {
             try {
               int gameId = gameIdField.getText().trim().isEmpty() ? selectedTeam.getGame().getId() : Integer.parseInt(gameIdField.getText().trim());
               String name = nameField.getText().trim().isEmpty() ? selectedTeam.getName() : nameField.getText().trim();
-              return new Team(name, gameController.getGameById(gameId));
+              // Pass the selected team's ID to the constructor
+              return new Team(selectedTeam.getId(), name, gameController.getGameById(gameId));
             } catch (NumberFormatException e) {
               return null;
             }
