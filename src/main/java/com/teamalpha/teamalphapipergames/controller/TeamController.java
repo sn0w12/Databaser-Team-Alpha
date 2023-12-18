@@ -15,7 +15,7 @@ public class TeamController {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            Team newTeam = new Team(0, gameId, name);  // Assuming ID is auto-generated
+            Team newTeam = new Team(0, gameId, name);
             entityManager.persist(newTeam);
             transaction.commit();
             return newTeam;
