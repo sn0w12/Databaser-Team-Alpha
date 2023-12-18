@@ -1,0 +1,17 @@
+/* General style for buttons */
+.button {
+    -fx-text-fill: white;
+    -fx-background-color: #174b54;
+}
+
+/* Hover effect for buttons */
+.button:hover {
+    -fx-text-fill: #174b54;
+    -fx-background-color: #75e8bd;
+}
+
+/* General style for text fields */
+.text-field {
+    -fx-text-fill: white;
+    -fx-background-color: #174b54;
+}

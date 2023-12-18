@@ -345,39 +345,10 @@ public class TeamGraphics {
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
         Scene scene = new Scene(vbox, 600, 400);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setTitle("Team Management");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    public Dialog<Team> createTeamDialog(Team selectedTeam, String name) {
-        Dialog<Team> dialog = new Dialog<>();
-        dialog.setTitle(name);
-
-        // Set up the dialog components
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGameId()));
-        gameIdField.setPromptText("Game ID");
-        TextField nameField = new TextField(selectedTeam.getName());
-        nameField.setPromptText("Team Name");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.add(new Label("Game ID:"), 0, 0);
-        grid.add(gameIdField, 1, 0);
-        grid.add(new Label("Team Name:"), 0, 1);
-        grid.add(nameField, 1, 1);
-
-        dialogPane.setContent(grid);
-
-        // Disable the OK button initially if gameIdField is empty or non-numeric
-        Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-        okButton.setDisable(false);
-
-        return dialog;
     }
 }
