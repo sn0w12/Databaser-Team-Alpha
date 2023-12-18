@@ -171,6 +171,7 @@ class StaffMainMenu extends Application {
     // start stage
     teamGraphics.start(stage);
 
+    stage.close();
   }
 
   private Button createPlayersButton() {
