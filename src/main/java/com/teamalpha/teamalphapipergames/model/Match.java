@@ -24,7 +24,6 @@ import java.time.format.DateTimeParseException;
 @Table(name = "matches")
 public class Match {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "match_id")
@@ -59,6 +58,7 @@ public class Match {
 
     //joins
     @Fetch(value = FetchMode.SUBSELECT)
+    @OrderColumn
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy="playerMatches"*/)
     private List<Player> players = new ArrayList<>();
 //    //    @JoinTable(name = "player_id",
@@ -67,6 +67,7 @@ public class Match {
 
 
     @Fetch(value = FetchMode.SUBSELECT)
+    @OrderColumn
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*,mappedBy="teamMatches"*/)
     private List<Team> teams = new ArrayList<>();
 

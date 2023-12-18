@@ -45,10 +45,18 @@ public class HelloApplication extends Application {
 
         matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
         matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,false,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
+        matchController.addNewMatchWithDate(1,true,1,2, LocalDate.of(2020,5,5));
         System.out.println(  matchController.getAllMatches(false).get(0).getMatchDate());
       //  matchController.addNewWithDate(1,true,1,2,22-06-2001);
       //  matchController.addNewWithDate(1,true,1,2,2222-06-21);
         System.out.println("idag är det den: "+LocalDate.now());
+
+
         launch(args);
     }
 

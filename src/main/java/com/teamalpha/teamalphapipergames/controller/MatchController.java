@@ -344,10 +344,10 @@ public class MatchController {
 //                    teamToRemove.getMatches().remove(match);
 //                    match.getTeams().set(playerOrTeamToRemoveIndex, teamToChangeTo);
 //
-                    Team team2 = entityManager.find(Team.class, match.getTeams().get(1).getTeamId());
+                   // Team team2 = entityManager.find(Team.class, match.getTeams().get(1).getTeamId());
                     // Team teamTest = entityManager.find(Team.class, 5);
-                    teamToChangeTo.getMatches().add(match);
-                    teamToRemove.getMatches().remove(match);
+                    //teamToChangeTo.getMatches().add(match);
+                    //teamToRemove.getMatches().remove(match);
 
 
                     //om vi ändrar första teamet
@@ -356,25 +356,28 @@ public class MatchController {
                         System.out.println("ändra första");
 
                         // match.getTeams().clear(); // tömmer listan
-                        match.getTeams().remove(0);
-                        match.getTeams().remove(0);
+                       // match.getTeams().remove(0);
+                        //match.getTeams().remove(0);
 
-                        // match.getTeams().set(0, teamToChangeTo);
-
-                        match.getTeams().add(0, teamToChangeTo);
-                        match.getTeams().add(1, team2);
+                         match.getTeams().set(0, teamToChangeTo);
+                        teamToRemove.getMatches().remove(match);
+//                        match.getTeams().add(0, teamToChangeTo);
+//                        match.getTeams().add(1, team2);
 
                         // match.getTeams().add(teamTest);
 
 // om jag tömmer hela listan och sen lägger till teamToChangeTo och sen teamTest. Hamnar de i rätt ordning
                         //men om jag tömmer hela listan och lägger till teamToChangeTo och sen team2 hamnar de i fel ordning
 
-                        entityManager.merge(team2);
+                      //  entityManager.merge(team2);
                         //   entityManager.merge(teamTest);
                     } else {
                         System.out.println("ändra andra");
-                        match.getTeams().remove(playerOrTeamToRemoveIndex);
-                        match.getTeams().add(teamToChangeTo);
+//                        match.getTeams().remove(playerOrTeamToRemoveIndex);
+//                        match.getTeams().add(teamToChangeTo);
+                        match.getTeams().set(1, teamToChangeTo);
+                        teamToRemove.getMatches().remove(match);
+
                     }
 
                     entityManager.merge(match);
@@ -422,6 +425,83 @@ public class MatchController {
 //            } else {
 //                System.out.println("Player or Team not found.");
 //            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+        return false;
+    }
+
+    public boolean replaceOnePlayerOrTeamFromMatchMicke(int matchId, int playerOrTeamToRemoveIndex, int playerOrTeamIdToChangeTo) {
+
+
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            // Fetch the match to alter
+            Match match = entityManager.find(Match.class, matchId);
+
+            // Check if there are teams we are dealing with
+            if (match.getTeamGame()) {
+                Team currentTeam = entityManager.find(Team.class, match.getTeams().get(playerOrTeamToRemoveIndex).getTeamId());
+                Team updatedTeam = entityManager.find(Team.class, playerOrTeamIdToChangeTo);
+//************************************************************************
+//                if (currentTeam != null && updatedTeam != null) {
+//                    System.out.println("Båda lagen finns:");
+//                    //om vi ändrar första teamet
+//                    if (playerOrTeamToRemoveIndex == 0) {
+//                        match.getTeams().set(0, updatedTeam);
+//                        currentTeam.getMatches().remove(match);
+//
+//                    } else {
+//                        System.out.println("ändra andra");
+//
+//                        match.getTeams().set(1, updatedTeam);
+//                        currentTeam.getMatches().remove(match);
+//                    }
+//                    entityManager.merge(match);
+//                    entityManager.merge(currentTeam);
+//                    entityManager.merge(updatedTeam);
+//                }
+                //************************************************************************
+                if (currentTeam != null && updatedTeam != null) {
+                    updatedTeam.getMatches().add(match);
+                    currentTeam.getMatches().remove(match);
+                    match.setTeamsByIndexInTeamsList(playerOrTeamToRemoveIndex,updatedTeam);
+                    entityManager.merge(currentTeam);
+                    entityManager.merge(updatedTeam);
+                    entityManager.merge(match);
+                }
+
+
+
+
+
+
+
+            } //om spelare, ta bort spelare ifrån matchen och ta bort matchen ifrån spelarna
+            else {
+                Player playerToRemove = entityManager.find(Player.class, match.getPlayers().get(playerOrTeamToRemoveIndex).getId());
+                Player playerToChangeTo = entityManager.find(Player.class, playerOrTeamIdToChangeTo);
+                if (playerToRemove != null && playerToChangeTo != null) {
+                    playerToChangeTo.getMatches().add(match);    //lagg till matchen i den nya spelarens lista
+                    playerToRemove.getMatches().remove(match);  //tar bort matchen ifrån spelarens lista
+                    match.setPlayersByIndexInPlayersList(playerOrTeamToRemoveIndex, playerToChangeTo);   //byter ut spelare på matchens lista med spelare
+                    entityManager.merge(playerToRemove);
+                    entityManager.merge(playerToChangeTo);
+                    entityManager.merge(match);
+                }
+            }
+            transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -639,8 +719,8 @@ public class MatchController {
             transaction = entityManager.getTransaction();
             transaction.begin();
 
-
             if (teamGame) {
+
                 Optional<Team> possiblyATeam1 = Optional.ofNullable(entityManager.find(Team.class, contestant1Id));
                 Optional<Team> possiblyATeam2 = Optional.ofNullable(entityManager.find(Team.class, contestant2Id));
                 if (possiblyATeam1.isPresent() && possiblyATeam2.isPresent()) {
