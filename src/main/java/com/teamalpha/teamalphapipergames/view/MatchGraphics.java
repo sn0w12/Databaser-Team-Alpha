@@ -19,9 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,19 +39,15 @@ public class MatchGraphics extends Application {
     public void start(Stage matchStage) throws Exception {
         //Här skapar jag i princip bara en massa knappar som kallar på andra funktioner när man trycker på knappen
 
-
         matchStage.setTitle("Matches");
 //        matchStage.setWidth(500);
 //        matchStage.setHeight(500);
-
-
 
         //knappar för varje funktion skapa, visa,ändra, ta bort mm
         Button buttonAddMatch = new Button("Add new Match");
         buttonAddMatch.setOnAction(event -> {
             addMatch();
         });
-
 
         Button buttonShowAllMatches = new Button("Show all matches");
         buttonShowAllMatches.setOnAction(event -> {
@@ -97,7 +91,6 @@ public class MatchGraphics extends Application {
         }
 
 
-
         VBox vBoxAlternatives = new VBox();
         setVBoxBackGround(vBoxAlternatives);
         vBoxAlternatives.getChildren().addAll(buttonAddMatch, buttonShowAllMatches, buttonShowPlayedMatches, buttonShowUnplayedMatches, buttonAddResults, buttonAlterMatch, buttonRemoveMatch);
@@ -109,96 +102,6 @@ public class MatchGraphics extends Application {
         matchStage.show();
     }
 
-    public void showAllMatchesJoinPlayerAndTeams() {
-        Stage matchStage = new Stage();
-        matchStage.setTitle("Show All Matches");
-        matchStage.setWidth(500);
-        matchStage.setHeight(500);
-
-        //en tableView som är det enda som jag vill visa i den här sidan så behöver inte någon vbox eller liknande
-        TableView<Match> allMatchesTable = new TableView<>();
-
-
-//skapar kolumner
-        TableColumn<Match, Integer> matchId = new TableColumn<>("Match id");
-        TableColumn<Match, Integer> gameId = new TableColumn<>("Game");
-        TableColumn<Match, Team> team1 = new TableColumn<>("Team11");
-        TableColumn<Match, Team> team2 = new TableColumn<>("Team22");
-        TableColumn<Match, Player> player1 = new TableColumn<>("Player11");
-        TableColumn<Match, Player> player2 = new TableColumn<>("Player22");
-        TableColumn<Match, Boolean> matchPlayed = new TableColumn<>("Match Played");
-        TableColumn<Match, LocalDate> matchDate = new TableColumn<>("Match date");
-        TableColumn<Match, String> results = new TableColumn<>("Results");
-        TableColumn<Match, String> winner = new TableColumn<>("Winner");
-        allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
-
-
-        //kopplar ihop data med kolumnerna.   Det som är i "fritext" berättar vartifrån man tar det. Det ska vara samma
-        // som namnet på ex int ifrån Match klassen. Alltså
-//        @Column(name = "match_id")
-//        int matchId;  --ska svara samma som den här
-        matchId.setCellValueFactory(new PropertyValueFactory<>("matchId"));
-        gameId.setCellValueFactory(new PropertyValueFactory<>("game_id"));
-        team1.setCellValueFactory(new PropertyValueFactory<>("team1"));
-        team2.setCellValueFactory(new PropertyValueFactory<>("team2"));
-        player1.setCellValueFactory(new PropertyValueFactory<>("player1"));
-        player2.setCellValueFactory(new PropertyValueFactory<>("player2"));
-        matchPlayed.setCellValueFactory(new PropertyValueFactory<>("matchPlayed"));
-        matchDate.setCellValueFactory(new PropertyValueFactory<>("matchDate"));
-        results.setCellValueFactory(new PropertyValueFactory<>("results"));
-        winner.setCellValueFactory(new PropertyValueFactory<>("winner"));
-
-        //skapar en lista matchdata och lägger in data
-        List<Match> matchList = matchController.getAllMatchesNoPrint();
-        final ObservableList<Match> matchData = FXCollections.observableArrayList(matchList);
-        // Lägger in data i kolumnerna
-
-
-        //Lägger till all data i min tableview/fönster och bygger scenen med den
-        allMatchesTable.setItems(matchData);
-
-        Scene sceneShowAllMatches = new Scene(allMatchesTable);
-        matchStage.setScene(sceneShowAllMatches);
-        matchStage.show();
-    }
-
-
-    public void ShowEveryMatch() {
-
-        Button showMatches = new Button("show matches");
-        showMatches.setOnAction(event -> {
-
-            String[] show = {"Show all matches", "show played matches", "Show upcoming matches"};
-            JComboBox<String> showMatchesAlternatives = new JComboBox<>(show);
-            showMatchesAlternatives.setVisible(true);
-
-            ActionEvent e = new ActionEvent(showMatchesAlternatives, 1, "s");
-
-
-        });
-
-
-        //  JComboBox<Button>showMatchesAlternatives=new JComboBox<>();
-
-
-//        ShowEveryMatch() {
-//            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            this.setLayout(new FlowLayout());
-//            String[] show = {"Show all matches", "show played matches", "Show upcoming matches"};
-//            JComboBox<String> showMatcheeeeeees = new JComboBox<>(show);
-//            this.add(showMatches);
-//            this.pack();
-//            this.setVisible(true);
-//        }
-//
-//
-//        @Override
-//        public void actionPerformed (ActionEvent e){
-//
-//        }
-
-
-    }
 
     public void showMatches(boolean showAllmatches, boolean showPlayedMatches) {
         Stage matchStage = new Stage();
@@ -206,8 +109,9 @@ public class MatchGraphics extends Application {
         matchStage.setWidth(750);
         matchStage.setHeight(500);
 
-        //en tableView som är det enda som jag vill visa i den här sidan så behöver inte någon vbox eller liknande
+
         TableView<Match> allMatchesTable = new TableView<>();
+
 
 //skapar kolumner
         TableColumn<Match, Integer> matchId = new TableColumn<>("Match id");
@@ -220,8 +124,6 @@ public class MatchGraphics extends Application {
         TableColumn<Match, LocalDate> matchDate = new TableColumn<>("Match date");
         TableColumn<Match, String> results = new TableColumn<>("Results");
         TableColumn<Match, String> winner = new TableColumn<>("Winner");
-        //  allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
-        //  allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchDate);
 
 
         //kopplar ihop data med kolumnerna.   Det som är i "fritext" berättar vartifrån man tar det. Det ska vara samma
@@ -239,18 +141,12 @@ public class MatchGraphics extends Application {
         results.setCellValueFactory(new PropertyValueFactory<>("results"));
         winner.setCellValueFactory(new PropertyValueFactory<>("winner"));
 
-        //skapar en lista matchdata och lägger in data
-        List<Match> matchList = matchController.getAllMatchesNoPrint();
-        //    ObservableList<Match> matchData = FXCollections.observableArrayList(matchList);
-        ObservableList<Match> matchData;
-        // Lägger in data i kolumnerna
 
-
-//*********************************
-//skapar nya listor med spelade/ospelade matcher
+//skapar listor med alla/spelade/ospelade matcher
+        List<Match> alMatches = matchController.getAllMatches();
         List<Match> playedMatches = new ArrayList<>();
         List<Match> unplayedMatches = new ArrayList<>();
-        for (Match match : matchController.getAllMatches(false)) {
+        for (Match match : matchController.getAllMatches()) {
             if (match.getMatchPlayed()) {
                 playedMatches.add(match);
             } else {
@@ -258,9 +154,10 @@ public class MatchGraphics extends Application {
             }
         }
 
-
+        //skapar en observable list och lägger in listorna som skapades ovanför beroende på vad som ska visas alla/spelade/ospelade matcher
+        ObservableList<Match> matchData;
         if (showAllmatches) {
-            matchData = FXCollections.observableArrayList(matchList);
+            matchData = FXCollections.observableArrayList(alMatches);
             allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
         } else {
             if (showPlayedMatches) {
@@ -273,28 +170,15 @@ public class MatchGraphics extends Application {
         }
 
 
-//***********************************
-
         allMatchesTable.setItems(matchData);
         allMatchesTable.setPrefSize(700, 700);
         VBox vbox = new VBox();
         setVBoxBackGround(vbox);
         vbox.getChildren().add(allMatchesTable);
 
-        //Lägger till all data i min tableview/fönster och bygger scenen med den
-
-
         Scene sceneShowAllMatches = new Scene(vbox);
         matchStage.setScene(sceneShowAllMatches);
         matchStage.show();
-
-
-//        //Lägger till all data i min tableview/fönster och bygger scenen med den
-//        allMatchesTable.setItems(matchData);
-//
-//        Scene sceneShowAllMatches = new Scene(allMatchesTable);
-//        matchStage.setScene(sceneShowAllMatches);
-//        matchStage.show();
     }
 
     public void addMatch() {
@@ -355,11 +239,7 @@ public class MatchGraphics extends Application {
                 int dayInteger = Integer.parseInt(dateAsList[2]);
 
 
-                //  matchController.addNewMatch(gameId, teamGame, contestant1_id, contestant2_id, date); //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
-                // matchController.addNewMatchTeamOrPlayer(gameId, teamGame, contestant1_id, contestant2_id, date); //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
-                // matchController.addNewWithDate(gameId, teamGame, contestant1_id, contestant2_id, LocalDate.of(2020,5,5) );  //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
-               matchController.addNewMatchWithDate(gameId, teamGame, contestant1_id, contestant2_id, LocalDate.of(year, monthInteger, dayInteger));  //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
-               // matchController.addNewMatchWithDate(1, true, 1, 2, LocalDate.of(1995, 6, 21));  //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
+                matchController.addNewMatch(gameId, teamGame, contestant1_id, contestant2_id, LocalDate.of(year, monthInteger, dayInteger));  //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
                 messageLabel.setText("Match added, add new match or close window");
 
             } catch (Exception e) {
@@ -372,59 +252,7 @@ public class MatchGraphics extends Application {
         Scene createMatchScene = new Scene(vBoxAddMatch);
         addMatchStage.setScene(createMatchScene);
         addMatchStage.show();
-
-
-//matchController.saveMatch();
-
-
     }
-
-//    public void showPlayedMatches() {
-//        Stage matchStage = new Stage();
-//        matchStage.setTitle("Played Matches");
-//        matchStage.setWidth(500);
-//        matchStage.setHeight(500);
-//
-//        Group groupMatchPlayed = new Group();
-//        TableView<Match> allMatchesTable = new TableView<>();
-////skapar kolumner
-//        TableColumn<Match, Integer> gameId = new TableColumn<>("Games");
-//        TableColumn<Match, Integer> team1_id = new TableColumn<>("Team 1");
-//        TableColumn<Match, Integer> team2_id = new TableColumn<>("Team 2");
-//        TableColumn<Match, Integer> player1_id = new TableColumn<>("Player 1");
-//        TableColumn<Match, Integer> player2_id = new TableColumn<>("Player 2");
-//        TableColumn<Match, Boolean> finished = new TableColumn<>("Match Played"); //ev ta bort sen men är med nu för att kunna se
-//        TableColumn<Match, String> results = new TableColumn<>("Results");
-//        allMatchesTable.getColumns().addAll(gameId, team1_id, team2_id, player1_id, player2_id, finished, results);
-//
-//
-//        //skapar en lista med matchdata och lägger in data
-//        final ObservableList<Match> matchData = FXCollections.observableArrayList();  //se kommentarer längre ner för observable
-//        for (Match match : matchController.getAllMatches(false)) {
-//            //  for (Match match : matchController.getAllMatchesNoPrint()) {
-//            matchData.add(match);
-//        }
-//
-//        //kopplar ihop data med kolumnerna
-//        gameId.setCellValueFactory(new PropertyValueFactory<>("game_id"));
-//        team1_id.setCellValueFactory(new PropertyValueFactory<>("team1_id"));
-//        team2_id.setCellValueFactory(new PropertyValueFactory<>("team2_id"));
-//        player1_id.setCellValueFactory(new PropertyValueFactory<>("player1_id"));
-//        player2_id.setCellValueFactory(new PropertyValueFactory<>("player2_id"));
-//        finished.setCellValueFactory(new PropertyValueFactory<>("Match played"));
-//        results.setCellValueFactory(new PropertyValueFactory<>("Results"));
-//
-//        // Läger in data i kolumnerna
-//        allMatchesTable.setItems(matchData);
-//
-//        Scene sceneShowAllMatches = new Scene(groupMatchPlayed);
-//
-//        ((Group) sceneShowAllMatches.getRoot()).getChildren().add(allMatchesTable);
-//
-//
-//        matchStage.setScene(sceneShowAllMatches);
-//        matchStage.show();
-//    }
 
     public void addResult() {
         Stage resultStage = new Stage();
@@ -482,10 +310,12 @@ public class MatchGraphics extends Application {
     }
 
     public void setWinner(Match match, String results) {
+        // Splittar upp resultat strängen och skapar två int ifrån den
         String[] resultsSplit = results.split("-");
         int result1 = Integer.parseInt(resultsSplit[0]);
         int result2 = Integer.parseInt(resultsSplit[1]);
 
+        //beroende på vilken result som är högst sätts vinnaren. Om de är samma sätts tie
         if (result1 > result2) {
             if (match.getTeamGame()) {
                 match.setWinner(match.getTeam1());
@@ -528,50 +358,36 @@ public class MatchGraphics extends Application {
             int matchId;
             int idOfNewplayerOrTeam;
 
-
             matchId = Integer.parseInt(matchIdTextField.getText());
             Match matchToUpdate = matchController.getMatchById(matchId);
-            System.out.println("matchToUpdate.getTeamGame()" + matchToUpdate.getTeamGame());
             if (matchToUpdate.getTeamGame()) {
-                //TODO ändra för team
-                // När jag ändrar team så förskjuts!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                System.out.println("team match som ska ändras");
 
-                //   if (playerOrTeam1TextField.getText() != null) {
+
                 if (!playerOrTeam1TextField.getText().isEmpty()) {
                     //ändra team1
                     try {
                         matchId = Integer.parseInt(matchIdTextField.getText());
-                        //  int idPlayerToChangeFrom = matchToUpdate.getPlayers().get(1).getId();
                         idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
-                        System.out.println("changing team1 to id: " + idOfNewplayerOrTeam);
 
-
-                        // if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                        if (matchController.replaceOnePlayerOrTeamFromMatchMicke(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-
+                         if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
                             System.out.println("lyckats ändra hoppas jag ");
                         } else {
                             System.out.println("nähä inte nu heller");
                         }
-
                     } catch (Exception e) {
                         System.out.println(e + "fel för jag försöker inte ändra player 2");
                     }
                 }
 
-                //    if (playerOrTeam2TextField.getText() != null) {
                 if (!playerOrTeam2TextField.getText().isEmpty()) {
                     //ändra team2
                     try {
                         matchId = Integer.parseInt(matchIdTextField.getText());
-                        //  int idPlayerToChangeFrom = matchToUpdate.getPlayers().get(1).getId();
+
                         idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
                         System.out.println("changing team1 to id: " + idOfNewplayerOrTeam);
 
-
-                        //  if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                        if (matchController.replaceOnePlayerOrTeamFromMatchMicke(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+                          if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
                             System.out.println("lyckats ändra hoppas jag ");
                         } else {
                             System.out.println("nähä inte nu heller");
@@ -580,103 +396,37 @@ public class MatchGraphics extends Application {
                     } catch (Exception e) {
                         System.out.println(e + "fel för jag försöker inte ändra player 2");
                     }
-
-
                 }
             } else {
 
-                if (playerOrTeam1TextField.getText() != null) {
-                    //  ändra spelare 1
+                if (playerOrTeam1TextField.getText() != null) {       //  ändra spelare 1
                     try {
                         matchId = Integer.parseInt(matchIdTextField.getText());
-//                    player1Id = Integer.parseInt(player1TextField.getText());
-                        //   System.out.println("changing player1 to id: " + player1Id);
                         idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
                         System.out.println("changing player1 to id: " + idOfNewplayerOrTeam);
 
-                        //  Match matchToUpdate = matchController.getMatchById(matchId);
-                        // Player playerToChangeTo = playerController.getPlayerById(player1Id);
-                        //Player playerToChangeTo = playerController.getPlayerById(idOfNewplayerOrTeam);
-                        //int idPlayerToChangeFrom = matchToUpdate.getPlayers().get(0).getId();
-                        //Player playerToChangeFrom = playerController.getPlayerById(idPlayerToChangeFrom);
-
-
-//*****************************************
-                        //  matchToUpdate.setPlayersByIndexInPlayersList(0, playerToChangeTo);  //ändrar i matchens lista för spelare 1, lägger till den nya spelaren i spelar listan på index 0
-//                    if (matchController.updateMatch(matchToUpdate)) {
-//                        System.out.println("lyckats ändra hoppas jag ");
-//                    } else {
-//                        System.out.println("nähä inte nu heller");
-//                    }
-
-//                    playerToChangeFrom.getMatches().remove(matchToUpdate);                    //Tar bort matchen ifrån den gamla spalarens matchista
-//                    playerToChangeTo.getMatches().add(matchToUpdate);                         //lägger till matchen i den nya splearens matchlista
-
-
-                        //skapa en metod för att lägga till spelare/team
-//                    if (playerController.updatePlayer(playerToChangeTo)&&playerController.updatePlayer(playerToChangeFrom)) {
-//                        System.out.println("lyckats ändra hoppas jag ");
-//                    } else {
-//                        System.out.println("nähä inte nu heller");
-//                    }
-
-
-//                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                        if (matchController.replaceOnePlayerOrTeamFromMatchMicke(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+                      if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
                             System.out.println("lyckats ändra hoppas jag ");
                         } else {
                             System.out.println("nähä inte nu heller");
                         }
-
-
-//                    if (matchController.updateMatchAndPlayer(matchToUpdate,playerToChangeFrom,playerToChangeTo)) {
-//                        System.out.println("lyckats ändra hoppas jag ");
-//                    } else {
-//                        System.out.println("nähä inte nu heller");
-//                    }
-
-//                    System.out.println("matchToUpdate.getPlayers().get(0).getFirstName(): " + matchToUpdate.getPlayers().get(0).getFirstName());
-//                    System.out.println("playerToChangeTo.getFirstName()" + playerToChangeTo.getFirstName());
-//                    System.out.println("playerToChangeFrom.getFirstName()" + playerToChangeFrom.getFirstName());
-
 
                     } catch (Exception e) {
                         System.out.println(e);
                     }
                 }
-//****************
-//                    matchToUpdate.setPlayersByIndexInPlayersList(0, playerToChangeTo);  //ändrar i matchens lista för spelare 1, lägger till den nya spelaren i spelar listan på index 0
-//                    playerToChangeFrom.getMatches().remove(matchToUpdate);                    //Tar bort matchen ifrån den gamla spalarens matchista
-//                    playerToChangeTo.getMatches().add(matchToUpdate);                         //lägger till matchen i den nya splearens matchlista
-//
-//                    System.out.println("matchToUpdate.getPlayer1(): " + matchToUpdate.getPlayer1());
-//                    System.out.println("matchToUpdate.getPlayers().get(0).getFirstName(): " + matchToUpdate.getPlayers().get(0).getFirstName());
-//
-//                    if (matchController.updateMatch(matchToUpdate)) {
-//                        System.out.println("lyckats ändra hoppas jag ");
-//                    } else {
-//                        System.out.println("nähä inte nu heller");
-//                    }
-//                } catch (Exception e) {
-//                    System.out.println(e);
-//                }
-                //******************************
 
-                //ändra spelare 2
-                if (playerOrTeam2TextField.getText() != null) {
+                if (playerOrTeam2TextField.getText() != null) {     //ändra spelare 2
                     try {
                         matchId = Integer.parseInt(matchIdTextField.getText());
-                        //  int idPlayerToChangeFrom = matchToUpdate.getPlayers().get(1).getId();
                         idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
                         System.out.println("changing player2 to id: " + idOfNewplayerOrTeam);
 
-                        // if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                        if (matchController.replaceOnePlayerOrTeamFromMatchMicke(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
                             System.out.println("lyckats ändra hoppas jag ");
                         } else {
                             System.out.println("nähä inte nu heller");
                         }
-
                     } catch (Exception e) {
                         System.out.println(e + "fel för jag försöker inte ändra player 2");
                     }
@@ -712,9 +462,6 @@ public class MatchGraphics extends Application {
         Scene scene = new Scene(vBoxAlterMatch);
         alterMatchStage.setScene(scene);
         alterMatchStage.show();
-
-
-//TODO skapa hela metoden här ... men först en promenad
     }
 
     public void removeMatch() {
@@ -735,9 +482,6 @@ public class MatchGraphics extends Application {
                 int id = Integer.parseInt(removeMatchIdTextField.getText());
 
                 if (id > 0) {
-                    // matchController.removePlayerFromMatch(id);  //tar bort spelarna ifrån matchens lista med spelare
-                    // matchController.removePlayerOrTeamFromMatch(id);  //tar bort spelarna ifrån matchens lista med spelare
-
                     if (matchController.removePlayerOrTeamFromMatch(id)) {
                         if (matchController.deleteMatch(id)) {
                             messageLabel.setText("Match removed");
@@ -756,7 +500,6 @@ public class MatchGraphics extends Application {
 
         vBoxRemoveMatch.getChildren().addAll(removeMatchLabel, removeMatchIdTextField, removeMatchButton, messageLabel);
         setVBoxBackGround(vBoxRemoveMatch);
-        //  Scene sceneRemoveMatch = new Scene(vBoxRemoveMatch, 400,300);
         Scene sceneRemoveMatch = new Scene(vBoxRemoveMatch, 300, 225);
         removeMatchStage.setScene(sceneRemoveMatch);
         removeMatchStage.show();

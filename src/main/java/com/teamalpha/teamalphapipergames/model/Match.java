@@ -1,24 +1,15 @@
 
 package com.teamalpha.teamalphapipergames.model;
 
-
-import com.teamalpha.teamalphapipergames.controller.MatchController;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Collection;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 
 @Entity
 @Table(name = "matches")
@@ -37,9 +28,9 @@ public class Match {
     //har lagt in den här själv, finns inte i vårt schema
 
     @Column(name = "player_1")
-    private String player1;//= String.valueOf(getPlayers().get(0));
+    private String player1;
     @Column(name = "player_2")
-    private String player2;//= String.valueOf(getPlayers().get(1));
+    private String player2;
 
     @Column(name = "team_1")
     private String team1;
@@ -61,9 +52,6 @@ public class Match {
     @OrderColumn
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy="playerMatches"*/)
     private List<Player> players = new ArrayList<>();
-//    //    @JoinTable(name = "player_id",
-////            joinColumns = @JoinColumn(name = "match_id")
-////    )
 
 
     @Fetch(value = FetchMode.SUBSELECT)
@@ -94,6 +82,15 @@ public class Match {
         teams.add(team);
     }
 
+    public void setPlayersByIndexInPlayersList(int index, Player player) {
+        this.players.set(index, player);
+    }
+
+    public void setTeamsByIndexInTeamsList(int index, Team team) {
+        this.teams.set(index, team);
+    }
+
+
     //getters and setters
     public int getMatchId() {
         return matchId;
@@ -107,50 +104,12 @@ public class Match {
         this.game_id = game_id;
     }
 
-
-    public boolean getMatchPlayed() {
-        if (matchDate.isBefore(LocalDate.now())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void setMatchPlayed(boolean matchPlayed) {
-        this.matchPlayed = matchPlayed;
-    }
-
-    public String getResults() {
-        return results;
-    }
-
-    public void setResults(String results) {
-        this.results = results;
-    }
-
     public boolean getTeamGame() {
         return teamGame;
     }
 
     public void setTeamGame(boolean teamGame) {
         this.teamGame = teamGame;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
-    public void setPlayersByIndexInPlayersList(int index, Player player) {
-        this.players.set(index, player);
-    }
-
-
-    public void setTeamsByIndexInTeamsList(int index, Team team) {
-        this.teams.set(index, team);
     }
 
     public String getPlayer1() {
@@ -204,6 +163,49 @@ public class Match {
         this.team2 = team2;
     }
 
+    public LocalDate getMatchDate() {
+        return matchDate;
+    }
+
+    public void setMatchDate(LocalDate match_date) {
+        this.matchDate = match_date;
+    }
+
+    public boolean getMatchPlayed() {
+        if (matchDate.isBefore(LocalDate.now())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setMatchPlayed(boolean matchPlayed) {
+        this.matchPlayed = matchPlayed;
+    }
+
+    public String getResults() {
+        return results;
+    }
+
+    public void setResults(String results) {
+        this.results = results;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
 
     public List<Team> getTeams() {
         return teams;
@@ -214,20 +216,5 @@ public class Match {
     }
 
 
-    public LocalDate getMatchDate() {
-        return matchDate;
-    }
-
-    public void setMatchDate(LocalDate match_date) {
-        this.matchDate = match_date;
-    }
-
-    public String getWinner() {
-        return winner;
-    }
-
-    public void setWinner(String winner) {
-        this.winner = winner;
-    }
 }
 
