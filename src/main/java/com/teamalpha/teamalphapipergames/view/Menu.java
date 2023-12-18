@@ -43,7 +43,7 @@ public class Menu {
     space();
     switch (userChoice) {
       case "1":
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id to log in as staff 💬: ");
         Optional<Staff> fetchedStaff = Optional.ofNullable(staffController.getStaffById(new Scanner(System.in).nextInt()));
         if (fetchedStaff.isPresent()) {
@@ -822,12 +822,12 @@ public class Menu {
       case "1":
         // List all staff
         System.out.println("Staff list");
-        staffController.getAll(true);
+        staffController.getAllStaff();
         showCrudMenu();
         break;
       case "2":
         // List staff by id
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id of staff to fetch 💬: ");
         Optional<Staff> fetchedStaff = Optional.ofNullable(staffController.getStaffById(new Scanner(System.in).nextInt()));
         if (fetchedStaff.isPresent()) {
@@ -897,15 +897,15 @@ public class Menu {
           } else if (fetchedStaff.get().getCountry().equals("USA")) {
             flagIcon = "🇺🇸";
           }
-          System.out.println("✅ Staff " + fetchedStaff.get().getNickName() + " fetched successfully");
+          System.out.println("✅ Staff " + fetchedStaff.get().getNickname() + " fetched successfully");
 
           System.out.println(""); // radbrytning
 
-          System.out.println("🪪 ID: " + fetchedStaff.get().getId());
-          System.out.println("ℹ️ Name: " + fetchedStaff.get().getFirstName() + " '" + fetchedStaff.get().getNickName() + "' " + fetchedStaff.get().getLastName());
-          System.out.println("📍 Adress: " + fetchedStaff.get().getAddress() + ", " + fetchedStaff.get().getId() + " " + fetchedStaff.get().getPostalAddress());
+          System.out.println("🪪 ID: " + fetchedStaff.get().getStaffId());
+          System.out.println("ℹ️ Name: " + fetchedStaff.get().getFirstName() + " '" + fetchedStaff.get().getNickname() + "' " + fetchedStaff.get().getLastName());
+          System.out.println("📍 Adress: " + fetchedStaff.get().getAddress() + ", " + fetchedStaff.get().getStaffId() + " " + fetchedStaff.get().getPostalAddress());
           System.out.println(flagIcon + " Country: " + fetchedStaff.get().getCountry());
-          System.out.println("✉️ E-mail: " + fetchedStaff.get().geteMail());
+          System.out.println("✉️ E-mail: " + fetchedStaff.get().getEmail());
 
           System.out.println(""); // Radbryt
         } else {
@@ -1194,7 +1194,7 @@ public class Menu {
     switch (userChoice) {
       case "0":
         // update everything
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         int staffIdToUpdate = new Scanner(System.in).nextInt();
         Staff staffToUpdate = staffController.getStaffById(staffIdToUpdate);
@@ -1207,8 +1207,8 @@ public class Menu {
         System.out.print("Last name from " + staffToUpdate.getLastName() + " to 💬: ");
         staffToUpdate.setLastName(new Scanner(System.in).nextLine());
 
-        System.out.print("Nickname from " + staffToUpdate.getNickName() + " to 💬: ");
-        staffToUpdate.setNickName(new Scanner(System.in).nextLine());
+        System.out.print("Nickname from " + staffToUpdate.getNickname() + " to 💬: ");
+        staffToUpdate.setNickname(new Scanner(System.in).nextLine());
 
         System.out.print("Address from " + staffToUpdate.getAddress() + " to 💬: ");
         staffToUpdate.setAddress(new Scanner(System.in).nextLine());
@@ -1222,10 +1222,10 @@ public class Menu {
         System.out.print("Country from " + staffToUpdate.getCountry() + " to 💬: ");
         staffToUpdate.setCountry(new Scanner(System.in).nextLine());
 
-        System.out.print("Email from " + staffToUpdate.geteMail() + " to 💬: ");
-        staffToUpdate.seteMail(new Scanner(System.in).nextLine());
+        System.out.print("Email from " + staffToUpdate.getEmail() + " to 💬: ");
+        staffToUpdate.setEmail(new Scanner(System.in).nextLine());
 
-        if (staffController.updateStaff(staffToUpdate)) {
+        if (staffController.update(staffToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1234,12 +1234,12 @@ public class Menu {
         break;
       case "1":
         // update firstname
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff firstNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change first name from " + firstNameToUpdate.getFirstName() + " to 💬: ");
         firstNameToUpdate.setFirstName(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(firstNameToUpdate)) {
+        if (staffController.update(firstNameToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1248,12 +1248,12 @@ public class Menu {
         break;
       case "2":
         // update last name
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff lastNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change last name from " + lastNameToUpdate.getLastName() + " to 💬: ");
         lastNameToUpdate.setLastName(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(lastNameToUpdate)) {
+        if (staffController.update(lastNameToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1262,12 +1262,12 @@ public class Menu {
         break;
       case "3":
         // update nickname
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff nickNameToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
-        System.out.print("Change nickname from " + nickNameToUpdate.getNickName() + " to 💬: ");
-        nickNameToUpdate.setNickName(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(nickNameToUpdate)) {
+        System.out.print("Change nickname from " + nickNameToUpdate.getNickname() + " to 💬: ");
+        nickNameToUpdate.setNickname(new Scanner(System.in).nextLine());
+        if (staffController.update(nickNameToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1276,12 +1276,12 @@ public class Menu {
         break;
       case "4":
         // update address
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff addressToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change address from " + addressToUpdate.getAddress() + " to 💬: ");
         addressToUpdate.setAddress(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(addressToUpdate)) {
+        if (staffController.update(addressToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1290,12 +1290,12 @@ public class Menu {
         break;
       case "5":
         // update zip code
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff zipCodeToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change zip code from " + zipCodeToUpdate.getZipCode() + " to 💬: ");
         zipCodeToUpdate.setZipCode(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(zipCodeToUpdate)) {
+        if (staffController.update(zipCodeToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1304,12 +1304,12 @@ public class Menu {
         break;
       case "6":
         // update postal address
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff postalAddrToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change postal address from " + postalAddrToUpdate.getPostalAddress() + " to 💬: ");
         postalAddrToUpdate.setPostalAddress(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(postalAddrToUpdate)) {
+        if (staffController.update(postalAddrToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1318,12 +1318,12 @@ public class Menu {
         break;
       case "7":
         // update country
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff countryToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
         System.out.print("Change country from " + countryToUpdate.getCountry() + " to 💬: ");
         countryToUpdate.setCountry(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(countryToUpdate)) {
+        if (staffController.update(countryToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1332,12 +1332,12 @@ public class Menu {
         break;
       case "8":
         // update email
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         Staff eMailToUpdate = staffController.getStaffById(new Scanner(System.in).nextInt());
-        System.out.print("Change email from " + eMailToUpdate.geteMail() + " to 💬: ");
-        eMailToUpdate.seteMail(new Scanner(System.in).nextLine());
-        if (staffController.updateStaff(eMailToUpdate)) {
+        System.out.print("Change email from " + eMailToUpdate.getEmail() + " to 💬: ");
+        eMailToUpdate.setEmail(new Scanner(System.in).nextLine());
+        if (staffController.update(eMailToUpdate)) {
           System.out.println("✅ Staff updated");
         } else {
           System.out.println("❌ Staff update failed");
@@ -1415,7 +1415,7 @@ public class Menu {
         break;
       case "6":
         // Delete Staff
-        staffController.getAll(true);
+        staffController.getAllStaff();
         System.out.print("Input id 💬: ");
         if (staffController.deleteStaffById(new Scanner(System.in).nextInt())) {
           System.out.println("✅ Staff deleted");
@@ -1433,7 +1433,7 @@ public class Menu {
   // Create assets
   public void createStaff() {
     // if there are no staff
-    if (staffController.getAll(false).isEmpty()) {
+    if (staffController.getAllStaff().isEmpty()) {
       // Creating staff
       staffController.save(new Staff("Richard", "Hendricks", "R_Hendricks", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "r_hendricks@piedpiper.com"));
       staffController.save(new Staff("Bertram", "Gilfoyle", "B_Gilfoyle", "5230 Newell Rd", "NONE", "Palo Alto", "USA", "b_gilfoyle@piedpiper.com"));

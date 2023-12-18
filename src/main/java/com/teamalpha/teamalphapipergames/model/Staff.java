@@ -9,15 +9,15 @@ public class Staff {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "staff_id")
-  private int id;
+  private int staffId;
   @Column(name = "first_name", length = 40)
   private String firstName;
 
   @Column(name = "last_name", length = 40)
   private String lastName;
 
-  @Column(name = "nick_name", length = 40)
-  private String nickName;
+  @Column(name = "nickname", length = 40)
+  private String nickname;
 
   @Column(name = "address", length = 40)
   private String address;
@@ -32,48 +32,52 @@ public class Staff {
   private String country;
 
   @Column(name = "email", length = 40)
-  private String eMail;
+  private String email;
 
   // Empty constructor
   public Staff() {
   }
 
+  public Staff(int staffId) {
+    this.staffId = staffId;
+  }
+
   // Constructor w/o id
-  public Staff(String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail) {
+  public Staff(String firstName, String lastName, String nickname, String address, String zipCode, String postalAddress, String country, String email) {
     this.firstName = firstName;
     this.lastName = lastName;
-    this.nickName = nickName;
+    this.nickname = nickname;
     this.address = address;
     this.zipCode = zipCode;
     this.postalAddress = postalAddress;
     this.country = country;
-    this.eMail = eMail;
+    this.email = email;
   }
 
   // full
-  public Staff(int id, String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail) {
-    this.id = id;
+  public Staff(int staffId, String firstName, String lastName, String nickname, String address, String zipCode, String postalAddress, String country, String email) {
+    this.staffId = staffId;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.nickName = nickName;
+    this.nickname = nickname;
     this.address = address;
     this.zipCode = zipCode;
     this.postalAddress = postalAddress;
     this.country = country;
-    this.eMail = eMail;
+    this.email = email;
   }
 
   // methods
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
-  private List<Team> allStaff = new ArrayList<>();
+//  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+//  private List<Team> allStaff = new ArrayList<>();
 
   // Setters and getters
-  public int getId() {
-    return id;
+  public int getStaffId() {
+    return staffId;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setStaffId(int staffId) {
+    this.staffId = staffId;
   }
 
   public String getFirstName() {
@@ -92,12 +96,12 @@ public class Staff {
     this.lastName = lastName;
   }
 
-  public String getNickName() {
-    return nickName;
+  public String getNickname() {
+    return nickname;
   }
 
-  public void setNickName(String nickName) {
-    this.nickName = nickName;
+  public void setNickname(String nickname) {
+    this.nickname = nickname;
   }
 
   public String getAddress() {
@@ -132,19 +136,19 @@ public class Staff {
     this.country = country;
   }
 
-  public String geteMail() {
-    return eMail;
+  public String getEmail() {
+    return email;
   }
 
-  public void seteMail(String eMail) {
-    this.eMail = eMail;
+  public void setEmail(String email) {
+    this.email = email;
   }
 
-  public List<Team> getAllStaff() {
-    return allStaff;
-  }
-
-  public void setAllStaff(List<Team> allStaff) {
-    this.allStaff = allStaff;
-  }
+//  public List<Team> getAllStaff() {
+//    return allStaff;
+//  }
+//
+//  public void setAllStaff(List<Team> allStaff) {
+//    this.allStaff = allStaff;
+//  }
 }

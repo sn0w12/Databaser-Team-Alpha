@@ -104,7 +104,7 @@ public class MainWindow extends Application {
     menu.createStaff();
     menu.createPlayersAndTeamsDataForStaff();
 
-    List<Staff> staffList = staffController.getAll(true);
+    List<Staff> staffList = staffController.getAllStaff();
 
     chooseEmployee.showEmployeeMenu(staffList);
 

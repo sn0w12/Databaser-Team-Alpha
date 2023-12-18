@@ -1,21 +1,18 @@
 package com.teamalpha.teamalphapipergames.controller;
 
 import com.teamalpha.teamalphapipergames.model.Staff;
-import com.teamalpha.teamalphapipergames.model.Team;
-import com.teamalpha.teamalphapipergames.model.Game;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class StaffController {
 
   public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
   // CREATE
-  public boolean save(Object staff) {
+  public boolean save(Staff staff) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
@@ -24,8 +21,8 @@ public class StaffController {
       entityManager.persist(staff);
       transaction.commit();
       return true;
-    } catch (Exception e){
-      if(transaction != null){
+    } catch (Exception e) {
+      if (transaction != null) {
         transaction.rollback();
       }
       e.printStackTrace();
@@ -35,31 +32,16 @@ public class StaffController {
     return false;
   }
   // READ
-  public List<Staff> getAll(boolean printOut) {
+  public List<Staff> getAllStaff() {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
-    List<Staff> staffListToReturn = new ArrayList<>();
-    List<String> staffNamesToReturn = new ArrayList<>();
+    List<Staff> staffList = null;
 
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      TypedQuery<Staff> resultList = entityManager.createQuery("FROM Staff", Staff.class);
-      staffListToReturn.addAll(resultList.getResultList());
-
-      for (Staff staff : staffListToReturn) {
-        staffNamesToReturn.add(staff.getFirstName() + " " + staff.getLastName());
-      }
-
+      staffList = entityManager.createQuery("FROM Staff", Staff.class).getResultList();
       transaction.commit();
-
-      if (printOut) {
-        for (Staff staff : staffListToReturn) {
-          System.out.println(staff.getId() + ". " + staff.getFirstName() + " " + staff.getLastName());
-        }
-      }
-
-      return staffListToReturn;
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -69,38 +51,9 @@ public class StaffController {
       entityManager.close();
     }
 
-    return Collections.emptyList();
+    return staffList;
   }
 
-
-  // OLD
-//  public List<Staff> getAll(boolean printOut){
-//    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-//    EntityTransaction transaction = null;
-//    List<Staff> staffListToReturn = new ArrayList<>();
-//    try {
-//      transaction = entityManager.getTransaction();
-//      transaction.begin();
-//      TypedQuery<Staff> resultList = entityManager.createQuery("FROM Staff", Staff.class);
-//      staffListToReturn.addAll(resultList.getResultList());
-//      transaction.commit();
-//      if(printOut){
-//        for (Staff staff :
-//            staffListToReturn) {
-//          System.out.println(staff.getId() + ". " + staff.getFirstName() + " " + staff.getLastName());
-//        }
-//      }
-//      return staffListToReturn;
-//    } catch (Exception e){
-//      if(transaction != null){
-//        transaction.rollback();
-//      }
-//      e.printStackTrace();
-//    } finally {
-//      entityManager.close();
-//    }
-//    return null;
-//  }
   // READ 1
   public Staff getStaffById(int id){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -122,7 +75,7 @@ public class StaffController {
     return null;
   }
   // UPDATE
-  public boolean updateStaff(Staff staff){
+  public boolean update(Staff staff){
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
@@ -142,18 +95,18 @@ public class StaffController {
     return false;
   }
   // DELETE
-  public boolean deleteStaff(Staff staff){
+  public boolean delete(int staffId) {
     EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
     EntityTransaction transaction = null;
     try {
       transaction = entityManager.getTransaction();
       transaction.begin();
-      // If the entity is attached then remove customer, else merge(attach/update) entity and then remove
-      entityManager.remove(entityManager.contains(staff) ? staff :entityManager.merge(staff));
+      Staff staff = entityManager.find(Staff.class, staffId);
+      entityManager.remove(staff);
       transaction.commit();
       return true;
-    } catch (Exception e){
-      if(transaction != null){
+    } catch (Exception e) {
+      if (transaction != null) {
         transaction.rollback();
       }
       e.printStackTrace();

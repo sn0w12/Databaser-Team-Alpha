@@ -69,7 +69,13 @@ class StaffMainMenu extends Application {
 
       // Add STAFF button
       Button staffButton = createStaffButton();
-      staffButton.setOnAction(event -> handleStaffButton());
+      staffButton.setOnAction(event -> {
+        try {
+          handleStaffButton();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
 
       // Add LOGOUT button
       Button logOutButton = createLogOutButton();
@@ -228,8 +234,16 @@ class StaffMainMenu extends Application {
     return staffButton;
   }
 
-  private void handleStaffButton() {
+  private void handleStaffButton() throws Exception {
     System.out.println("Launching STAFF");
+
+    StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController);
+
+    // Start next stage
+    staffGraphics.start(stage);
+
+
+    stage.close();
   }
 
   private Button createLogOutButton() {
