@@ -143,12 +143,4 @@ public class Staff {
   public void setEmail(String email) {
     this.email = email;
   }
-
-//  public List<Team> getAllStaff() {
-//    return allStaff;
-//  }
-//
-//  public void setAllStaff(List<Team> allStaff) {
-//    this.allStaff = allStaff;
-//  }
 }

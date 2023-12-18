@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -442,108 +443,8 @@ public class PlayerGraphics extends Application {
 
     // Set the scene to the stage
     Scene listPlayersScene = new Scene(vBox, 400, 400);
-
-    // +++ COLORS +++
-    // Color top bar
-    listPlayersScene.setFill(Color.web("#174b54"));
-
-    // Color the columns at top
-    playerIdColumn.setStyle("-fx-background-color: #75e8bd; -fx-text-fill: white;");
-    playerNicknameColumn.setStyle("-fx-background-color: #75e8bd; -fx-text-fill: white;");
-    playerTeamNameColumn.setStyle("-fx-background-color: #75e8bd; -fx-text-fill: white;");
-    playerGameColumn.setStyle("-fx-background-color: #75e8bd; -fx-text-fill: white;");
-
-    // Color columns
-    playerIdColumn.setCellFactory(column -> new TableCell<Player, Integer>() {
-      @Override
-      protected void updateItem(Integer item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          setText(item.toString());
-
-          // Set background color based on row index
-          int rowIndex = getIndex();
-          String bgColor = (rowIndex % 2 == 0) ? "#14373d" : "#174b54";
-          setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: white;");
-        }
-      }
-    });
-    playerNicknameColumn.setCellFactory(column -> new TableCell<Player, String>() {
-      @Override
-      protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          setText(item);
-
-          // Set background color based on row index
-          int rowIndex = getIndex();
-          String bgColor = (rowIndex % 2 == 0) ? "#14373d" : "#174b54";
-          setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: white;");
-        }
-      }
-    });
-    playerTeamNameColumn.setCellFactory(column -> new TableCell<Player, String>() {
-      @Override
-      protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          setText(item);
-
-          // Set background color based on row index
-          int rowIndex = getIndex();
-          String bgColor = (rowIndex % 2 == 0) ? "#14373d" : "#174b54";
-          setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: white;");
-        }
-      }
-    });
-    playerGameColumn.setCellFactory(column -> new TableCell<Player, String>() {
-      @Override
-      protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          setText(item);
-
-          // Set background color based on row index
-          int rowIndex = getIndex();
-          String bgColor = (rowIndex % 2 == 0) ? "#14373d" : "#174b54";
-          setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: white;");
-        }
-      }
-    });
-
-    // Color lines depending on row - this filles the whole table even when resized outside of max length
-    allPlayersTable.setRowFactory(tv -> new TableRow<Player>() {
-      @Override
-      protected void updateItem(Player item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (getIndex() % 2 == 0) {
-          setStyle("-fx-background-color: #14373d; -fx-text-fill: white;");
-        } else {
-          setStyle("-fx-background-color: #174b54; -fx-text-fill: white;");
-        }
-      }
-    });
-
-    // Colors the inner borders
-    allPlayersTable.setStyle("-fx-table-cell-border-color: #14373d;");
-    // --- COLORS ---
+    // Load CSS file
+    listPlayersScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
     mainMenuStage.setScene(listPlayersScene);
     mainMenuStage.show();
