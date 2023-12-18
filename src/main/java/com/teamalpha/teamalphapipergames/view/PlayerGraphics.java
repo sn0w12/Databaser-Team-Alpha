@@ -852,14 +852,14 @@ public class PlayerGraphics extends Application {
 
 
     playerBox.setOnAction(event -> {
-          Player selectedPlayerInBox = playerBox.getSelectionModel().getSelectedItem();
-          if (selectedPlayerInBox != null) {
-            teamInformation.setText(selectedPlayerInBox.getNickName() + " is currently in: " + selectedPlayerInBox.getTeam().getName());
-          } else {
-            teamInformation.setText("Could not fetch team data");
-            teamInformation.setTextFill(Color.RED);
-          }
-        });
+      Player selectedPlayerInBox = playerBox.getSelectionModel().getSelectedItem();
+      if (selectedPlayerInBox != null) {
+        teamInformation.setText(selectedPlayerInBox.getNickName() + " is currently in: " + selectedPlayerInBox.getTeam().getName());
+      } else {
+        teamInformation.setText("Could not fetch team data");
+        teamInformation.setTextFill(Color.RED);
+      }
+    });
 
 
     // Add buttons, labels, and HBox to VBox

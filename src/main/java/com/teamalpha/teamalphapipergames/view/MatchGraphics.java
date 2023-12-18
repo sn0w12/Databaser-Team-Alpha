@@ -1,8 +1,9 @@
 package com.teamalpha.teamalphapipergames.view;
 
-import com.teamalpha.teamalphapipergames.controller.MatchController;
+import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.Match;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -16,12 +17,34 @@ import javafx.scene.layout.*;
 
 public class MatchGraphics extends Application {
     Stage stage;
-
-    MatchController matchController = new MatchController();
+    private GameController gameController;
+    private TeamController teamController;
+    private PlayerController playerController;
+    private MatchController matchController;
+    private StaffController staffController;
     private final TableView<Match> allMatchesTable = new TableView<>();
+
+    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+        this.gameController = gameController;
+        this.teamController = teamController;
+        this.playerController = playerController;
+        this.matchController = matchController;
+        this.staffController = staffController;
+    }
 
     @Override
     public void start(Stage matchStage) throws Exception {
+        try {
+            this.stage = matchStage;
+            Platform.runLater(() -> {
+                mainWindow(stage);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mainWindow(Stage matchStage) {
         matchStage.setTitle("Matches");
         matchStage.setWidth(500);
         matchStage.setHeight(500);
@@ -31,8 +54,8 @@ public class MatchGraphics extends Application {
 
         Button buttonShowAllMatches = new Button("Show all matches");
         buttonShowAllMatches.setOnAction(event -> {
-                    showAllMatches();
-                }
+                showAllMatches();
+            }
         );
         vBoxAlternatives.getChildren().add(buttonShowAllMatches);
 

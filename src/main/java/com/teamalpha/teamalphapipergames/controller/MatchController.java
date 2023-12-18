@@ -90,13 +90,13 @@ public class MatchController {
     public List <Match> getAllMatchesNoPrint() {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
-    List<Match> matchesToReturn;
+        List<Match> matchesToReturn;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
 
 
-          matchesToReturn = entityManager.createQuery("FROM Match",Match.class).getResultList();
+            matchesToReturn = entityManager.createQuery("FROM Match",Match.class).getResultList();
             transaction.commit();
 
 
@@ -204,4 +204,3 @@ public class MatchController {
 
 // getUpcomingMatches
 //boolean getFinishedMatches
-

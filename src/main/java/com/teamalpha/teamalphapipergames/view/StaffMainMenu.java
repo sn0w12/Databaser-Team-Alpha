@@ -41,7 +41,13 @@ class StaffMainMenu extends Application {
 
       // Add TEAMS button
       Button teamsButton = createTeamsButton();
-      teamsButton.setOnAction(event -> handleTeamsButton());
+      teamsButton.setOnAction(event -> {
+        try {
+          handleTeamsButton();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
 
       // Add PLAYERS button
       Button playersButton = createPlayersButton();
@@ -157,8 +163,14 @@ class StaffMainMenu extends Application {
     return teamsButton;
   }
 
-  private void handleTeamsButton() {
-    System.out.println("Launching TEAMS");
+  private void handleTeamsButton() throws Exception {
+    System.out.println("Launching MATCHES");
+
+    TeamGraphics teamGraphics = new TeamGraphics(gameController, teamController, playerController, matchController, staffController);
+
+    // start stage
+    teamGraphics.start(stage);
+
   }
 
   private Button createPlayersButton() {
@@ -200,7 +212,7 @@ class StaffMainMenu extends Application {
   public void handleMatchesButton() throws Exception {
     System.out.println("Launching MATCHES");
 
-    MatchGraphics matchGraphics = new MatchGraphics();
+    MatchGraphics matchGraphics = new MatchGraphics(gameController, teamController, playerController, matchController, staffController);
 
     // start stage
     matchGraphics.start(stage);
