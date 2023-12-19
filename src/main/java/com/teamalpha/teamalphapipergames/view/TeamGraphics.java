@@ -26,13 +26,15 @@ public class TeamGraphics {
   private PlayerController playerController;
   private MatchController matchController;
   private StaffController staffController;
+  private TournamentController tournamentController;
 
-  public TeamGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+  public TeamGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
     this.gameController = gameController;
     this.teamController = teamController;
     this.playerController = playerController;
     this.matchController = matchController;
     this.staffController = staffController;
+    this.tournamentController = tournamentController;
   }
 
   public void start(Stage primaryStage) throws Exception {
@@ -355,7 +357,7 @@ public class TeamGraphics {
     backButton.setOnAction(event -> {
       System.out.println("Back to Staff Main Menu");
 
-      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
+      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
       // start stage
       try {

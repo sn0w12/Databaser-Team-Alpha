@@ -32,15 +32,16 @@ public class PlayerGraphics extends Application {
   private PlayerController playerController;
   private MatchController matchController;
   private StaffController staffController;
+  private TournamentController tournamentController;
 
   // list players table
-
-  public PlayerGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+  public PlayerGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
     this.gameController = gameController;
     this.teamController = teamController;
     this.playerController = playerController;
     this.matchController = matchController;
     this.staffController = staffController;
+    this.tournamentController = tournamentController;
   }
 
   @Override
@@ -58,6 +59,355 @@ public class PlayerGraphics extends Application {
 
 
   // SCENES
+  // Main Menu
+  public void mainMenu() {
+    Stage mainMenuStage = new Stage();
+    mainMenuStage.setTitle("Players Menu");
+    mainMenuStage.setWidth(382);
+    mainMenuStage.setHeight(500);
+
+    // Create the TableView
+    TableView<Player> allPlayersTable = new TableView<>();
+
+    // Columns, new PropertValueFactory<>("NAME OF VARIABLE IN CLASS");
+    TableColumn<Player, Integer> playerIdColumn = new TableColumn<>("Player ID");
+    playerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+    TableColumn<Player, String> playerNicknameColumn = new TableColumn<>("Player Nickname");
+    playerNicknameColumn.setCellValueFactory(new PropertyValueFactory<>("nickName"));
+
+    TableColumn<Player, String> playerTeamNameColumn = new TableColumn<>("Team");
+    playerTeamNameColumn.setCellValueFactory(cellData -> {
+      Player player = cellData.getValue();
+      if (player.getTeam() != null) {
+        return new SimpleStringProperty(player.getTeam().getName());
+      } else {
+        return new SimpleStringProperty("NONE");
+      }
+    });
+
+    TableColumn<Player, String> playerGameColumn = new TableColumn<>("Game");
+    playerGameColumn.setCellValueFactory(cellData -> {
+      Player player = cellData.getValue();
+      if (player.getTeam() != null) {
+        if (player.getTeam().getGame() != null) {
+          return new SimpleStringProperty(player.getTeam().getGame().getName());
+        } else {
+          return new SimpleStringProperty("NONE");
+        }
+      } else if (player.getGame() != null) {
+        return new SimpleStringProperty(player.getGame().getName());
+      } else {
+        return new SimpleStringProperty("NONE");
+      }
+    });
+
+    // Tie columns to allPlayerTable
+    allPlayersTable.getColumns().addAll(playerIdColumn, playerNicknameColumn, playerTeamNameColumn, playerGameColumn);
+
+    // Fetch data
+    ObservableList<Player> playerData = FXCollections.observableArrayList(playerController.getAll(false));
+    allPlayersTable.setItems(playerData);
+
+    // button length
+    double buttonWidth = 191;
+    // +++++++ update button
+    // Create the "UPDATE TABLE" button
+    Button updateTableButton = new Button("UPDATE TABLE");
+    updateTableButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    updateTableButton.setOnMouseEntered(event -> updateTableButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    updateTableButton.setOnMouseExited(event -> updateTableButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    updateTableButton.setPrefWidth(buttonWidth);
+
+    // Add an event handler to the button to update the table
+    updateTableButton.setOnAction(event -> {
+      // Fetch data
+      ObservableList<Player> updatedPlayerData = FXCollections.observableArrayList(playerController.getAll(false));
+      allPlayersTable.setItems(updatedPlayerData);
+    });
+
+
+    // Create player button
+    Button createPlayerButton = new Button("CREATE PLAYER");
+    createPlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    createPlayerButton.setOnMouseEntered(event -> createPlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    createPlayerButton.setOnMouseExited(event -> createPlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    createPlayerButton.setMinWidth(buttonWidth);
+    createPlayerButton.setMaxWidth(buttonWidth);
+
+    createPlayerButton.setOnAction(event -> {
+      createPlayer();
+    });
+
+    // Delete player button
+    Button deletePlayerButton = new Button("DELETE PLAYER");
+    deletePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    deletePlayerButton.setOnMouseEntered(event -> deletePlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    deletePlayerButton.setOnMouseExited(event -> deletePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    deletePlayerButton.setMinWidth(buttonWidth);
+    deletePlayerButton.setMaxWidth(buttonWidth);
+
+    deletePlayerButton.setOnAction(event -> {
+      deletePlayer();
+    });
+
+    // Update player button
+    Button updatePlayerButton = new Button("EDIT PLAYER");
+    updatePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    updatePlayerButton.setOnMouseEntered(event -> updatePlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    updatePlayerButton.setOnMouseExited(event -> updatePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    updatePlayerButton.setMinWidth(buttonWidth);
+    updatePlayerButton.setMaxWidth(buttonWidth);
+
+    updatePlayerButton.setOnAction(event -> {
+      updatePlayer();
+    });
+
+    // Add player To Team
+    Button addPlayerToTeamButton = new Button("ADD TO TEAM");
+    addPlayerToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    addPlayerToTeamButton.setOnMouseEntered(event -> addPlayerToTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    addPlayerToTeamButton.setOnMouseExited(event -> addPlayerToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    addPlayerToTeamButton.setMinWidth(buttonWidth);
+    addPlayerToTeamButton.setMaxWidth(buttonWidth);
+
+    addPlayerToTeamButton.setOnAction(event -> {
+      addPlayerToTeam();
+    });
+
+    // Remove player from team button
+    Button removePlayerFromTeamButton = new Button("REMOVE FROM TEAM");
+    removePlayerFromTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    removePlayerFromTeamButton.setOnMouseEntered(event -> removePlayerFromTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    removePlayerFromTeamButton.setOnMouseExited(event -> removePlayerFromTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    removePlayerFromTeamButton.setMinWidth(buttonWidth);
+    removePlayerFromTeamButton.setMaxWidth(buttonWidth);
+
+    removePlayerFromTeamButton.setOnAction(event -> {
+      removePlayerFromTeam();
+    });
+
+    // Add player To Game
+    Button addPlayerToGameButton = new Button("ADD TO GAME");
+    addPlayerToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    addPlayerToGameButton.setOnMouseEntered(event -> addPlayerToGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    addPlayerToGameButton.setOnMouseExited(event -> addPlayerToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    addPlayerToGameButton.setMinWidth(buttonWidth);
+    addPlayerToGameButton.setMaxWidth(buttonWidth);
+
+    addPlayerToGameButton.setOnAction(event -> {
+      addPlayerToGame();
+    });
+
+    // Remove player from game button
+    Button removePlayerFromGameButton = new Button("REMOVE FROM GAME");
+    removePlayerFromGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    removePlayerFromGameButton.setOnMouseEntered(event -> removePlayerFromGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    removePlayerFromGameButton.setOnMouseExited(event -> removePlayerFromGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    removePlayerFromGameButton.setMinWidth(buttonWidth);
+    removePlayerFromGameButton.setMaxWidth(buttonWidth);
+
+    removePlayerFromGameButton.setOnAction(event -> {
+      removePlayerFromGame();
+    });
+
+    // Back button
+    Button backButton = new Button("BACK");
+    backButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    backButton.setOnMouseEntered(event -> backButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    backButton.setOnMouseExited(event -> backButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    backButton.setMinWidth(382);
+    backButton.setMaxWidth(382);
+
+    backButton.setOnAction(event -> {
+      System.out.println("Back to Staff Main Menu");
+
+      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
+
+      // start stage
+      try {
+        staffMainMenu.start(stage);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+
+      mainMenuStage.close();
+    });
+
+    // change listview button
+    Button listButton = new Button("FILTER LIST");
+    listButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    listButton.setOnMouseEntered(event -> listButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    listButton.setOnMouseExited(event -> listButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+    listButton.setMinWidth(382);
+    listButton.setMaxWidth(382);
+
+    listButton.setOnAction(event -> {
+      // what should happen when button is pressed
+      changeListView(allPlayersTable);
+    });
+
+
+    // Create an HBox to hold the "UPDATE TABLE" and "CREATE PLAYER" buttons
+    HBox buttonsBox1 = new HBox(createPlayerButton, updatePlayerButton);
+    buttonsBox1.setAlignment(Pos.CENTER);
+
+    HBox buttonsBox2 = new HBox(addPlayerToTeamButton, removePlayerFromTeamButton);
+    buttonsBox2.setAlignment(Pos.CENTER);
+
+    HBox buttonsBox3 = new HBox(addPlayerToGameButton, removePlayerFromGameButton);
+    buttonsBox3.setAlignment(Pos.CENTER);
+
+    HBox buttonsBox4 = new HBox(updateTableButton, deletePlayerButton);
+    buttonsBox4.setAlignment(Pos.CENTER);
+
+    HBox buttonsBox5 = new HBox(backButton);
+    buttonsBox5.setAlignment(Pos.CENTER);
+
+    // Create a VBox to hold the table and the "UPDATE TABLE" and "CREATE PLAYER" buttons
+    VBox vBox = new VBox(listButton, allPlayersTable, buttonsBox1, buttonsBox2, buttonsBox3, buttonsBox4, buttonsBox5);
+    VBox.setVgrow(allPlayersTable, Priority.ALWAYS);
+    vBox.setStyle("-fx-background-color: #174b54;");
+    // ----- update button
+
+
+    // Set the scene to the stage
+    Scene listPlayersScene = new Scene(vBox, 400, 400);
+    // Load CSS file
+    listPlayersScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
+    mainMenuStage.setScene(listPlayersScene);
+    mainMenuStage.show();
+  }
+
+  // Filter list method
+  public void changeListView(TableView<Player> allPlayersTable) {
+    Stage listViewStage = new Stage();
+    listViewStage.setTitle("Filter List");
+    listViewStage.setWidth(300);
+    listViewStage.setHeight(350);
+
+    // Wrap VBox in StackPane to center it
+    StackPane stackPane = new StackPane();
+
+    // Existing VBox
+    VBox vBox = new VBox();
+    vBox.setAlignment(Pos.CENTER);
+    vBox.setSpacing(10);
+
+    Label infoLabel = new Label("Filter list by options");
+    infoLabel.setTextFill(Color.WHITE);
+
+    Label spaceLabel = new Label("");
+
+    Label viewGamesLabel = new Label("View Games");
+    viewGamesLabel.setTextFill(Color.WHITE);
+
+    // Create checkboxes dynamically
+    List<CheckBox> checkBoxes = createCheckBoxes();
+
+    // Add checkboxes to the VBox
+    vBox.getChildren().addAll(infoLabel, spaceLabel, viewGamesLabel);
+    vBox.getChildren().addAll(checkBoxes);
+
+    Button applyButton = new Button("APPLY");
+    applyButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    applyButton.setPrefWidth(130);
+
+    AtomicBoolean filteringSuccessful = new AtomicBoolean(false);
+
+    // Add a listener to the applyButton to update checkboxes when it's clicked
+    applyButton.setOnAction(event -> {
+      // Get the selected game IDs from checkboxes
+      List<String> selectedIds = checkBoxes.stream()
+          .filter(CheckBox::isSelected)
+          .map(CheckBox::getUserData)
+          .map(Object::toString)
+          .collect(Collectors.toList());
+
+      // Perform filtering based on selected game IDs
+      List<Player> filteredPlayers;
+      if (selectedIds.isEmpty()) {
+        // If no games are selected, show players from all games
+        filteredPlayers = playerController.getAll(false);
+      } else {
+        filteredPlayers = playerController.getAll(false).stream()
+            .filter(player -> {
+              // Check if the player is directly connected to a game
+              boolean connectedToGameDirectly = player.getGame() != null && selectedIds.contains(String.valueOf(player.getGame().getId()));
+
+              // Check if the player is in a team connected to a game
+              boolean connectedToGameThroughTeam =
+                  player.getTeam() != null &&
+                      player.getTeam().getGame() != null &&
+                      selectedIds.contains(String.valueOf(player.getTeam().getGame().getId()));
+
+              // Include the player if connected to the game directly or through a team
+              return connectedToGameDirectly || connectedToGameThroughTeam;
+            })
+            .collect(Collectors.toList());
+      }
+
+      // Update the provided TableView with filtered player data
+      ObservableList<Player> updatedPlayerData = FXCollections.observableArrayList(filteredPlayers);
+      allPlayersTable.setItems(updatedPlayerData);
+
+      // Close the filter list window
+      listViewStage.close();
+
+      // Set filteringSuccessful to true
+      filteringSuccessful.set(true);
+
+      // Update checkboxes after filtering
+      updateCheckBoxes(checkBoxes);
+    });
+
+    Button closeWindowButton = new Button("CLOSE");
+    closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    closeWindowButton.setPrefWidth(130);
+
+    HBox buttonBox = new HBox(10); // 10 is spacing between buttons
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.getChildren().addAll(applyButton, closeWindowButton);
+
+    vBox.getChildren().add(buttonBox);
+
+    // add vBox to stackpane
+    stackPane.getChildren().add(vBox);
+
+    Scene listScene = new Scene(stackPane);
+    stackPane.setStyle("-fx-background-color: #14373d;");
+
+    listViewStage.setScene(listScene);
+    listViewStage.show();
+
+    closeWindowButton.setOnAction(event -> {
+      listViewStage.close();
+      // Update checkboxes after closing the window
+      updateCheckBoxes(checkBoxes);
+    });
+  }
+
+  // Method to create checkboxes based on the current list of games
+  private List<CheckBox> createCheckBoxes() {
+    List<Game> games = gameController.getAll(false);
+    return games.stream()
+        .map(game -> {
+          CheckBox checkBox = new CheckBox(game.getName());
+          checkBox.setUserData(String.valueOf(game.getId()));
+          checkBox.setTextFill(Color.WHITE);
+          return checkBox;
+        })
+        .collect(Collectors.toList());
+  }
+
+  // Method to update checkboxes based on the current list of games
+  private void updateCheckBoxes(List<CheckBox> checkBoxes) {
+    List<CheckBox> updatedCheckBoxes = createCheckBoxes();
+    checkBoxes.clear();
+    checkBoxes.addAll(updatedCheckBoxes);
+  }
+
   // CREATE PLAYER
   public void createPlayer() {
     Stage createPlayerStage = new Stage();
@@ -227,355 +577,6 @@ public class PlayerGraphics extends Application {
     closeWindowButton.setOnAction(events -> {
       createPlayerStage.close();
     });
-  }
-
-  // Main Menu
-  public void mainMenu() {
-    Stage mainMenuStage = new Stage();
-    mainMenuStage.setTitle("Main Menu");
-    mainMenuStage.setWidth(382);
-    mainMenuStage.setHeight(500);
-
-    // Create the TableView
-    TableView<Player> allPlayersTable = new TableView<>();
-
-    // Columns, new PropertValueFactory<>("NAME OF VARIABLE IN CLASS");
-    TableColumn<Player, Integer> playerIdColumn = new TableColumn<>("Player ID");
-    playerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-    TableColumn<Player, String> playerNicknameColumn = new TableColumn<>("Player Nickname");
-    playerNicknameColumn.setCellValueFactory(new PropertyValueFactory<>("nickName"));
-
-    TableColumn<Player, String> playerTeamNameColumn = new TableColumn<>("Team");
-    playerTeamNameColumn.setCellValueFactory(cellData -> {
-      Player player = cellData.getValue();
-      if (player.getTeam() != null) {
-        return new SimpleStringProperty(player.getTeam().getName());
-      } else {
-        return new SimpleStringProperty("NONE");
-      }
-    });
-
-    TableColumn<Player, String> playerGameColumn = new TableColumn<>("Game");
-    playerGameColumn.setCellValueFactory(cellData -> {
-      Player player = cellData.getValue();
-      if (player.getTeam() != null) {
-        if (player.getTeam().getGame() != null) {
-          return new SimpleStringProperty(player.getTeam().getGame().getName());
-        } else {
-          return new SimpleStringProperty("NONE");
-        }
-      } else if (player.getGame() != null) {
-        return new SimpleStringProperty(player.getGame().getName());
-      } else {
-        return new SimpleStringProperty("NONE");
-      }
-    });
-
-    // Tie columns to allPlayerTable
-    allPlayersTable.getColumns().addAll(playerIdColumn, playerNicknameColumn, playerTeamNameColumn, playerGameColumn);
-
-    // Fetch data
-    ObservableList<Player> playerData = FXCollections.observableArrayList(playerController.getAll(false));
-    allPlayersTable.setItems(playerData);
-
-    // button length
-    double buttonWidth = 191;
-    // +++++++ update button
-    // Create the "UPDATE TABLE" button
-    Button updateTableButton = new Button("UPDATE TABLE");
-    updateTableButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    updateTableButton.setOnMouseEntered(event -> updateTableButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    updateTableButton.setOnMouseExited(event -> updateTableButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    updateTableButton.setPrefWidth(buttonWidth);
-
-    // Add an event handler to the button to update the table
-    updateTableButton.setOnAction(event -> {
-      // Fetch data
-      ObservableList<Player> updatedPlayerData = FXCollections.observableArrayList(playerController.getAll(false));
-      allPlayersTable.setItems(updatedPlayerData);
-    });
-
-
-    // Create player button
-    Button createPlayerButton = new Button("CREATE PLAYER");
-    createPlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    createPlayerButton.setOnMouseEntered(event -> createPlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    createPlayerButton.setOnMouseExited(event -> createPlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    createPlayerButton.setMinWidth(buttonWidth);
-    createPlayerButton.setMaxWidth(buttonWidth);
-
-    createPlayerButton.setOnAction(event -> {
-      createPlayer();
-    });
-
-    // Delete player button
-    Button deletePlayerButton = new Button("DELETE PLAYER");
-    deletePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    deletePlayerButton.setOnMouseEntered(event -> deletePlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    deletePlayerButton.setOnMouseExited(event -> deletePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    deletePlayerButton.setMinWidth(buttonWidth);
-    deletePlayerButton.setMaxWidth(buttonWidth);
-
-    deletePlayerButton.setOnAction(event -> {
-      deletePlayer();
-    });
-
-    // Update player button
-    Button updatePlayerButton = new Button("EDIT PLAYER");
-    updatePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    updatePlayerButton.setOnMouseEntered(event -> updatePlayerButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    updatePlayerButton.setOnMouseExited(event -> updatePlayerButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    updatePlayerButton.setMinWidth(buttonWidth);
-    updatePlayerButton.setMaxWidth(buttonWidth);
-
-    updatePlayerButton.setOnAction(event -> {
-      updatePlayer();
-    });
-
-    // Add player To Team
-    Button addPlayerToTeamButton = new Button("ADD TO TEAM");
-    addPlayerToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addPlayerToTeamButton.setOnMouseEntered(event -> addPlayerToTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    addPlayerToTeamButton.setOnMouseExited(event -> addPlayerToTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    addPlayerToTeamButton.setMinWidth(buttonWidth);
-    addPlayerToTeamButton.setMaxWidth(buttonWidth);
-
-    addPlayerToTeamButton.setOnAction(event -> {
-      addPlayerToTeam();
-    });
-
-    // Remove player from team button
-    Button removePlayerFromTeamButton = new Button("REMOVE FROM TEAM");
-    removePlayerFromTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    removePlayerFromTeamButton.setOnMouseEntered(event -> removePlayerFromTeamButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    removePlayerFromTeamButton.setOnMouseExited(event -> removePlayerFromTeamButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    removePlayerFromTeamButton.setMinWidth(buttonWidth);
-    removePlayerFromTeamButton.setMaxWidth(buttonWidth);
-
-    removePlayerFromTeamButton.setOnAction(event -> {
-      removePlayerFromTeam();
-    });
-
-    // Add player To Game
-    Button addPlayerToGameButton = new Button("ADD TO GAME");
-    addPlayerToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addPlayerToGameButton.setOnMouseEntered(event -> addPlayerToGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    addPlayerToGameButton.setOnMouseExited(event -> addPlayerToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    addPlayerToGameButton.setMinWidth(buttonWidth);
-    addPlayerToGameButton.setMaxWidth(buttonWidth);
-
-    addPlayerToGameButton.setOnAction(event -> {
-      addPlayerToGame();
-    });
-
-    // Remove player from game button
-    Button removePlayerFromGameButton = new Button("REMOVE FROM GAME");
-    removePlayerFromGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    removePlayerFromGameButton.setOnMouseEntered(event -> removePlayerFromGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    removePlayerFromGameButton.setOnMouseExited(event -> removePlayerFromGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    removePlayerFromGameButton.setMinWidth(buttonWidth);
-    removePlayerFromGameButton.setMaxWidth(buttonWidth);
-
-    removePlayerFromGameButton.setOnAction(event -> {
-      removePlayerFromGame();
-    });
-
-    // Back button
-    Button backButton = new Button("BACK");
-    backButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    backButton.setOnMouseEntered(event -> backButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    backButton.setOnMouseExited(event -> backButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    backButton.setMinWidth(382);
-    backButton.setMaxWidth(382);
-
-    backButton.setOnAction(event -> {
-      System.out.println("Back to Staff Main Menu");
-
-      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
-
-      // start stage
-      try {
-        staffMainMenu.start(stage);
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-
-      mainMenuStage.close();
-    });
-
-    // change listview button
-    Button listButton = new Button("CHANGE LIST");
-    listButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    listButton.setOnMouseEntered(event -> listButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    listButton.setOnMouseExited(event -> listButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    listButton.setMinWidth(382);
-    listButton.setMaxWidth(382);
-
-    listButton.setOnAction(event -> {
-      // what should happen when button is pressed
-      changeListView(allPlayersTable);
-    });
-
-
-    // Create an HBox to hold the "UPDATE TABLE" and "CREATE PLAYER" buttons
-    HBox buttonsBox1 = new HBox(createPlayerButton, updatePlayerButton);
-    buttonsBox1.setAlignment(Pos.CENTER);
-
-    HBox buttonsBox2 = new HBox(addPlayerToTeamButton, removePlayerFromTeamButton);
-    buttonsBox2.setAlignment(Pos.CENTER);
-
-    HBox buttonsBox3 = new HBox(addPlayerToGameButton, removePlayerFromGameButton);
-    buttonsBox3.setAlignment(Pos.CENTER);
-
-    HBox buttonsBox4 = new HBox(updateTableButton, deletePlayerButton);
-    buttonsBox4.setAlignment(Pos.CENTER);
-
-    HBox buttonsBox5 = new HBox(backButton);
-    buttonsBox4.setAlignment(Pos.CENTER);
-
-    // Create a VBox to hold the table and the "UPDATE TABLE" and "CREATE PLAYER" buttons
-    VBox vBox = new VBox(listButton, allPlayersTable, buttonsBox1, buttonsBox2, buttonsBox3, buttonsBox4, buttonsBox5);
-    VBox.setVgrow(allPlayersTable, Priority.ALWAYS);
-    vBox.setStyle("-fx-background-color: #174b54;");
-    // ----- update button
-
-
-    // Set the scene to the stage
-    Scene listPlayersScene = new Scene(vBox, 400, 400);
-    // Load CSS file
-    listPlayersScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
-
-    mainMenuStage.setScene(listPlayersScene);
-    mainMenuStage.show();
-  }
-
-  // List specific player by ID (more info)
-  public void changeListView(TableView<Player> allPlayersTable) {
-    Stage listViewStage = new Stage();
-    listViewStage.setTitle("Filter List");
-    listViewStage.setWidth(300);
-    listViewStage.setHeight(350);
-
-    // Wrap VBox in StackPane to center it
-    StackPane stackPane = new StackPane();
-
-    // Existing VBox
-    VBox vBox = new VBox();
-    vBox.setAlignment(Pos.CENTER);
-    vBox.setSpacing(10);
-
-    Label infoLabel = new Label("Filter list by options");
-    infoLabel.setTextFill(Color.WHITE);
-
-    Label spaceLabel = new Label("");
-
-    Label viewGamesLabel = new Label("View Games");
-    viewGamesLabel.setTextFill(Color.WHITE);
-
-    // Create checkboxes dynamically
-    List<CheckBox> checkBoxes = createCheckBoxes();
-
-    // Add checkboxes to the VBox
-    vBox.getChildren().addAll(infoLabel, spaceLabel, viewGamesLabel);
-    vBox.getChildren().addAll(checkBoxes);
-
-    Button applyButton = new Button("APPLY");
-    applyButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    applyButton.setPrefWidth(130);
-
-    AtomicBoolean filteringSuccessful = new AtomicBoolean(false);
-
-    // Add a listener to the applyButton to update checkboxes when it's clicked
-    applyButton.setOnAction(event -> {
-      // Get the selected game IDs from checkboxes
-      List<String> selectedIds = checkBoxes.stream()
-          .filter(CheckBox::isSelected)
-          .map(CheckBox::getUserData)
-          .map(Object::toString)
-          .collect(Collectors.toList());
-
-      // Perform filtering based on selected game IDs
-      List<Player> filteredPlayers;
-      if (selectedIds.isEmpty()) {
-        // If no games are selected, show players from all games
-        filteredPlayers = playerController.getAll(false);
-      } else {
-        filteredPlayers = playerController.getAll(false).stream()
-            .filter(player -> {
-              // Check if the player is directly connected to a game
-              boolean connectedToGameDirectly = player.getGame() != null && selectedIds.contains(String.valueOf(player.getGame().getId()));
-
-              // Check if the player is in a team connected to a game
-              boolean connectedToGameThroughTeam =
-                  player.getTeam() != null &&
-                      player.getTeam().getGame() != null &&
-                      selectedIds.contains(String.valueOf(player.getTeam().getGame().getId()));
-
-              // Include the player if connected to the game directly or through a team
-              return connectedToGameDirectly || connectedToGameThroughTeam;
-            })
-            .collect(Collectors.toList());
-      }
-
-      // Update the provided TableView with filtered player data
-      ObservableList<Player> updatedPlayerData = FXCollections.observableArrayList(filteredPlayers);
-      allPlayersTable.setItems(updatedPlayerData);
-
-      // Close the filter list window
-      listViewStage.close();
-
-      // Set filteringSuccessful to true
-      filteringSuccessful.set(true);
-
-      // Update checkboxes after filtering
-      updateCheckBoxes(checkBoxes);
-    });
-
-    Button closeWindowButton = new Button("CLOSE");
-    closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    closeWindowButton.setPrefWidth(130);
-
-    HBox buttonBox = new HBox(10); // 10 is spacing between buttons
-    buttonBox.setAlignment(Pos.CENTER);
-    buttonBox.getChildren().addAll(applyButton, closeWindowButton);
-
-    vBox.getChildren().add(buttonBox);
-
-    // add vBox to stackpane
-    stackPane.getChildren().add(vBox);
-
-    Scene listScene = new Scene(stackPane);
-    stackPane.setStyle("-fx-background-color: #14373d;");
-
-    listViewStage.setScene(listScene);
-    listViewStage.show();
-
-    closeWindowButton.setOnAction(event -> {
-      listViewStage.close();
-      // Update checkboxes after closing the window
-      updateCheckBoxes(checkBoxes);
-    });
-  }
-
-  // Method to create checkboxes based on the current list of games
-  private List<CheckBox> createCheckBoxes() {
-    List<Game> games = gameController.getAll(false);
-    return games.stream()
-        .map(game -> {
-          CheckBox checkBox = new CheckBox(game.getName());
-          checkBox.setUserData(String.valueOf(game.getId()));
-          checkBox.setTextFill(Color.WHITE);
-          return checkBox;
-        })
-        .collect(Collectors.toList());
-  }
-
-  // Method to update checkboxes based on the current list of games
-  private void updateCheckBoxes(List<CheckBox> checkBoxes) {
-    List<CheckBox> updatedCheckBoxes = createCheckBoxes();
-    checkBoxes.clear();
-    checkBoxes.addAll(updatedCheckBoxes);
   }
 
   // ADD PLAYER TO TEAM

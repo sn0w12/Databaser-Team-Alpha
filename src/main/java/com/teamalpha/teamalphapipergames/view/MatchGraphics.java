@@ -22,14 +22,16 @@ public class MatchGraphics extends Application {
     private PlayerController playerController;
     private MatchController matchController;
     private StaffController staffController;
+    private TournamentController tournamentController;
     private final TableView<Match> allMatchesTable = new TableView<>();
 
-    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
         this.gameController = gameController;
         this.teamController = teamController;
         this.playerController = playerController;
         this.matchController = matchController;
         this.staffController = staffController;
+        this.tournamentController = tournamentController;
     }
 
     @Override

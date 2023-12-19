@@ -17,15 +17,17 @@ class StaffMainMenu extends Application {
   private final PlayerController playerController;
   private final MatchController matchController;
   private final StaffController staffController;
+  private final TournamentController tournamentController;
 
 
   // Constructor
-  public StaffMainMenu(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+  public StaffMainMenu(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
     this.gameController = gameController;
     this.teamController = teamController;
     this.playerController = playerController;
     this.matchController = matchController;
     this.staffController = staffController;
+    this.tournamentController = tournamentController;
   }
 
   @Override
@@ -71,7 +73,13 @@ class StaffMainMenu extends Application {
 
       // Add TOURNAMENT button
       Button tournamentsButton = createTournamentsButton();
-      tournamentsButton.setOnAction(event -> handleTournamentsButton());
+      tournamentsButton.setOnAction(event -> {
+        try {
+          handleTournamentsButton();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
 
       // Add STAFF button
       Button staffButton = createStaffButton();
@@ -166,7 +174,7 @@ class StaffMainMenu extends Application {
   private void handleTeamsButton() throws Exception {
     System.out.println("Launching MATCHES");
 
-    TeamGraphics teamGraphics = new TeamGraphics(gameController, teamController, playerController, matchController, staffController);
+    TeamGraphics teamGraphics = new TeamGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
     // start stage
     teamGraphics.start(stage);
@@ -189,7 +197,7 @@ class StaffMainMenu extends Application {
   public void handlePlayersButton() throws Exception {
     System.out.println("Launching PLAYERS");
 
-    PlayerGraphics playerGraphics = new PlayerGraphics(gameController, teamController, playerController, matchController, staffController);
+    PlayerGraphics playerGraphics = new PlayerGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
     // Start next stage
     playerGraphics.start(stage);
@@ -213,7 +221,7 @@ class StaffMainMenu extends Application {
   public void handleMatchesButton() throws Exception {
     System.out.println("Launching MATCHES");
 
-    MatchGraphics matchGraphics = new MatchGraphics(gameController, teamController, playerController, matchController, staffController);
+    MatchGraphics matchGraphics = new MatchGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
     // start stage
     matchGraphics.start(stage);
@@ -231,8 +239,12 @@ class StaffMainMenu extends Application {
     return tournamentsButton;
   }
 
-  private void handleTournamentsButton() {
+  private void handleTournamentsButton() throws Exception {
     System.out.println("Launching TOURNAMENTS");
+
+    TournamentGraphics tournamentGraphics = new TournamentGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
+
+    tournamentGraphics.start(stage);
   }
 
   private Button createStaffButton() {
@@ -250,7 +262,7 @@ class StaffMainMenu extends Application {
   private void handleStaffButton() throws Exception {
     System.out.println("Launching STAFF");
 
-    StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController);
+    StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
     // Start next stage
     staffGraphics.start(stage);
