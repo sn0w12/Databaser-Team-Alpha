@@ -1788,6 +1788,12 @@ public class Menu {
         teamController.updateTeam(cloud9LoLTeam);
         System.out.println("Team renamed to Cloud9");
       }
+
+      // adding player to specific game as well
+      for (Player player : playersToAdd) {
+        gameController.addPlayerToGame(player.getId(), player.getTeam().getGame().getId());
+        System.out.println(player.getNickName() + " added to: " + player.getTeam().getGame().getName());
+      }
     }
 
   }

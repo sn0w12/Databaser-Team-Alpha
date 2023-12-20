@@ -81,4 +81,9 @@ public class Tournament {
   public void setGame(Game game) {
     this.game = game;
   }
+
+  @Override
+  public String toString() {
+    return getName();
+  }
 }

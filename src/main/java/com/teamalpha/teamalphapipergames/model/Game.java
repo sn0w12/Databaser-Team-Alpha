@@ -35,6 +35,10 @@ public class Game {
   @Fetch(FetchMode.SUBSELECT)
   private List<Player> individualPlayers = new ArrayList<>();
 
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+  @Fetch(FetchMode.SUBSELECT)
+  private List<Tournament> tournamentGameList = new ArrayList<>();
+
   public Game() {
   }
   public Game(String name) {
@@ -65,6 +69,11 @@ public class Game {
   public void addPlayer(Player player) {
     player.setGame(this);
     individualPlayers.add(player);
+  }
+
+  public void addTournament(Tournament tournament) {
+    tournament.setGame(this);
+    tournamentGameList.add(tournament);
   }
 
   public int getId() {

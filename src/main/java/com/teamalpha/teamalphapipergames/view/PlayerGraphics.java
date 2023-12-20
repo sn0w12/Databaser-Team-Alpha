@@ -822,7 +822,7 @@ public class PlayerGraphics extends Application {
     VBox vBoxCreatePlayer = new VBox();
     vBoxCreatePlayer.setAlignment(Pos.CENTER);
 
-    Label infoLabel = new Label("Only players without a game and team are shown");
+    Label infoLabel = new Label("Only players without a game");
     infoLabel.setTextFill(Color.WHITE);
 
     Label spaceLabel = new Label("");
@@ -833,7 +833,7 @@ public class PlayerGraphics extends Application {
     ComboBox<Player> playerBox = new ComboBox<>();
     playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
     List<Player> allPlayers = playerController.getAll(true);
-    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() == null && player.getGame() == null).collect(Collectors.toList());
+    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() == null).collect(Collectors.toList());
 
     ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
     playerBox.setItems(playerList);
@@ -935,7 +935,7 @@ public class PlayerGraphics extends Application {
     VBox vBoxCreatePlayer = new VBox();
     vBoxCreatePlayer.setAlignment(Pos.CENTER);
 
-    Label infoLabel = new Label("Only players who are tied to a game and missing a team can be selected");
+    Label infoLabel = new Label("Only players who are tied to a game can be selected");
     infoLabel.setTextFill(Color.WHITE);
 
     Label spaceLabel = new Label("");
@@ -946,7 +946,7 @@ public class PlayerGraphics extends Application {
     ComboBox<Player> playerBox = new ComboBox<>();
     playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
     List<Player> allPlayers = playerController.getAll(true);
-    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() != null && player.getTeam() == null).collect(Collectors.toList());
+    List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() != null).collect(Collectors.toList());
 
     ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
     playerBox.setItems(playerList);

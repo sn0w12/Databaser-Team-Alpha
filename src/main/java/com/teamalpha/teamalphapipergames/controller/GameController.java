@@ -3,6 +3,8 @@ package com.teamalpha.teamalphapipergames.controller;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 import com.teamalpha.teamalphapipergames.model.Game;
+import com.teamalpha.teamalphapipergames.model.Tournament;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +193,35 @@ public class GameController {
         Team team = possiblyATeam.get();
         game = possiblyAGame.get();
         game.addTeam(team);
+      }
+      transaction.commit();
+      return true;
+    } catch (Exception e){
+      if(transaction != null){
+        transaction.rollback();
+      }
+      e.printStackTrace();
+    } finally {
+      entityManager.close();
+    }
+    return false;
+  }
+
+  // Assign tournament to game
+  public boolean addTournamentToGame(int tournamentId, int gameId){
+    EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    EntityTransaction transaction = null;
+    Game game;
+    try {
+      transaction = entityManager.getTransaction();
+      transaction.begin();
+      Optional<Tournament> possiblyATournament = Optional.ofNullable(entityManager.find(Tournament.class,tournamentId));
+      Optional<Game> possiblyAGame = Optional.ofNullable(entityManager.find(Game.class, gameId));
+      if(possiblyAGame.isPresent() && possiblyATournament.isPresent()){
+        System.out.println("Both exist");
+        Tournament tournament = possiblyATournament.get();
+        game = possiblyAGame.get();
+        game.addTournament(tournament);
       }
       transaction.commit();
       return true;
