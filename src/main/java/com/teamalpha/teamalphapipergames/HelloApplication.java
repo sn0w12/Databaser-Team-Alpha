@@ -37,25 +37,6 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
 
-
-
-
-        MatchController matchController = new MatchController();
-        matchController.saveMatch(new Match(true, 1, 1, 2, false, "2023/12/24"));
-        matchController.saveMatch(new Match(true, 1, 2, 4, true, "3455"));
-        matchController.saveMatch(new Match(false, 1, 2, 4, true, "3455"));
-        matchController.saveMatch(new Match(false, 1, 2, 4, true, "3455"));
-        //matchController.saveMatch(new Match(false, 1, 2, 4, true, "3455"));
-
-        //  matchController.getAllMatches(true);
-
-        System.out.println("***********************");
-        matchController.getPlayedOrUpcomingMatches(true, true);
-        System.out.println("***********************");
-        matchController.getPlayedOrUpcomingMatches(true, false);
-
-        System.out.println("test igen");
-
         launch();
     }
 }

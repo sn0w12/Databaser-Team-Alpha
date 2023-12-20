@@ -1,6 +1,8 @@
 package com.teamalpha.teamalphapipergames.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // @Entity, we want this class to have persistence in the database
 @Entity
@@ -34,6 +36,9 @@ public class Player {
   @ManyToOne
   @JoinColumn(name = "team_id")  // This is the owning side of the relation
   private Team team;
+
+  @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy = "players"*/)
+  private List<Match> playerMatches=new ArrayList<>();
 
   // Connection to Game
   @ManyToOne
@@ -93,6 +98,10 @@ public class Player {
     this.country = country;
     this.eMail = eMail;
     this.team = team;
+  }
+
+  public void addMatch(Match match){
+    playerMatches.add(match);
   }
 
   // Getters and Setters
@@ -184,16 +193,18 @@ public class Player {
     this.game = game;
   }
 
-  public Match getMatch() {
-    return match;
+  public List<Match> getMatches() {
+    return playerMatches;
   }
 
-  public void setMatch(Match match) {
-    this.match = match;
+  public void setMatches(List <Match> match) {
+
+    this.playerMatches = match;
   }
 
   @Override
   public String toString() {
     return getNickName();
   }
+
 }

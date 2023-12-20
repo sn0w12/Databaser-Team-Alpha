@@ -29,6 +29,9 @@ public class Team {
   @JoinColumn(name = "match_id")
   private Match match;
 
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL/* , mappedBy = "teams"*/)
+  private List<Match> teamMatches=new ArrayList<>();
+
   // to bind players to team
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "team")
   private List<Player> ownedPlayers = new ArrayList<>();
@@ -54,6 +57,10 @@ public class Team {
   public void addPlayer(Player player){
     player.setTeam(this);
     ownedPlayers.add(player);
+  }
+
+  public void addMatch (Match match){
+    teamMatches.add(match);
   }
 
   public int getId() {
@@ -94,6 +101,14 @@ public class Team {
 
   public void setOwnedPlayers(List<Player> ownedPlayers) {
     this.ownedPlayers = ownedPlayers;
+  }
+
+  public List<Match> getMatches() {
+    return teamMatches;
+  }
+
+  public void setMatches(List<Match> matches) {
+    this.teamMatches = matches;
   }
 
   @Override
