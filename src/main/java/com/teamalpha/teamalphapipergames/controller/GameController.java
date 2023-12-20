@@ -53,7 +53,7 @@ public class GameController {
       if(printOut){
         for (Game game :
             gameListToReturn) {
-          System.out.println(game.getId() + ". " + game.getName());
+          System.out.println(game.getGame_id() + ". " + game.getName());
           for (Team team :
               game.getOwnedTeams()) {
             System.out.println("\t - " + team.getName());

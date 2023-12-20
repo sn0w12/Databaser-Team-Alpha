@@ -18,7 +18,7 @@ public class Game {
   // The id will be generetad by the database
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "game_id")
-  private int id;
+  private int game_id;
   // @Column(name = "game_title", length = 30) is equivalent to VARCHAR(30) in database terms
   @Column(name = "game_title", length = 30)
   private String name;
@@ -44,8 +44,8 @@ public class Game {
   public Game(String name) {
     this.name = name;
   }
-  public Game(int id, String name) {
-    this.id = id;
+  public Game(int game_id, String name) {
+    this.game_id = game_id;
     this.name = name;
   }
   public void addTeam(Team team){
@@ -76,12 +76,12 @@ public class Game {
     tournamentGameList.add(tournament);
   }
 
-  public int getId() {
-    return id;
+  public int getGame_id() {
+    return game_id;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setGame_id(int game_id) {
+    this.game_id = game_id;
   }
 
   public String getName() {

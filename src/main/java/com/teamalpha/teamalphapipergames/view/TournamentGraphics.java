@@ -19,11 +19,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -125,32 +124,32 @@ public class TournamentGraphics extends Application {
     });
 
     // Add to tournament button
-    Button addToTournamentButton = new Button("ADD TEAMS/PLAYERS");
-    addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addToTournamentButton.setOnMouseEntered(event -> addToTournamentButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    addToTournamentButton.setOnMouseExited(event -> addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    addToTournamentButton.setMinWidth(buttonWidth);
-    addToTournamentButton.setMaxWidth(buttonWidth);
-    addToTournamentButton.setAlignment(Pos.CENTER);
-
-    addToTournamentButton.setOnAction(event -> {
-      addTeamsOrPlayersToTournament();
-    });
+//    Button addToTournamentButton = new Button("ADD TEAMS/PLAYERS");
+//    addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+//    addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+//    addToTournamentButton.setOnMouseEntered(event -> addToTournamentButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+//    addToTournamentButton.setOnMouseExited(event -> addToTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+//    addToTournamentButton.setMinWidth(buttonWidth);
+//    addToTournamentButton.setMaxWidth(buttonWidth);
+//    addToTournamentButton.setAlignment(Pos.CENTER);
+//
+//    addToTournamentButton.setOnAction(event -> {
+//      addTeamsOrPlayersToTournament();
+//    });
 
     // Add to Games button
-    Button addTournamentToGamesButton = new Button("ADD TO GAME");
-    addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-    addTournamentToGamesButton.setOnMouseEntered(event -> addTournamentToGamesButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-    addTournamentToGamesButton.setOnMouseExited(event -> addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-    addTournamentToGamesButton.setMinWidth(buttonWidth);
-    addTournamentToGamesButton.setMaxWidth(buttonWidth);
-    addTournamentToGamesButton.setAlignment(Pos.CENTER);
-
-    addTournamentToGamesButton.setOnAction(event -> {
-      addTournamentToGame();
-    });
+//    Button addTournamentToGamesButton = new Button("ADD TO GAME");
+//    addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+//    addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+//    addTournamentToGamesButton.setOnMouseEntered(event -> addTournamentToGamesButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+//    addTournamentToGamesButton.setOnMouseExited(event -> addTournamentToGamesButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+//    addTournamentToGamesButton.setMinWidth(buttonWidth);
+//    addTournamentToGamesButton.setMaxWidth(buttonWidth);
+//    addTournamentToGamesButton.setAlignment(Pos.CENTER);
+//
+//    addTournamentToGamesButton.setOnAction(event -> {
+//      addTournamentToGame();
+//    });
 
     // Add score to tournament button
     Button addScoreToTournamentButton = new Button("ADD SCORE");
@@ -235,20 +234,14 @@ public class TournamentGraphics extends Application {
     HBox buttonsBox1 = new HBox(createTournamentButton, updateTournamentButton);
     buttonsBox1.setAlignment(Pos.CENTER);
 
-    HBox buttonsBox2 = new HBox(addTournamentToGamesButton);
+    HBox buttonsBox2 = new HBox(updateTableButton, deleteTournamentButton);
     buttonsBox2.setAlignment(Pos.CENTER);
 
-    HBox buttonsBox3 = new HBox(addToTournamentButton, addScoreToTournamentButton);
-    buttonsBox2.setAlignment(Pos.CENTER);
-
-    HBox buttonsBox4 = new HBox(updateTableButton, deleteTournamentButton);
+    HBox buttonsBox3 = new HBox(backButton);
     buttonsBox3.setAlignment(Pos.CENTER);
 
-    HBox buttonsBox5 = new HBox(backButton);
-    buttonsBox4.setAlignment(Pos.CENTER);
-
     // Create a VBox to hold the table and the "UPDATE TABLE" and "CREATE PLAYER" buttons
-    VBox vBox = new VBox(listButton, allTournamentsTable, buttonsBox1, buttonsBox2, buttonsBox3, buttonsBox4, buttonsBox5);
+    VBox vBox = new VBox(listButton, allTournamentsTable, buttonsBox1, buttonsBox2, buttonsBox3);
     VBox.setVgrow(allTournamentsTable, Priority.ALWAYS);
     vBox.setStyle("-fx-background-color: #174b54;");
 
@@ -317,7 +310,7 @@ public class TournamentGraphics extends Application {
         filteredTournaments = tournamentController.getAll(false).stream()
             .filter(tournament -> {
               // Check if the player is directly connected to a game
-              boolean connectedToGameDirectly = tournament.getGame() != null && selectedIds.contains(String.valueOf(tournament.getGame().getId()));
+              boolean connectedToGameDirectly = tournament.getGame() != null && selectedIds.contains(String.valueOf(tournament.getGame().getGame_id()));
 
               // Include the player if connected to the game directly or through a team
               return connectedToGameDirectly;
@@ -372,7 +365,7 @@ public class TournamentGraphics extends Application {
     return games.stream()
         .map(game -> {
           CheckBox checkBox = new CheckBox(game.getName());
-          checkBox.setUserData(String.valueOf(game.getId()));
+          checkBox.setUserData(String.valueOf(game.getGame_id()));
           checkBox.setTextFill(Color.WHITE);
           return checkBox;
         })
@@ -419,7 +412,7 @@ public class TournamentGraphics extends Application {
 
     Label spaceLabel3 = new Label();
 
-    Button createTournamentButton = new Button("CREATE");
+    Button createTournamentButton = new Button("NEXT");
     createTournamentButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
     createTournamentButton.setPrefWidth(95);
     createTournamentButton.setOnMouseEntered(event -> createTournamentButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
@@ -483,11 +476,18 @@ public class TournamentGraphics extends Application {
           messageLabel.setText("You have to fill in the required textfield");
           messageLabel.setTextFill(Color.RED);
         } else {
-          tournamentController.save(new Tournament(title, contestants), contestants);
+          Tournament savedTournament = new Tournament(title, contestants);
+          tournamentController.save(savedTournament, contestants);
           messageLabel.setText("Tournament: " + title + " with " + contestants + " contestants was created");
           messageLabel.setTextFill(Color.LIGHTGREEN);
           titleTextField.clear();
           nrOfContestants.getSelectionModel().clearSelection();
+
+          // Close window
+          createTournamentStage.close();
+
+          // Open next
+          addTournamentToGame(savedTournament);
         }
       } catch (IllegalArgumentException e) {
         // Handle specific exception related to invalid arguments
@@ -506,7 +506,7 @@ public class TournamentGraphics extends Application {
 
   }
 
-  public void addTournamentToGame() {
+  public void addTournamentToGame(Tournament savedTournament) {
     Stage createAddTournamentToGameStage = new Stage();
     createAddTournamentToGameStage.setTitle("Add Tournament to Game");
     createAddTournamentToGameStage.setWidth(300);
@@ -522,9 +522,9 @@ public class TournamentGraphics extends Application {
     Label infoLabel = new Label("Only tournaments without a game are shown");
     infoLabel.setTextFill(Color.WHITE);
 
-    Label spaceLabel = new Label("");
+    Label spaceLabel = new Label();
 
-    Label chooseTournament = new Label("Choose Tournament");
+    Label chooseTournament = new Label("Tournament: " + savedTournament.getName());
     chooseTournament.setTextFill(Color.WHITE);
 
     ComboBox<Tournament> tournamentBox = new ComboBox<>();
@@ -535,7 +535,7 @@ public class TournamentGraphics extends Application {
     ObservableList<Tournament> tournamentList = FXCollections.observableArrayList(availableTournaments);
     tournamentBox.setItems(tournamentList);
 
-    Label spaceLabel2 = new Label("");
+    Label spaceLabel2 = new Label();
 
     Label chooseGame = new Label("Choose Game");
     chooseGame.setTextFill(Color.WHITE);
@@ -547,9 +547,42 @@ public class TournamentGraphics extends Application {
     ObservableList<Game> gameList = FXCollections.observableArrayList(allGames);
     gameBox.setItems(gameList);
 
-    Label spaceLabel3 = new Label("");
+    Label spaceLabel3 = new Label();
 
-    Button createAddToGameButton = new Button("ADD TO GAME");
+    // Checkboxes
+    Label gameTypeLabel = new Label("Tournament Type");
+    gameTypeLabel.setTextFill(Color.WHITE);
+    CheckBox teamBox = new CheckBox("Teams");
+    teamBox.setTextFill(Color.WHITE);
+    CheckBox playerBox = new CheckBox("Players");
+    playerBox.setTextFill(Color.WHITE);
+
+    // Checkboxes settings
+    teamBox.setOnAction(event -> {
+      if (teamBox.isSelected()) {
+        playerBox.setSelected(false);
+        playerBox.setDisable(true);
+        savedTournament.setTeamGame(true);
+      } else {
+        playerBox.setDisable(false);
+        savedTournament.setTeamGame(false);
+      }
+    });
+
+    playerBox.setOnAction(event -> {
+      if (playerBox.isSelected()) {
+        teamBox.setSelected(false);
+        teamBox.setDisable(true);
+        savedTournament.setTeamGame(false);
+      } else {
+        teamBox.setDisable(false);
+        savedTournament.setTeamGame(true);
+      }
+    });
+
+    Label spaceLabel4 = new Label();
+
+    Button createAddToGameButton = new Button("NEXT");
     createAddToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
     createAddToGameButton.setPrefWidth(130);
     createAddToGameButton.setOnMouseEntered(event -> createAddToGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
@@ -573,7 +606,7 @@ public class TournamentGraphics extends Application {
     // Add buttons, labels, and HBox to VBox
     vBoxTournamentToGame.getChildren().addAll(
         infoLabel, spaceLabel, chooseTournament, tournamentBox, spaceLabel2,
-        chooseGame, gameBox, spaceLabel3, buttonBox, spaceLabel10, messageLabel
+        chooseGame, gameBox, spaceLabel3, gameTypeLabel, teamBox, playerBox, spaceLabel4, buttonBox, spaceLabel10, messageLabel
     );
 
     stackPane.getChildren().addAll(vBoxTournamentToGame);
@@ -585,28 +618,33 @@ public class TournamentGraphics extends Application {
     createAddTournamentToGameStage.show();
 
     createAddToGameButton.setOnAction(event -> {
-      Tournament selectedTournament = tournamentBox.getSelectionModel().getSelectedItem();
       Game selectedGame = gameBox.getSelectionModel().getSelectedItem();
 
-      if (selectedTournament != null && selectedGame != null) {
-        int tournamentId = selectedTournament.getId();
-        int gameId = selectedGame.getId();
+      if (savedTournament != null && selectedGame != null) {
+        int tournamentId = savedTournament.getId();
+        int gameId = selectedGame.getGame_id();
 
         if (gameController.addTournamentToGame(tournamentId, gameId)) {
-          messageLabel.setText(selectedTournament.getName() + " added to " + selectedGame.getName());
+          messageLabel.setText(savedTournament.getName() + " added to " + selectedGame.getName());
           messageLabel.setTextFill(Color.LIGHTGREEN);
-          System.out.println("✅ Player added to Game");
+          System.out.println("✅ Tournament added to Game");
 
           tournamentBox.getSelectionModel().clearSelection();
           gameBox.getSelectionModel().clearSelection();
 
+          // Close window
+          createAddTournamentToGameStage.close();
+
+          // Open new
+          addTeamsOrPlayersToTournament(savedTournament, gameId);
+
         } else {
-          System.out.println("❌ Player failed to be added to Game");
+          System.out.println("❌ Tournament failed to be added to Game");
         }
-      } else if (selectedTournament != null && selectedGame == null) {
+      } else if (savedTournament != null && selectedGame == null) {
         messageLabel.setText("Choose a Game");
         messageLabel.setTextFill(Color.RED);
-      } else if (selectedTournament == null && selectedGame != null) {
+      } else if (savedTournament == null && selectedGame != null) {
         messageLabel.setText("Choose a Tournament");
         messageLabel.setTextFill(Color.RED);
       }
@@ -618,7 +656,7 @@ public class TournamentGraphics extends Application {
     });
   }
 
-  public void addTeamsOrPlayersToTournament() {
+  public void addTeamsOrPlayersToTournament(Tournament savedTournament, int gameId) {
     Stage addMatchesStage = new Stage();
     addMatchesStage.setTitle("Add Teams/Players");
     addMatchesStage.setWidth(322);
@@ -630,83 +668,372 @@ public class TournamentGraphics extends Application {
     VBox vBoxAddMatch = new VBox();
     vBoxAddMatch.setAlignment(Pos.CENTER);
 
-    Label chooseTournamentLabel = new Label("Choose Tournament");
-    chooseTournamentLabel.setTextFill(Color.WHITE);
-
-    ComboBox<Tournament> tournamentBox = new ComboBox();
-    tournamentBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
-    tournamentBox.setPromptText("Select Tournament");
-    List<Tournament> allTournaments = tournamentController.getAll(true);
-    ObservableList<Tournament> tournamentsList = FXCollections.observableArrayList(allTournaments);
-    tournamentBox.setItems(tournamentsList);
+    Label savedTournamentLabel = new Label("Tournament: " + savedTournament.getName());
+    savedTournamentLabel.setTextFill(Color.WHITE);
 
     Label spaceLabel = new Label();
 
-    Label chooseType = new Label("Choose Type");
-    chooseType.setTextFill(Color.WHITE);
+    String typeOfTournament = "";
+    if (savedTournament.isTeamGame()) {
+      typeOfTournament = "Teams";
+    } else {
+      typeOfTournament = "Players";
+    }
+    Label tournamentTypeLabel = new Label("Tournament Type: " + typeOfTournament);
+    tournamentTypeLabel.setTextFill(Color.WHITE);
 
-    CheckBox typeTeamBox = new CheckBox("Teams");
-    typeTeamBox.setTextFill(Color.WHITE);
-    CheckBox typePlayerBox = new CheckBox("Players");
-    typePlayerBox.setTextFill(Color.WHITE);
+    Label spaceLabel2 = new Label();
 
     Label spaceLabel3 = new Label();
 
-    Label contestantLabel = new Label("Contestants");
-    contestantLabel.setTextFill(Color.WHITE);
+    Button createAddToGameButton = new Button("DONE");
+    createAddToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    createAddToGameButton.setPrefWidth(130);
+    createAddToGameButton.setOnMouseEntered(event -> createAddToGameButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    createAddToGameButton.setOnMouseExited(event -> createAddToGameButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
 
-    // Add event handlers to create ComboBoxes immediately when checkboxes are selected
-    typeTeamBox.setOnAction(event -> createComboBoxes(vBoxAddMatch, tournamentBox, typeTeamBox, typePlayerBox));
-    typePlayerBox.setOnAction(event -> createComboBoxes(vBoxAddMatch, tournamentBox, typeTeamBox, typePlayerBox));
+    Button closeWindowButton = new Button("CLOSE");
+    closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
+    closeWindowButton.setPrefWidth(130);
+    closeWindowButton.setOnMouseEntered(event -> closeWindowButton.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
+    closeWindowButton.setOnMouseExited(event -> closeWindowButton.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
+
+    HBox buttonBox = new HBox(10); // 10 is spacing between buttons
+    buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.getChildren().addAll(createAddToGameButton, closeWindowButton);
 
     // add to vBox
     vBoxAddMatch.getChildren().addAll(
-        chooseTournamentLabel, tournamentBox, spaceLabel,
-        chooseType, typeTeamBox, typePlayerBox, spaceLabel3,
-        contestantLabel
+        savedTournamentLabel, spaceLabel,
+        tournamentTypeLabel, spaceLabel2
     );
 
-    stackPane.getChildren().addAll(vBoxAddMatch);
 
-    Scene addMatchScene = new Scene(stackPane);
-    stackPane.setStyle("-fx-background-color: #14373d;");
+    Team team1 = null;
+    Team team2 = null;
+    ComboBox<Team> teamComboBox = null;
+    ComboBox<Team> teamComboBox2 = null;
 
-    addMatchesStage.setScene(addMatchScene);
-    addMatchesStage.show();
-  }
+    if (savedTournament.isTeamGame()) {
+      if (savedTournament.getContestants() == 2) {
+        // Box 1
 
-  private void createComboBoxes(VBox vBox, ComboBox<Tournament> tournamentBox, CheckBox typeTeamBox, CheckBox typePlayerBox) {
-    Tournament selectedTournament = tournamentBox.getSelectionModel().getSelectedItem();
-    if (selectedTournament != null) {
-      int contestants = selectedTournament.getContestants();
-      // Clear existing ComboBoxes
-      vBox.getChildren().removeIf(node -> node instanceof ComboBox);
+        teamComboBox = new ComboBox<>();
+        teamComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+        List<Team> allTeams = teamController.getAll(true);
+        List<Team> availableTeams = allTeams.stream().filter(team -> team.getGame() != null && team.getGame().getGame_id() == gameId).collect(Collectors.toList());
 
-      // Create ComboBoxes based on the user's selection
-      if (typeTeamBox.isSelected()) {
-        for (int i = 1; i <= contestants; i++) {
-          ComboBox<Team> teamBox = new ComboBox<>();
-          teamBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
-          teamBox.setPromptText("Select Contestant");
-          List<Team> allTeams = teamController.getAll(true);
-          List<Team> availableTeams = allTeams.stream().filter(team -> team.getGame().getId() == selectedTournament.getGame().getId()).collect(Collectors.toList());
-          ObservableList<Team> teamsList = FXCollections.observableArrayList(availableTeams);
-          teamBox.setItems(teamsList);
-          vBox.getChildren().add(teamBox);
-        }
-      } else if (typePlayerBox.isSelected()) {
-        for (int i = 1; i <= contestants; i++) {
-          ComboBox<Player> playerBox = new ComboBox<>();
-          playerBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
-          playerBox.setPromptText("Select Contestant");
-          List<Player> allPlayers = playerController.getAll(true);
-          List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getTeam() == null && player.getGame().getId() == selectedTournament.getGame().getId()).collect(Collectors.toList());
-          ObservableList<Player> playersList = FXCollections.observableArrayList(availablePlayers);
-          playerBox.setItems(playersList);
-          vBox.getChildren().add(playerBox);
-        }
+        ObservableList<Team> teamList = FXCollections.observableArrayList(availableTeams);
+        teamComboBox.setItems(teamList);
+
+        team1 = teamComboBox.getSelectionModel().getSelectedItem();
+
+
+        vBoxAddMatch.getChildren().add(teamComboBox);
+        Label spaceLabelForComboBox = new Label();
+        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+
+        // Box 2
+        teamComboBox2 = new ComboBox<>();
+        teamComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+        teamComboBox2.setItems(teamList);
+
+        vBoxAddMatch.getChildren().add(teamComboBox2);
+        Label spaceLabelForComboBox2 = new Label();
+        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+
+        team2 = teamComboBox2.getSelectionModel().getSelectedItem();
+
+//      } else if (savedTournament.getContestants() == 4) {
+//        // Box 1
+//        ComboBox<Team> teamComboBox = new ComboBox<>();
+//        teamComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        List<Team> allTeams = teamController.getAll(true);
+//        List<Team> availableTeams = allTeams.stream().filter(team -> team.getGame() != null && team.getGame().getGame_id() == gameId).collect(Collectors.toList());
+//
+//        ObservableList<Team> teamList = FXCollections.observableArrayList(availableTeams);
+//        teamComboBox.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox);
+//        Label spaceLabelForComboBox = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+//
+//        // Box 2
+//        ComboBox<Team> teamComboBox2 = new ComboBox<>();
+//        teamComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox2.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox2);
+//        Label spaceLabelForComboBox2 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+//
+//        // Box 3
+//        ComboBox<Team> teamComboBox3 = new ComboBox<>();
+//        teamComboBox3.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox3.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox3);
+//        Label spaceLabelForComboBox3 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox3);
+//
+//        // Box 2
+//        ComboBox<Team> teamComboBox4 = new ComboBox<>();
+//        teamComboBox4.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox4.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox4);
+//        Label spaceLabelForComboBox4 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox4);
+//      } else if (savedTournament.getContestants() == 8) {
+//        // Box 1
+//        ComboBox<Team> teamComboBox = new ComboBox<>();
+//        teamComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        List<Team> allTeams = teamController.getAll(true);
+//        List<Team> availableTeams = allTeams.stream().filter(team -> team.getGame() != null && team.getGame().getGame_id() == gameId).collect(Collectors.toList());
+//
+//        ObservableList<Team> teamList = FXCollections.observableArrayList(availableTeams);
+//        teamComboBox.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox);
+//        Label spaceLabelForComboBox = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+//
+//        // Box 2
+//        ComboBox<Team> teamComboBox2 = new ComboBox<>();
+//        teamComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox2.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox2);
+//        Label spaceLabelForComboBox2 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+//
+//        // Box 3
+//        ComboBox<Team> teamComboBox3 = new ComboBox<>();
+//        teamComboBox3.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox3.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox3);
+//        Label spaceLabelForComboBox3 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox3);
+//        // Box 4
+//        ComboBox<Team> teamComboBox4 = new ComboBox<>();
+//        teamComboBox4.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox4.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox4);
+//        Label spaceLabelForComboBox4 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox4);
+//        // Box 5
+//        ComboBox<Team> teamComboBox5 = new ComboBox<>();
+//        teamComboBox5.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox5.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox5);
+//        Label spaceLabelForComboBox5 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox5);
+//        // Box 6
+//        ComboBox<Team> teamComboBox6 = new ComboBox<>();
+//        teamComboBox6.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox6.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox6);
+//        Label spaceLabelForComboBox6 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox6);
+//        // Box 7
+//        ComboBox<Team> teamComboBox7 = new ComboBox<>();
+//        teamComboBox7.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox7.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox7);
+//        Label spaceLabelForComboBox7 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox7);
+//        // Box 8
+//        ComboBox<Team> teamComboBox8 = new ComboBox<>();
+//        teamComboBox8.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        teamComboBox8.setItems(teamList);
+//
+//        vBoxAddMatch.getChildren().add(teamComboBox8);
+//        Label spaceLabelForComboBox8 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox8);
+//      }
+//    } else {
+//      if (savedTournament.getContestants() == 2) {
+//        // Box 1
+//        ComboBox<Player> playerComboBox = new ComboBox<>();
+//        playerComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        List<Player> allPlayers = playerController.getAll(true);
+//        List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() != null && player.getGame().getGame_id() == gameId).collect(Collectors.toList());
+//
+//        ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
+//        playerComboBox.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox);
+//        Label spaceLabelForComboBox = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+//
+//        // Box 2
+//        ComboBox<Player> playerComboBox2 = new ComboBox<>();
+//        playerComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox2.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox2);
+//        Label spaceLabelForComboBox2 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+//      } else if (savedTournament.getContestants() == 4) {
+//        // Box 1
+//        ComboBox<Player> playerComboBox = new ComboBox<>();
+//        playerComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        List<Player> allPlayers = playerController.getAll(true);
+//        List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() != null && player.getGame().getGame_id() == gameId).collect(Collectors.toList());
+//
+//        ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
+//        playerComboBox.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox);
+//        Label spaceLabelForComboBox = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+//
+//        // Box 2
+//        ComboBox<Player> playerComboBox2 = new ComboBox<>();
+//        playerComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox2.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox2);
+//        Label spaceLabelForComboBox2 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+//
+//        // Box 3
+//        ComboBox<Player> playerComboBox3 = new ComboBox<>();
+//        playerComboBox3.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox3.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox3);
+//        Label spaceLabelForComboBox3 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox3);
+//
+//        // Box 4
+//        ComboBox<Player> playerComboBox4 = new ComboBox<>();
+//        playerComboBox4.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox4.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox4);
+//        Label spaceLabelForComboBox4 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox4);
+//      } else if (savedTournament.getContestants() == 8) {
+//        // Box 1
+//        ComboBox<Player> playerComboBox = new ComboBox<>();
+//        playerComboBox.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        List<Player> allPlayers = playerController.getAll(true);
+//        List<Player> availablePlayers = allPlayers.stream().filter(player -> player.getGame() != null && player.getGame().getGame_id() == gameId).collect(Collectors.toList());
+//
+//        ObservableList<Player> playerList = FXCollections.observableArrayList(availablePlayers);
+//        playerComboBox.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox);
+//        Label spaceLabelForComboBox = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox);
+//
+//        // Box 2
+//        ComboBox<Player> playerComboBox2 = new ComboBox<>();
+//        playerComboBox2.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox2.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox2);
+//        Label spaceLabelForComboBox2 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox2);
+//
+//        // Box 3
+//        ComboBox<Player> playerComboBox3 = new ComboBox<>();
+//        playerComboBox3.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox3.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox3);
+//        Label spaceLabelForComboBox3 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox3);
+//
+//        // Box 4
+//        ComboBox<Player> playerComboBox4 = new ComboBox<>();
+//        playerComboBox4.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox4.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox4);
+//        Label spaceLabelForComboBox4 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox4);
+//
+//        // Box 5
+//        ComboBox<Player> playerComboBox5 = new ComboBox<>();
+//        playerComboBox5.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox5.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox5);
+//        Label spaceLabelForComboBox5 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox5);
+//
+//        // Box 6
+//        ComboBox<Player> playerComboBox6 = new ComboBox<>();
+//        playerComboBox6.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox6.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox6);
+//        Label spaceLabelForComboBox6 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox6);
+//
+//        // Box 7
+//        ComboBox<Player> playerComboBox7 = new ComboBox<>();
+//        playerComboBox7.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox7.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox7);
+//        Label spaceLabelForComboBox7 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox7);
+//
+//        // Box 8
+//        ComboBox<Player> playerComboBox8 = new ComboBox<>();
+//        playerComboBox8.setStyle("-fx-background-color: #206773; -fx-mark-highlight-text-fill: white;");
+//        playerComboBox8.setItems(playerList);
+//
+//        vBoxAddMatch.getChildren().add(playerComboBox8);
+//        Label spaceLabelForComboBox8 = new Label();
+//        vBoxAddMatch.getChildren().add(spaceLabelForComboBox8);
+//      }
       }
+
+      LocalDate todaysDate = LocalDate.now();
+
+
+      vBoxAddMatch.getChildren().addAll(spaceLabel3, buttonBox);
+
+
+      closeWindowButton.setOnAction(event -> {
+        addMatchesStage.close();
+      });
+
+      ComboBox<Team> finalTeamComboBox = teamComboBox;
+      ComboBox<Team> finalTeamComboBox1 = teamComboBox2;
+      createAddToGameButton.setOnAction(event -> {
+        if (savedTournament.isTeamGame()) {
+          if (savedTournament.getContestants() == 2) {
+            Team finalTeam = finalTeamComboBox.getSelectionModel().getSelectedItem();
+            Team finalTeam1 = finalTeamComboBox1.getSelectionModel().getSelectedItem();
+
+            if (finalTeam != null && finalTeam1 != null) {
+              matchController.addNewMatch(gameId, true, finalTeam.getGame().getGame_id(), finalTeam1.getGame().getGame_id(), todaysDate);
+            } else {
+              // Handle the case where one or both teams are not selected
+              System.out.println("Please select both teams.");
+            }
+          }
+        }
+      });
+
+
+      stackPane.getChildren().addAll(vBoxAddMatch);
+
+      Scene addMatchScene = new Scene(stackPane);
+      stackPane.setStyle("-fx-background-color: #14373d;");
+
+      addMatchesStage.setScene(addMatchScene);
+      addMatchesStage.show();
     }
   }
-
 }

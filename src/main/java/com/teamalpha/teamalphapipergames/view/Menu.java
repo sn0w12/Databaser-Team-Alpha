@@ -359,7 +359,7 @@ public class Menu {
           System.out.println("✅ Game " + fetchedGame.get().getName() + " fetched successfully");
           System.out.println(""); // Radbryt
 
-          System.out.println("🪪 ID: " + fetchedGame.get().getId());
+          System.out.println("🪪 ID: " + fetchedGame.get().getGame_id());
           System.out.println("🎮 Game: " + fetchedGame.get().getName());
           System.out.println("🎮 Number of Teams: " + fetchedGame.get().getOwnedTeams().size());
 
@@ -1791,7 +1791,7 @@ public class Menu {
 
       // adding player to specific game as well
       for (Player player : playersToAdd) {
-        gameController.addPlayerToGame(player.getId(), player.getTeam().getGame().getId());
+        gameController.addPlayerToGame(player.getId(), player.getTeam().getGame().getGame_id());
         System.out.println(player.getNickName() + " added to: " + player.getTeam().getGame().getName());
       }
     }

@@ -17,9 +17,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -334,13 +332,13 @@ public class PlayerGraphics extends Application {
         filteredPlayers = playerController.getAll(false).stream()
             .filter(player -> {
               // Check if the player is directly connected to a game
-              boolean connectedToGameDirectly = player.getGame() != null && selectedIds.contains(String.valueOf(player.getGame().getId()));
+              boolean connectedToGameDirectly = player.getGame() != null && selectedIds.contains(String.valueOf(player.getGame().getGame_id()));
 
               // Check if the player is in a team connected to a game
               boolean connectedToGameThroughTeam =
                   player.getTeam() != null &&
                       player.getTeam().getGame() != null &&
-                      selectedIds.contains(String.valueOf(player.getTeam().getGame().getId()));
+                      selectedIds.contains(String.valueOf(player.getTeam().getGame().getGame_id()));
 
               // Include the player if connected to the game directly or through a team
               return connectedToGameDirectly || connectedToGameThroughTeam;
@@ -394,7 +392,7 @@ public class PlayerGraphics extends Application {
     return games.stream()
         .map(game -> {
           CheckBox checkBox = new CheckBox(game.getName());
-          checkBox.setUserData(String.valueOf(game.getId()));
+          checkBox.setUserData(String.valueOf(game.getGame_id()));
           checkBox.setTextFill(Color.WHITE);
           return checkBox;
         })
@@ -893,7 +891,7 @@ public class PlayerGraphics extends Application {
 
       if (selectedPlayer != null && selectedGame != null) {
         int playerId = selectedPlayer.getId();
-        int gameId = selectedGame.getId();
+        int gameId = selectedGame.getGame_id();
 
         if (gameController.addPlayerToGame(playerId, gameId)) {
           messageLabel.setText(selectedPlayer.getNickName() + " added to " + selectedGame.getName());
@@ -1012,7 +1010,7 @@ public class PlayerGraphics extends Application {
 
       if (selectedPlayer != null) {
         int playerId = selectedPlayer.getId();
-        int gameId = selectedPlayer.getGame().getId();
+        int gameId = selectedPlayer.getGame().getGame_id();
         String playerGame = selectedPlayer.getGame().getName();
 
         if (gameController.removePlayerFromGame(playerId, gameId)) {

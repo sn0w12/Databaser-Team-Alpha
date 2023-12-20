@@ -73,7 +73,6 @@ public class Match {
     this.teamGame = teamGame;
   }
 
-
   public void addPlayer(Player player) {
     players.add(player);
   }

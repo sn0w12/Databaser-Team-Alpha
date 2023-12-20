@@ -64,7 +64,7 @@ public class TeamGraphics {
     teamIdCol.setMaxWidth(100);
 
     TableColumn<Team, Integer> gameIdCol = new TableColumn<>("Game ID");
-    gameIdCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getGame() != null ? cellData.getValue().getGame().getId() : null));
+    gameIdCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getGame() != null ? cellData.getValue().getGame().getGame_id() : null));
     gameIdCol.setMinWidth(70);
     gameIdCol.setMaxWidth(100);
 
@@ -114,7 +114,7 @@ public class TeamGraphics {
       editTeamButton.setDisable(newSelection == null);
       removeTeamButton.setDisable(newSelection == null);
       if (newSelection != null) {
-        selectedTeamLabel.setText("Selected team name: " + newSelection.getName() + ", team id: " + newSelection.getId() + ", game id: " + newSelection.getGame().getId());
+        selectedTeamLabel.setText("Selected team name: " + newSelection.getName() + ", team id: " + newSelection.getId() + ", game id: " + newSelection.getGame().getGame_id());
       } else {
         selectedTeamLabel.setText("No team selected");
       }
@@ -214,7 +214,7 @@ public class TeamGraphics {
         dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
-        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGame().getId()));
+        TextField gameIdField = new TextField(String.valueOf(selectedTeam.getGame().getGame_id()));
         gameIdField.setPromptText("Game ID");
         TextField nameField = new TextField(selectedTeam.getName());
         nameField.setPromptText("Team Name");
@@ -243,7 +243,7 @@ public class TeamGraphics {
         dialog.setResultConverter(dialogButton -> {
           if (dialogButton == ButtonType.OK) {
             try {
-              int gameId = gameIdField.getText().trim().isEmpty() ? selectedTeam.getGame().getId() : Integer.parseInt(gameIdField.getText().trim());
+              int gameId = gameIdField.getText().trim().isEmpty() ? selectedTeam.getGame().getGame_id() : Integer.parseInt(gameIdField.getText().trim());
               String name = nameField.getText().trim().isEmpty() ? selectedTeam.getName() : nameField.getText().trim();
               // Pass the selected team's ID to the constructor
               return new Team(selectedTeam.getId(), name, gameController.getGameById(gameId));

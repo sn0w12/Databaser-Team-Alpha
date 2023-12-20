@@ -45,7 +45,7 @@ public class TeamController {
         // Check if the team is associated with a game
         if (game != null) {
           // Fetch the game from the database to ensure it's managed by the current EntityManager
-          game = entityManager.find(Game.class, game.getId());
+          game = entityManager.find(Game.class, game.getGame_id());
           if (game != null) {
             // Add the team to the game's team list
             game.addTeam(team);

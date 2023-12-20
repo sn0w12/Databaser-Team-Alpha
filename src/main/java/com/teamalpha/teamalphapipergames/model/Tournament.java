@@ -21,6 +21,8 @@ public class Tournament {
   @JoinColumn(name = "game_id")  // This is the owning side of the relation
   private Game game;
 
+  private boolean teamGame = false;
+
   // Constructors
   public Tournament() {
   }
@@ -64,6 +66,14 @@ public class Tournament {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public boolean isTeamGame() {
+    return teamGame;
+  }
+
+  public void setTeamGame(boolean teamGame) {
+    this.teamGame = teamGame;
   }
 
   public int getContestants() {
