@@ -1,17 +1,12 @@
 package com.teamalpha.teamalphapipergames.controller;
 
-import com.teamalpha.teamalphapipergames.model.Match;
 import com.teamalpha.teamalphapipergames.model.Player;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerController {
-
     public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
     // CREATE
@@ -46,8 +41,11 @@ public class PlayerController {
             transaction.commit();
             if(printOut){
                 for (Player player :
-                        listToReturn) {
-                    System.out.println(player.getId() + ". " + player.getNickName());
+                    listToReturn) {
+                    if (player.getTeam() == null) {
+                        System.out.println(player.getId() + ". " + player.getNickName());
+                    }
+
                 }
             }
             return listToReturn;
@@ -104,41 +102,38 @@ public class PlayerController {
         return false;
     }
 
+    public boolean deletePlayerById(int id) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
 
+            // Retrieve the Game entity using EntityManager.find
+            Player playerToDelete = entityManager.find(Player.class, id);
 
+            // Check if the entity is found
+            if (playerToDelete != null) {
+                if (playerToDelete.getTeam() != null) {
+                    System.out.println("❌ Remove player from its team first.");
+                    return false;
+                }
 
-    //Ska vara kvar bara jag som tagit bort för att inte få error pga getTeam
-//    public boolean deletePlayerById(int id) {
-//        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-//        EntityTransaction transaction = null;
-//        try {
-//            transaction = entityManager.getTransaction();
-//            transaction.begin();
-//
-//            // Retrieve the Game entity using EntityManager.find
-//            Player playerToDelete = entityManager.find(Player.class, id);
-//
-//            // Check if the entity is found
-//            if (playerToDelete != null) {
-//                if (playerToDelete.getTeam() != null) {
-//                    System.out.println("❌ Remove player from its team first.");
-//                    return false;
-//                }
-//
-//                entityManager.remove(playerToDelete);
-//                transaction.commit();
-//                return true;
-//            } else {
-//                System.out.println("Player not found with id: " + id);
-//            }
-//        } catch (Exception e) {
-//            if (transaction != null) {
-//                transaction.rollback();
-//            }
-//            e.printStackTrace();
-//        } finally {
-//            entityManager.close();
-//        }
-//        return false;
-//    }
+                entityManager.remove(playerToDelete);
+                transaction.commit();
+                return true;
+            } else {
+                System.out.println("Player not found with id: " + id);
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+        return false;
+    }
+
 }

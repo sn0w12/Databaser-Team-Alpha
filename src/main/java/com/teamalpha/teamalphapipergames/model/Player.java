@@ -1,13 +1,12 @@
 package com.teamalpha.teamalphapipergames.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// @Entity, we want this class to have persistence in the database
 @Entity
+// @Table, we can rename this to suit our needs, or else Hibernate takes charge.
 @Table(name = "players")
 public class Player {
     // We declare where the primary key is
@@ -34,37 +33,28 @@ public class Player {
     @Column(name = "email", length = 30)
     private String eMail;
     // @ManyToOne - many players like this one can be owned by a single team
-//    @ManyToOne
-//    @JoinColumn(name = "team_id")  // This is the owning side of the relation
-//    private Team team;
-
-    // Matches
-//    @ManyToOne
-//    @JoinColumn(name = "match_id")
-//    private Match match;
-
-//    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "player1")
-//    private List<Match> matches=new ArrayList<>();
-//
-//    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "match")
-//    private List<Match> matches=new ArrayList<>();
-
-
-
-   // @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "players")
-
+    @ManyToOne
+    @JoinColumn(name = "team_id")  // This is the owning side of the relation
+    private Team team;
 
     @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, mappedBy = "players"*/)
-    private List <Match> playerMatches=new ArrayList<>();
+    private List<Match> playerMatches=new ArrayList<>();
 
+    // Connection to Game
+    @ManyToOne
+    @JoinColumn(name = "game_id")  // This is the owning side of the relation
+    private Game game;
 
-
+    // Matches
+    @ManyToOne
+    @JoinColumn(name = "match_id")
+    private Match match;
 
     // Empty constructor
     public Player() {
     }
 
-    // for registering with only first name, last name and nickname
+    // constructor for creating player with firstname, lastname, nickname
     public Player(String firstName, String lastName, String nickName) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -84,20 +74,20 @@ public class Player {
     }
 
     // full no id
-//    public Player(String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail,) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.nickName = nickName;
-//        this.address = address;
-//        this.zipCode = zipCode;
-//        this.postalAddress = postalAddress;
-//        this.country = country;
-//        this.eMail = eMail;
-//      //  this.team = team;
-//    }
+    public Player(String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail, Team team) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickName = nickName;
+        this.address = address;
+        this.zipCode = zipCode;
+        this.postalAddress = postalAddress;
+        this.country = country;
+        this.eMail = eMail;
+        this.team = team;
+    }
 
     // full
-    public Player(int id, String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail) {
+    public Player(int id, String firstName, String lastName, String nickName, String address, String zipCode, String postalAddress, String country, String eMail, Team team) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -107,14 +97,12 @@ public class Player {
         this.postalAddress = postalAddress;
         this.country = country;
         this.eMail = eMail;
-      //  this.team = team;
+        this.team = team;
     }
-
 
     public void addMatch(Match match){
-       playerMatches.add(match);
+        playerMatches.add(match);
     }
-
 
     // Getters and Setters
     public int getId() {
@@ -189,15 +177,21 @@ public class Player {
         this.eMail = eMail;
     }
 
+    public Team getTeam() {
+        return team;
+    }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 
-//    public Team getTeam() {
-//        return team;
-//    }
-//
-//    public void setTeam(Team team) {
-//        this.team = team;
-//    }
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
 
     public List<Match> getMatches() {
         return playerMatches;
@@ -206,8 +200,11 @@ public class Player {
     public void setMatches(List <Match> match) {
 
         this.playerMatches = match;
-    }}
+    }
 
+    @Override
+    public String toString() {
+        return getNickName();
+    }
 
-
-
+}
