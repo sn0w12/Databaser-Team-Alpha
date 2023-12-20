@@ -1,6 +1,11 @@
 package com.teamalpha.teamalphapipergames.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -15,6 +20,14 @@ public class Game {
     @Column(name = "game_title")
     private String name;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Team> ownedTeams = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Player> individualPlayers = new ArrayList<>();
+
     // Constructors, getters, setters
 
     public Game(String name) {
@@ -26,6 +39,33 @@ public class Game {
         // Default constructor
     }
 
+    public Game(int game_id, String name) {
+        this.game_id = game_id;
+        this.name = name;
+    }
+
+    public void addTeam(Team team){
+        team.setGame(this);
+        ownedTeams.add(team);
+    }
+
+    public void removeTeam(Team team) {
+        if (team != null && ownedTeams != null) {
+            for (Iterator<Team> iterator = ownedTeams.iterator(); iterator.hasNext();) {
+                Team currentTeam = iterator.next();
+                if (currentTeam.equals(team)) {
+                    iterator.remove();
+                    team.setGame(null); // This is important to dissociate the team from the game
+                    break;
+                }
+            }
+        }
+    }
+
+    public void addPlayer(Player player) {
+        player.setGame(this);
+        individualPlayers.add(player);
+    }
 
     public int getGame_id() {
         return game_id;
@@ -43,6 +83,21 @@ public class Game {
         this.name = name;
     }
 
+    public List<Team> getOwnedTeams() {
+        return ownedTeams;
+    }
+
+    public void setOwnedTeams(List<Team> ownedTeams) {
+        this.ownedTeams = ownedTeams;
+    }
+
+    public List<Player> getIndividualPlayers() {
+        return individualPlayers;
+    }
+
+    public void setIndividualPlayers(List<Player> individualPlayers) {
+        this.individualPlayers = individualPlayers;
+    }
 }
 
 

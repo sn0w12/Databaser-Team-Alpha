@@ -1,8 +1,10 @@
 
 package com.teamalpha.teamalphapipergames.view;
 
-import com.teamalpha.teamalphapipergames.controller.StaffController;
+import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.Staff;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,10 +15,36 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.util.List;
 
-public class StaffGraphics {
+public class StaffGraphics extends Application {
+    Stage stage;
+    private GameController gameController;
+    private TeamController teamController;
+    private PlayerController playerController;
+    private MatchController matchController;
     private StaffController staffController;
+    //  private TournamentController tournamentController;
     private Stage editStaffStage;
     Stage staffStage = new Stage();
+
+    public StaffGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+        this.gameController = gameController;
+        this.teamController = teamController;
+        this.playerController = playerController;
+        this.matchController = matchController;
+        this.staffController = staffController;
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            this.stage = primaryStage;
+            Platform.runLater(() -> {
+                displayStaffUI();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public void displayStaffUI() {
@@ -348,8 +376,7 @@ public class StaffGraphics {
 
                 // För att uppdatera listan av personal efter att en ny har lagts till
                 displayAddConfirmation();
-                StaffGraphics staffGraphics = new StaffGraphics();
-                staffGraphics.displayStaffUI();
+                displayStaffUI();
             }
             });
 
@@ -542,8 +569,7 @@ public class StaffGraphics {
                     editStaffStage.close();
                     staffStage.close();
                     displayEditConfirmation();
-                    StaffGraphics staffGraphics = new StaffGraphics();
-                    staffGraphics.displayStaffUI();
+                    displayStaffUI();
                 } else {
                     // Visa meddelande om misslyckad uppdatering
                     displayUpdateFailure();
@@ -622,8 +648,7 @@ public class StaffGraphics {
                 staffStage.close();
 
                 // Uppdatera listan av personal efter att en person har tagits bort
-                StaffGraphics staffGraphics = new StaffGraphics();
-                staffGraphics.displayStaffUI();
+                displayStaffUI();
 
                 // Visa en bekräftelse till användaren
                 displayDeleteConfirmation();

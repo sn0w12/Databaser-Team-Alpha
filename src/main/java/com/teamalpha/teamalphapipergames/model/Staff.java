@@ -58,6 +58,16 @@ public class Staff {
         this.email = email;
     }
 
+    public Staff(String firstName, String lastName, String nickname, String address, String zipCode, String postalAddress, String country, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickname = nickname;
+        this.address = address;
+        this.zipCode = zipCode;
+        this.postalAddress = postalAddress;
+        this.country = country;
+        this.email = email;
+    }
 
     public int getStaffId() {
         return staffId;

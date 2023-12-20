@@ -220,8 +220,8 @@ public class MatchController {
 
             //om ett lag så tar vi bort lagen ifrån matchen och vi tar bort matchen ifrån lagen
             if (match.getTeamGame()) {
-                Team team1 = entityManager.find(Team.class, match.getTeams().get(0).getTeamId());
-                Team team2 = entityManager.find(Team.class, match.getTeams().get(1).getTeamId());
+                Team team1 = entityManager.find(Team.class, match.getTeams().get(0).getId());
+                Team team2 = entityManager.find(Team.class, match.getTeams().get(1).getId());
 
                 if (team1 != null && team2 != null) {
                     match.getTeams().remove(team1);
@@ -280,7 +280,7 @@ public class MatchController {
 
             if (match.getTeamGame()) {
                 //Find the teams
-                Team teamToRemove = entityManager.find(Team.class, match.getTeams().get(playerOrTeamToRemoveIndex).getTeamId());
+                Team teamToRemove = entityManager.find(Team.class, match.getTeams().get(playerOrTeamToRemoveIndex).getId());
                 Team teamToChangeTo = entityManager.find(Team.class, playerOrTeamIdToChangeTo);
 
                 if (teamToRemove != null && teamToChangeTo != null) {

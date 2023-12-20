@@ -1,11 +1,11 @@
 package com.teamalpha.teamalphapipergames.view;
 
-import com.teamalpha.teamalphapipergames.controller.MatchController;
-import com.teamalpha.teamalphapipergames.controller.PlayerController;
+import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.Match;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -30,18 +30,39 @@ import javafx.scene.image.Image;
 
 public class MatchGraphics extends Application {
 
-    //  public void actionPerformed(ActionEvent){};
+    Stage stage;
+    private GameController gameController;
+    private TeamController teamController;
+    private PlayerController playerController;
+    private MatchController matchController;
+    private StaffController staffController;
 
-    MatchController matchController = new MatchController();
-    PlayerController playerController = new PlayerController();
+    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+        this.gameController = gameController;
+        this.teamController = teamController;
+        this.playerController = playerController;
+        this.matchController = matchController;
+        this.staffController = staffController;
+    }
 
     @Override
-    public void start(Stage matchStage) throws Exception {
-        //Här skapar jag i princip bara en massa knappar som kallar på andra funktioner när man trycker på knappen
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            this.stage = primaryStage;
+            Platform.runLater(() -> {
+                mainWindow(stage);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    public void mainWindow(Stage matchStage) {
         matchStage.setTitle("Matches");
-//        matchStage.setWidth(500);
-//        matchStage.setHeight(500);
+        matchStage.setWidth(500);
+        matchStage.setHeight(500);
+
 
         //knappar för varje funktion skapa, visa,ändra, ta bort mm
         Button buttonAddMatch = new Button("Add new Match");

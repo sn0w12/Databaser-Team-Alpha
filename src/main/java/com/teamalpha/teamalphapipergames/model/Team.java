@@ -1,70 +1,107 @@
 package com.teamalpha.teamalphapipergames.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// @Entity, we want this class to have persistence in the database
 @Entity
+// @Table, we can rename this to suit our needs, or else Hibernate takes charge.
 @Table(name = "teams")
 public class Team {
+    // We declare where the primary key is
     @Id
+    // The id will be generetad by the database
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
-    private int teamId;
-
-    @Column(name = "game_id")
-    private int gameId;
-
-    @Column(name = "name")
+    private int id;
+    // @Column(length = 8) is equivalent to VARCHAR(8) in database terms
+    @Column(name = "team_name", length = 40)
     private String name;
+    // @ManyToOne - many teams like this one can be owned by a single game
 
+    @ManyToOne
+    @JoinColumn(name = "game_id")  // This is the owning side of the relation
+    private Game game;
 
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL/* , mappedBy = "teams"*/)
+    // Matches
+    @ManyToOne
+    @JoinColumn(name = "match_id")
+    private Match match;
+
+    @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL/* , mappedBy = "teams"*/)
     private List<Match> teamMatches=new ArrayList<>();
 
-    // Default constructor for JPA
-    public Team() {}
+    // to bind players to team
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "team")
+    private List<Player> ownedPlayers = new ArrayList<>();
 
-    // Constructor
-    public Team(int teamId, int gameId, String name) {
-        this.teamId = teamId;
-        this.gameId = gameId;
+    public Team() {
+    }
+
+    public Team(String name) {
         this.name = name;
     }
 
+    public Team(String name, Game game) {
+        this.name = name;
+        this.game = game;
+    }
+
+    public Team(int id, String name, Game game) {
+        this.id = id;
+        this.name = name;
+        this.game = game;
+    }
+
+    public void addPlayer(Player player){
+        player.setTeam(this);
+        ownedPlayers.add(player);
+    }
 
     public void addMatch (Match match){
         teamMatches.add(match);
     }
-    // Getters
-    public int getTeamId() {
-        return teamId;
+
+    public int getId() {
+        return id;
     }
 
-    public int getGameId() {
-        return gameId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    // Setters
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public List<Player> getOwnedPlayers() {
+        return ownedPlayers;
+    }
+
+    public void setOwnedPlayers(List<Player> ownedPlayers) {
+        this.ownedPlayers = ownedPlayers;
+    }
 
     public List<Match> getMatches() {
         return teamMatches;
@@ -72,5 +109,10 @@ public class Team {
 
     public void setMatches(List<Match> matches) {
         this.teamMatches = matches;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

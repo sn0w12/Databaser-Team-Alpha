@@ -1,79 +1,45 @@
-
 package com.teamalpha.teamalphapipergames;
-
 
 import com.teamalpha.teamalphapipergames.controller.GameController;
 import com.teamalpha.teamalphapipergames.controller.MatchController;
-import com.teamalpha.teamalphapipergames.controller.PlayerController;
-import com.teamalpha.teamalphapipergames.controller.TeamController;
-import com.teamalpha.teamalphapipergames.model.Player;
+import com.teamalpha.teamalphapipergames.model.Match;
+import com.teamalpha.teamalphapipergames.view.MainWindow;
+import com.teamalpha.teamalphapipergames.view.Menu;
 import com.teamalpha.teamalphapipergames.view.MatchGraphics;
-
 import javafx.application.Application;
+import javafx.beans.Observable;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableIntegerValue;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.*;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
-
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class HelloApplication extends Application {
+  @Override
+  public void start(Stage stage) throws Exception {
+//        MatchGraphics matchGraphics = new MatchGraphics();
+//        matchGraphics.start(new Stage());
+    MainWindow mainWindow = new MainWindow();
+    mainWindow.start(new Stage());
 
-    public static void main(String[] args) {
+    //         start for menu to test in console while coding
+//        GameController controller = new GameController();
+//        Menu menu = new Menu(controller);
+//        menu.showMainMenu();
+  }
 
-        // lägger till några spelare och en match för att ha lite att testa med
+  public static void main(String[] args) {
 
-        MatchController matchController = new MatchController();
-        TeamController teamController=new TeamController();
-        PlayerController playerController = new PlayerController();
-        GameController gameController = new GameController();
-
-        gameController.createGame("minecraft");
-        gameController.createGame("overwatch");
-        gameController.getAllGames(true);
-
-        playerController.save(new Player("Valerii", "Vakhovskyi", "b1t", "Kosmonavtov", "NONE", "DNEPROPETROVSK", "Ukraine", "b1t@navi.com"));
-        playerController.save(new Player("Justinas", "Lekavicius", "jL", "52 Luknojų", "06295", "VILNIUS", "Lithuania", "jL@navi.com"));
-        playerController.save(new Player("Aleksi", "Virolainen", "Aleksib", "Kluuvikatu 5", "01380", "UUSIMAA", "Finland", "aleksib@navi.com"));
-        playerController.save(new Player("Mihai", "Ivan", "iM", "Nr.179B, Creaca", "NONE", "SALAJ", "Romania", "iM@navi.com"));
-        playerController.save(new Player("Ihor", "Zhdanov", "w0nderful", "Mineralnaya 18", "NONE", "IRPEN", "Ukraine", "w0nderful@navi.com"));
-        playerController.save(new Player("Lukas", "Rossander", "gla1ve", "Lumbyholmvej 39", "3390", "SJAELLAND", "Denmark", "gla1ve@ence.gg"));
-
-       teamController.createTeam(1, "badAnka");
-       teamController.createTeam(2, "kalleAnka");
-       teamController.createTeam(3, "KallesJul");
-       teamController.createTeam(4, "Anki");
-       teamController.createTeam(2, "Pytte");
-
-
-
-        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,false,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
-        matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
-        System.out.println(  matchController.getAllMatches().get(0).getMatchDate());
-
-        System.out.println("idag är det den: "+LocalDate.now());
-
-
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        //kommentera in för att få startsida och välja staff
-//        StaffGraphics staffGraphics = new StaffGraphics();
-//        staffGraphics.displayStaffUI();
-
-        //kommentera in för att få matchsida och välja matcher
-        //MatchGraphics matchGraphics = new MatchGraphics();
-        //matchGraphics.start(new Stage());
-    }
+    launch();
+  }
 }
-
 
 
 

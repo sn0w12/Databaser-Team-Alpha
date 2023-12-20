@@ -1,0 +1,146 @@
+* {
+    -color-text: white;
+    -color-table-header: #75e8bd;
+    -color-selected: #3db08d;
+    -color-combo-box: #206773;
+    -color-background-primary: #174b54;
+    -color-dialog-pane: #14373d;
+    -color-border: #102c31;
+    -color-delete-button: #DC143C;
+    -color-delete-button-hover: #E75480;
+}
+
+/* General style for labels */
+.label {
+    -fx-text-fill: -color-text;
+}
+
+/* General style for text fields */
+.text-field {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-background-primary;
+    -fx-max-width: 200;
+}
+
+/* General style for buttons */
+.button {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-background-primary;
+}
+
+/* Hover effect for buttons */
+.button:hover {
+    -fx-text-fill: -color-background-primary;
+    -fx-background-color: -color-table-header;
+}
+
+.delete-button {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-delete-button;
+}
+
+.delete-button:hover {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-delete-button-hover;
+}
+
+/* Style for specific buttons with different width */
+.button-wide {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-background-primary;
+    -fx-min-width: 191;
+    -fx-max-width: 191;
+}
+
+.dialog-pane {
+    -fx-background-color: -color-dialog-pane;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -color-background-primary;
+}
+
+/* Style the vertical scroll bar of the table view */
+.scroll-bar {
+    -fx-background-color: -color-dialog-pane;
+}
+
+/* Style the thumb of the vertical scroll bar */
+.scroll-bar .thumb {
+    -fx-background-color: -color-background-primary;
+}
+
+/* Style the track of the vertical scroll bar */
+.scroll-bar .track {
+    -fx-background-color: -color-dialog-pane;
+}
+
+/* Style the increment and decrement buttons of the vertical scroll bar */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: -color-background-primary;
+}
+
+/* Style for StackPane */
+.stack-pane {
+    -fx-background-color: -color-dialog-pane;
+}
+
+.vbox-background {
+    -fx-background-color: -color-dialog-pane;
+}
+
+/* Style for ComboBox */
+.combo-box {
+    -fx-background-color: -color-combo-box;
+    -fx-mark-highlight-text-fill: -color-text;
+}
+
+/* Style for TableColumns headers */
+.table-view .column-header {
+    -fx-background-color: -color-table-header;
+    -fx-border-color: transparent -color-selected transparent -color-selected;
+    -fx-border-width: 1;
+    -fx-text-fill: -color-text;
+}
+
+/* Style for TableCell */
+.table-cell:even,
+.table-row:even {
+    -fx-background-color: -color-background-primary;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent -color-border transparent -color-border;
+    -fx-border-width: 1;
+}
+
+/* Style for alternate TableCell */
+.table-cell:odd,
+.table-row:odd {
+    -fx-background-color: -color-dialog-pane;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent -color-border transparent -color-border;
+    -fx-border-width: 1;
+}
+
+/* Style for selected TableRow and its cells */
+.table-view .table-row-cell:selected,
+.table-view .table-row-cell:selected .table-cell {
+    -fx-background-color: -color-selected;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent;
+}
+
+/* Style for TableView */
+.table-view {
+    -fx-table-cell-border-color: -color-dialog-pane;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-box-border: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: -color-table-header;
+}
