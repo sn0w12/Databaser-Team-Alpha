@@ -1,5 +1,6 @@
 package com.teamalpha.teamalphapipergames.controller;
 
+import com.teamalpha.teamalphapipergames.model.Game;
 import com.teamalpha.teamalphapipergames.model.Match;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
@@ -14,6 +15,95 @@ public class MatchController {
     public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("hibernate");
 
     //Create
+//    public void addNewMatch(int gameId, boolean teamGame, int contestant1Id, int contestant2Id, LocalDate date) {
+//        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+//        EntityTransaction transaction = null;
+//        Player player1;
+//        Player player2;
+//        Team team1;
+//        Team team2;
+//        Match match;
+//        //tänker att jag får göra liknande med gameid och team sen när de är ihopkopplade och kolla om
+//        //det är possibly game/team och lägga till det.
+//
+//
+//        //lägger till team/player
+//        try {
+//            transaction = entityManager.getTransaction();
+//            transaction.begin();
+//
+//            if (teamGame) {
+//
+//                Optional<Team> possiblyATeam1 = Optional.ofNullable(entityManager.find(Team.class, contestant1Id));
+//                Optional<Team> possiblyATeam2 = Optional.ofNullable(entityManager.find(Team.class, contestant2Id));
+//                if (possiblyATeam1.isPresent() && possiblyATeam2.isPresent()) {
+//
+//                    team1 = possiblyATeam1.get();
+//                    team2 = possiblyATeam2.get();
+//                    match = new Match();
+//
+//                    //lägger till team i match och match till team
+//                    match.addTeam(team1);
+//                    match.addTeam(team2);
+//                    match.getPlayers().add(null);
+//                    match.getPlayers().add(null);
+//
+//                    team1.addMatch(match);
+//                    team2.addMatch(match);
+//
+//                    match.setGame(gameId);
+//                    match.setTeamGame(teamGame);
+//                    match.setMatchDate(date);
+//
+//                    entityManager.persist(match);
+//                    entityManager.merge(team1);
+//                    entityManager.merge(team2);
+//                    System.out.println("Datum för nylagd match: " + match.getMatchDate());
+//                } else {
+//                    System.out.println("fel lag");
+//                }
+//
+//            } else {
+//                Optional<Player> possiblyAPlayer1 = Optional.ofNullable(entityManager.find(Player.class, contestant1Id));
+//                Optional<Player> possiblyAPlayer2 = Optional.ofNullable(entityManager.find(Player.class, contestant2Id));
+//
+//                if (possiblyAPlayer1.isPresent() && possiblyAPlayer2.isPresent()) {
+//                    player1 = possiblyAPlayer1.get();
+//                    player2 = possiblyAPlayer2.get();
+//                    match = new Match();
+//
+//                    match.addPlayer(player1);
+//                    match.addPlayer(player2);
+//                    match.getTeams().add(null);
+//                    match.getTeams().add(null);
+//
+//                    player1.addMatch(match);
+//                    player2.addMatch(match);
+//
+//                    match.setGame_id(gameId);
+//                    match.setTeamGame(teamGame);
+//                    match.setMatchDate(date);
+//                    entityManager.persist(match);
+//                    entityManager.merge(player1);
+//                    entityManager.merge(player2);
+//                    System.out.println("Datum för nylagd match: " + match.getMatchDate());
+//                } else {
+//                    System.out.println("fel spelare");
+//                }
+//            }
+//            transaction.commit();
+//
+//        } catch (Exception e) {
+//            if (transaction != null) {
+//                transaction.rollback();
+//            }
+//            e.printStackTrace();
+//        } finally {
+//            entityManager.close();
+//        }
+//    }
+    //TODO Create played match where date is passed and you need to set at score to the match when created
+
     public void addNewMatch(int gameId, boolean teamGame, int contestant1Id, int contestant2Id, LocalDate date) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -30,11 +120,12 @@ public class MatchController {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-
+            Game game = entityManager.find(Game.class, gameId);
             if (teamGame) {
 
                 Optional<Team> possiblyATeam1 = Optional.ofNullable(entityManager.find(Team.class, contestant1Id));
                 Optional<Team> possiblyATeam2 = Optional.ofNullable(entityManager.find(Team.class, contestant2Id));
+
                 if (possiblyATeam1.isPresent() && possiblyATeam2.isPresent()) {
 
                     team1 = possiblyATeam1.get();
@@ -44,19 +135,24 @@ public class MatchController {
                     //lägger till team i match och match till team
                     match.addTeam(team1);
                     match.addTeam(team2);
-                    match.getPlayers().add(null);
-                    match.getPlayers().add(null);
+//                   match.getPlayers().add(null);
+//                   match.getPlayers().add(null);
+                    match.getPlayers().add( entityManager.find(Player.class, 1));
+                    match.getPlayers().add( entityManager.find(Player.class, 2));
+
 
                     team1.addMatch(match);
                     team2.addMatch(match);
 
-                    match.setGame_id(gameId);
+                    //  match.setGame_id(gameId);
+                    match.setGame(game);
                     match.setTeamGame(teamGame);
                     match.setMatchDate(date);
 
                     entityManager.persist(match);
                     entityManager.merge(team1);
                     entityManager.merge(team2);
+                    entityManager.merge(game);
                     System.out.println("Datum för nylagd match: " + match.getMatchDate());
                 } else {
                     System.out.println("fel lag");
@@ -73,18 +169,27 @@ public class MatchController {
 
                     match.addPlayer(player1);
                     match.addPlayer(player2);
-                    match.getTeams().add(null);
-                    match.getTeams().add(null);
+//                    match.getTeams().add(null);
+//                    match.getTeams().add(null);
+                    match.addTeam(entityManager.find(Team.class, 1));
+                    match.addTeam(entityManager.find(Team.class, 2));
+
 
                     player1.addMatch(match);
                     player2.addMatch(match);
 
-                    match.setGame_id(gameId);
+                    // match.setGame_id(gameId);
+                    match.setGame(game);
                     match.setTeamGame(teamGame);
                     match.setMatchDate(date);
+
                     entityManager.persist(match);
                     entityManager.merge(player1);
                     entityManager.merge(player2);
+//                    entityManager.merge(team1);
+//                    entityManager.merge(team2);
+                    entityManager.merge(game);
+
                     System.out.println("Datum för nylagd match: " + match.getMatchDate());
                 } else {
                     System.out.println("fel spelare");
@@ -103,46 +208,45 @@ public class MatchController {
     }
     //TODO Create played match where date is passed and you need to set at score to the match when created
 
-
     //Read
-    public List<Match> getAllMatchesAndPrint(boolean printMatches) {
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = null;
-        List<Match> matchesToReturn;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-
-            matchesToReturn = entityManager.createQuery("FROM Match", Match.class).getResultList();
-            transaction.commit();
-
-            if (printMatches) {
-                for (Match match : matchesToReturn) {
-                    System.out.println("Game id: " + match.getMatchId());
-                    if (match.getTeamGame()) {
-                        System.out.println("Team " + match.getTeam1() + " vs Team " + match.getTeam2());
-                    } else {
-                        System.out.println("Player " + match.getPlayers().get(0) + " vs Player " + match.getPlayers().get(1));
-                    }
-                    if (match.getMatchPlayed()) {
-                        System.out.println("Match finished, resuls: " + match.getResults());
-                    } else {
-                        System.out.println("Match not played, no results available");
-                    }
-                    System.out.println("");
-                }
-            }
-            return matchesToReturn;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
-        return null;
-    }
+//    public List<Match> getAllMatchesAndPrint(boolean printMatches) {
+//        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+//        EntityTransaction transaction = null;
+//        List<Match> matchesToReturn;
+//        try {
+//            transaction = entityManager.getTransaction();
+//            transaction.begin();
+//
+//            matchesToReturn = entityManager.createQuery("FROM Match", Match.class).getResultList();
+//            transaction.commit();
+//
+//            if (printMatches) {
+//                for (Match match : matchesToReturn) {
+//                    System.out.println("Game id: " + match.getMatchId());
+//                    if (match.getTeamGame()) {
+//                        System.out.println("Team " + match.getTeam1() + " vs Team " + match.getTeam2());
+//                    } else {
+//                        System.out.println("Player " + match.getPlayers().get(0) + " vs Player " + match.getPlayers().get(1));
+//                    }
+//                    if (match.getMatchPlayed()) {
+//                        System.out.println("Match finished, resuls: " + match.getResults());
+//                    } else {
+//                        System.out.println("Match not played, no results available");
+//                    }
+//                    System.out.println("");
+//                }
+//            }
+//            return matchesToReturn;
+//        } catch (Exception e) {
+//            if (transaction != null) {
+//                transaction.rollback();
+//            }
+//            e.printStackTrace();
+//        } finally {
+//            entityManager.close();
+//        }
+//        return null;
+//    }
     public List<Match> getAllMatches() {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;

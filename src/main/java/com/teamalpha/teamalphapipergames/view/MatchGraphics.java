@@ -6,6 +6,7 @@ import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -124,23 +125,100 @@ public class MatchGraphics extends Application {
     }
 
 
+//    public void showMatches(boolean showAllmatches, boolean showPlayedMatches) {
+//        Stage matchStage = new Stage();
+//        matchStage.setTitle("Show All Matches");
+//        matchStage.setWidth(750);
+//        matchStage.setHeight(500);
+//
+//
+//        TableView<Match> allMatchesTable = new TableView<>();
+//
+//
+////skapar kolumner
+//        TableColumn<Match, Integer> matchId = new TableColumn<>("Match id");
+//        TableColumn<Match, Integer> gameId = new TableColumn<>("Game");
+//        TableColumn<Match, Team> team1 = new TableColumn<>("Team11");
+//        TableColumn<Match, Team> team2 = new TableColumn<>("Team22");
+//        TableColumn<Match, Player> player1 = new TableColumn<>("Player11");
+//        TableColumn<Match, Player> player2 = new TableColumn<>("Player22");
+//        TableColumn<Match, Boolean> matchPlayed = new TableColumn<>("Match Played");
+//        TableColumn<Match, LocalDate> matchDate = new TableColumn<>("Match date");
+//        TableColumn<Match, String> results = new TableColumn<>("Results");
+//        TableColumn<Match, String> winner = new TableColumn<>("Winner");
+//
+//
+//        //kopplar ihop data med kolumnerna.   Det som är i "fritext" berättar vartifrån man tar det. Det ska vara samma
+//        // som namnet på ex int ifrån Match klassen. Alltså
+////        @Column(name = "match_id")
+////        int matchId;  --ska svara samma som den här
+//        matchId.setCellValueFactory(new PropertyValueFactory<>("matchId"));
+//        gameId.setCellValueFactory(new PropertyValueFactory<>("game_id"));
+//        team1.setCellValueFactory(new PropertyValueFactory<>("team1"));
+//        team2.setCellValueFactory(new PropertyValueFactory<>("team2"));
+//        player1.setCellValueFactory(new PropertyValueFactory<>("player1"));
+//        player2.setCellValueFactory(new PropertyValueFactory<>("player2"));
+//        matchPlayed.setCellValueFactory(new PropertyValueFactory<>("matchPlayed"));
+//        matchDate.setCellValueFactory(new PropertyValueFactory<>("matchDate"));
+//        results.setCellValueFactory(new PropertyValueFactory<>("results"));
+//        winner.setCellValueFactory(new PropertyValueFactory<>("winner"));
+//
+//
+////skapar listor med alla/spelade/ospelade matcher
+//        List<Match> alMatches = matchController.getAllMatches();
+//        List<Match> playedMatches = new ArrayList<>();
+//        List<Match> unplayedMatches = new ArrayList<>();
+//        for (Match match : matchController.getAllMatches()) {
+//            if (match.getMatchPlayed()) {
+//                playedMatches.add(match);
+//            } else {
+//                unplayedMatches.add(match);
+//            }
+//        }
+//
+//        //skapar en observable list och lägger in listorna som skapades ovanför beroende på vad som ska visas alla/spelade/ospelade matcher
+//        ObservableList<Match> matchData;
+//        if (showAllmatches) {
+//            matchData = FXCollections.observableArrayList(alMatches);
+//            allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
+//        } else {
+//            if (showPlayedMatches) {
+//                matchData = FXCollections.observableArrayList(playedMatches);
+//                allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
+//            } else {
+//                matchData = FXCollections.observableArrayList(unplayedMatches);
+//                allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchDate);
+//            }
+//        }
+//
+//
+//        allMatchesTable.setItems(matchData);
+//        allMatchesTable.setPrefSize(700, 700);
+//        VBox vbox = new VBox();
+//        setVBoxBackGround(vbox);
+//        vbox.getChildren().add(allMatchesTable);
+//
+//        Scene sceneShowAllMatches = new Scene(vbox);
+//        matchStage.setScene(sceneShowAllMatches);
+//        matchStage.show();
+//    }
+
+
     public void showMatches(boolean showAllmatches, boolean showPlayedMatches) {
         Stage matchStage = new Stage();
         matchStage.setTitle("Show All Matches");
         matchStage.setWidth(750);
         matchStage.setHeight(500);
 
-
         TableView<Match> allMatchesTable = new TableView<>();
-
 
 //skapar kolumner
         TableColumn<Match, Integer> matchId = new TableColumn<>("Match id");
-        TableColumn<Match, Integer> gameId = new TableColumn<>("Game");
-        TableColumn<Match, Team> team1 = new TableColumn<>("Team11");
-        TableColumn<Match, Team> team2 = new TableColumn<>("Team22");
-        TableColumn<Match, Player> player1 = new TableColumn<>("Player11");
-        TableColumn<Match, Player> player2 = new TableColumn<>("Player22");
+        TableColumn<Match, String> game = new TableColumn<>("Game");
+        TableColumn<Match, String> team1 = new TableColumn<>("Team1");
+        TableColumn<Match, String> team2 = new TableColumn<>("Team2");
+        TableColumn<Match, String> player1 = new TableColumn<>("Player1");
+        TableColumn<Match, String> player2 = new TableColumn<>("Player2");
         TableColumn<Match, Boolean> matchPlayed = new TableColumn<>("Match Played");
         TableColumn<Match, LocalDate> matchDate = new TableColumn<>("Match date");
         TableColumn<Match, String> results = new TableColumn<>("Results");
@@ -152,18 +230,18 @@ public class MatchGraphics extends Application {
 //        @Column(name = "match_id")
 //        int matchId;  --ska svara samma som den här
         matchId.setCellValueFactory(new PropertyValueFactory<>("matchId"));
-        gameId.setCellValueFactory(new PropertyValueFactory<>("game_id"));
-        team1.setCellValueFactory(new PropertyValueFactory<>("team1"));
-        team2.setCellValueFactory(new PropertyValueFactory<>("team2"));
-        player1.setCellValueFactory(new PropertyValueFactory<>("player1"));
-        player2.setCellValueFactory(new PropertyValueFactory<>("player2"));
+        game.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getGame().getName()));
+        team1.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getTeams().get(0).getName()));
+        team2.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getTeams().get(1).getName()));
+        player1.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPlayers().get(0).getFirstName()));
+        player2.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPlayers().get(1).getFirstName()));
         matchPlayed.setCellValueFactory(new PropertyValueFactory<>("matchPlayed"));
         matchDate.setCellValueFactory(new PropertyValueFactory<>("matchDate"));
         results.setCellValueFactory(new PropertyValueFactory<>("results"));
         winner.setCellValueFactory(new PropertyValueFactory<>("winner"));
 
 
-//skapar listor med alla/spelade/ospelade matcher
+        //skapar listor med alla/spelade/ospelade matcher
         List<Match> alMatches = matchController.getAllMatches();
         List<Match> playedMatches = new ArrayList<>();
         List<Match> unplayedMatches = new ArrayList<>();
@@ -175,21 +253,20 @@ public class MatchGraphics extends Application {
             }
         }
 
-        //skapar en observable list och lägger in listorna som skapades ovanför beroende på vad som ska visas alla/spelade/ospelade matcher
+//skapar en observable list och lägger in listorna som skapades ovanför beroende på vad som ska visas alla/spelade/ospelade matcher
         ObservableList<Match> matchData;
         if (showAllmatches) {
             matchData = FXCollections.observableArrayList(alMatches);
-            allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
+            allMatchesTable.getColumns().addAll(matchId, game, team1, team2, matchPlayed, matchDate, results, winner);
         } else {
             if (showPlayedMatches) {
                 matchData = FXCollections.observableArrayList(playedMatches);
-                allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
+                allMatchesTable.getColumns().addAll(matchId, game, team1, team2, player1, player2, matchPlayed, matchDate, results, winner);
             } else {
                 matchData = FXCollections.observableArrayList(unplayedMatches);
-                allMatchesTable.getColumns().addAll(matchId, gameId, team1, team2, player1, player2, matchDate);
+                allMatchesTable.getColumns().addAll(matchId, game, team1, team2, player1, player2, matchDate);
             }
         }
-
 
         allMatchesTable.setItems(matchData);
         allMatchesTable.setPrefSize(700, 700);
@@ -201,7 +278,6 @@ public class MatchGraphics extends Application {
         matchStage.setScene(sceneShowAllMatches);
         matchStage.show();
     }
-
     public void addMatch() {
         Stage addMatchStage = new Stage();
         addMatchStage.setTitle("Add new match");
@@ -305,7 +381,7 @@ public class MatchGraphics extends Application {
 
                     if (results.contains("-")) {                         //Jag satte ett krav att resultatet måste innehålla "-"
                         matchToAddResult.setResults(results);            //anger resultatet
-                        setWinner(matchToAddResult, results);
+                       // setWinner(matchToAddResult, results);
                         if (matchController.updateMatch(matchToAddResult)) {
                             messageLabel.setText("Added result successfully. Add more results or close window");
                             System.out.println("Results added");
@@ -330,29 +406,29 @@ public class MatchGraphics extends Application {
         resultStage.show();
     }
 
-    public void setWinner(Match match, String results) {
-        // Splittar upp resultat strängen och skapar två int ifrån den
-        String[] resultsSplit = results.split("-");
-        int result1 = Integer.parseInt(resultsSplit[0]);
-        int result2 = Integer.parseInt(resultsSplit[1]);
-
-        //beroende på vilken result som är högst sätts vinnaren. Om de är samma sätts tie
-        if (result1 > result2) {
-            if (match.getTeamGame()) {
-                match.setWinner(match.getTeam1());
-            } else {
-                match.setWinner(match.getPlayer1());
-            }
-        } else if (result1 < result2) {
-            if (match.getTeamGame()) {
-                match.setWinner(match.getTeam2());
-            } else {
-                match.setWinner(match.getPlayer2());
-            }
-        } else {
-            match.setWinner("Tie");
-        }
-    }
+//    public void setWinner(Match match, String results) {
+//        // Splittar upp resultat strängen och skapar två int ifrån den
+//        String[] resultsSplit = results.split("-");
+//        int result1 = Integer.parseInt(resultsSplit[0]);
+//        int result2 = Integer.parseInt(resultsSplit[1]);
+//
+//        //beroende på vilken result som är högst sätts vinnaren. Om de är samma sätts tie
+//        if (result1 > result2) {
+//            if (match.getTeamGame()) {
+//                match.setWinner(match.getTeam1());
+//            } else {
+//                match.setWinner(match.getPlayer1());
+//            }
+//        } else if (result1 < result2) {
+//            if (match.getTeamGame()) {
+//                match.setWinner(match.getTeam2());
+//            } else {
+//                match.setWinner(match.getPlayer2());
+//            }
+//        } else {
+//            match.setWinner("Tie");
+//        }
+//    }
 
     public void alterMatchTestPlayerAndTeam() {
 

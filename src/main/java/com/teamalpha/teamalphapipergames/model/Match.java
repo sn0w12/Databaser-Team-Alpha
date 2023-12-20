@@ -20,23 +20,23 @@ public class Match {
     @Column(name = "match_id")
     int matchId;
 
-    @Column(name = "game_id")
-    private int game_id;
+//    @Column(name = "game_id")
+//    private int game_id;
 
     @Column(name = " team_game")
     private boolean teamGame;
     //har lagt in den här själv, finns inte i vårt schema
 
-    @Column(name = "player_1")
-    private String player1;
-    @Column(name = "player_2")
-    private String player2;
-
-    @Column(name = "team_1")
-    private String team1;
-    @Column(name = "team_2")
-    private String team2;
-    @Column(name = "match_date")
+//    @Column(name = "player_1")
+//    private String player1;
+//    @Column(name = "player_2")
+//    private String player2;
+//
+//    @Column(name = "team_1")
+//    private String team1;
+//    @Column(name = "team_2")
+//    private String team2;
+//    @Column(name = "match_date")
     private LocalDate matchDate;
     @Column(name = "match_played")
     private boolean matchPlayed;
@@ -59,6 +59,10 @@ public class Match {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*,mappedBy="teamMatches"*/)
     private List<Team> teams = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
+
 
     //constructors
     public Match() {
@@ -68,10 +72,10 @@ public class Match {
         this.matchId = id;
     }
 
-    public Match(int game_id, boolean teamGame, Player teamOrPlayer1_id, Player teamOrPlayer2_id, Date matchDate) {
-        this.game_id = game_id;
-        this.teamGame = teamGame;
-    }
+//    public Match(int game_id, boolean teamGame, Player teamOrPlayer1_id, Player teamOrPlayer2_id, Date matchDate) {
+//        this.game_id = game_id;
+//        this.teamGame = teamGame;
+//    }
 
 
     public void addPlayer(Player player) {
@@ -96,12 +100,12 @@ public class Match {
         return matchId;
     }
 
-    public int getGame_id() {
-        return game_id;
+    public Game getGame() {
+        return game;
     }
 
-    public void setGame_id(int game_id) {
-        this.game_id = game_id;
+    public void setGame( Game game) {
+        this.game = game;
     }
 
     public boolean getTeamGame() {
@@ -112,56 +116,56 @@ public class Match {
         this.teamGame = teamGame;
     }
 
-    public String getPlayer1() {
-        if (players.isEmpty()) {
-            return "-";
-        } else
-            return players.get(0).getFirstName();
-    }
-
-
-    public void setPlayer1(String player1) {
-        this.players.get(0).setFirstName(player1);
-        this.player1 = player1;
-    }
-
-    public String getPlayer2() {
-        if (players.isEmpty()) {
-            return "-";
-        } else
-            return players.get(1).getFirstName();
-    }
-
-    public void setPlayer2(String player2) {
-        this.players.get(1).setFirstName(player2);
-        this.player2 = player2;
-    }
-
-    public String getTeam1() {
-        if (teams.isEmpty()) {
-            return "-";
-        } else {
-            return teams.get(0).getName();
-        }
-    }
-
-    public void setTeam1(String team1) {
-        this.teams.get(0).setName(team1);
-        this.team1 = team1;
-    }
-
-    public String getTeam2() {
-        if (teams.isEmpty()) {
-            return "-";
-        } else {
-            return teams.get(1).getName();
-        }
-    }
-
-    public void setTeam2(String team2) {
-        this.teams.get(1).setName(team2);
-        this.team2 = team2;
-    }
+//    public String getPlayer1() {
+//        if (players.isEmpty()) {
+//            return "-";
+//        } else
+//            return players.get(0).getFirstName();
+//    }
+//
+//
+//    public void setPlayer1(String player1) {
+//        this.players.get(0).setFirstName(player1);
+//        this.player1 = player1;
+//    }
+//
+//    public String getPlayer2() {
+//        if (players.isEmpty()) {
+//            return "-";
+//        } else
+//            return players.get(1).getFirstName();
+//    }
+//
+//    public void setPlayer2(String player2) {
+//        this.players.get(1).setFirstName(player2);
+//        this.player2 = player2;
+//    }
+//
+//    public String getTeam1() {
+//        if (teams.isEmpty()) {
+//            return "-";
+//        } else {
+//            return teams.get(0).getName();
+//        }
+//    }
+//
+//    public void setTeam1(String team1) {
+//        this.teams.get(0).setName(team1);
+//        this.team1 = team1;
+//    }
+//
+//    public String getTeam2() {
+//        if (teams.isEmpty()) {
+//            return "-";
+//        } else {
+//            return teams.get(1).getName();
+//        }
+//    }
+//
+//    public void setTeam2(String team2) {
+//        this.teams.get(1).setName(team2);
+//        this.team2 = team2;
+//    }
 
     public LocalDate getMatchDate() {
         return matchDate;
