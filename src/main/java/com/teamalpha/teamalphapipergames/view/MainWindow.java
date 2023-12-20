@@ -105,6 +105,8 @@ public class MainWindow extends Application {
     menu.createStaff();
     menu.createPlayersAndTeamsDataForStaff();
 
+    //added test matches, ska lägga in snyggare matcher om de ska finnas från början
+    menu.createMatches();
     List<Staff> staffList = staffController.getAllStaff();
 
     chooseEmployee.showEmployeeMenu(staffList);

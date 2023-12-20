@@ -3,6 +3,7 @@ package com.teamalpha.teamalphapipergames.view;
 import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.*;
 
@@ -66,8 +67,8 @@ public class Menu {
             teamsToAdd.addAll(List.of(
                     // Teams
                     // Counter-Strike 2
-                    new Team("-"),
-                    new Team("-"),
+//                    new Team("-"),
+//                    new Team("-"),
                     new Team("NaVi"), new Team("ENCE"),
                     new Team("Cloud9"), new Team("FaZe"),
                     new Team("Heroic"), new Team("Complexity"),
@@ -89,8 +90,8 @@ public class Menu {
                     // Players
                     // Counter-Strike 2
                     // NaVi
-                    new Player("-", "-", "-"),
-                    new Player("-", "-", "-"),
+//                    new Player("-", "-", "-"),
+//                    new Player("-", "-", "-"),
                     new Player("Valerii", "Vakhovskyi", "b1t", "Kosmonavtov", "NONE", "DNEPROPETROVSK", "Ukraine", "b1t@navi.com"),
                     new Player("Justinas", "Lekavicius", "jL", "52 Luknojų", "06295", "VILNIUS", "Lithuania", "jL@navi.com"),
                     new Player("Aleksi", "Virolainen", "Aleksib", "Kluuvikatu 5", "01380", "UUSIMAA", "Finland", "aleksib@navi.com"),
@@ -407,14 +408,34 @@ public class Menu {
 
             // adding player to specific game as well
             for (Player player : playersToAdd) {
-                if (player.getId() != 1 && player.getId() != 2) {  //added if, so dont add the "empty" players to the list
+//                if (player.getId() != 1 && player.getId() != 2) {  //added if, so dont add the "empty" players to the list
                     gameController.addPlayerToGame(player.getId(), player.getTeam().getGame().getGame_id());
                     System.out.println(player.getNickName() + " added to: " + player.getTeam().getGame().getName());
-                }
+//                }
             }
         }
 
     }
+
+
+    //
+    public void createMatches() {
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2220, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, false, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, false, 3, 4, LocalDate.of(2220, 5, 5));
+        matchController.addNewMatch(1, false, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, false, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, false, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2220, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2220, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
+        matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
+    }
+
+
 
     // misc
     private void space() {

@@ -4,6 +4,7 @@ import com.teamalpha.teamalphapipergames.model.Game;
 import com.teamalpha.teamalphapipergames.model.Match;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -137,8 +138,8 @@ public class MatchController {
                     match.addTeam(team2);
 //                   match.getPlayers().add(null);
 //                   match.getPlayers().add(null);
-                    match.getPlayers().add( entityManager.find(Player.class, 1));
-                    match.getPlayers().add( entityManager.find(Player.class, 2));
+//                    match.getPlayers().add(entityManager.find(Player.class, 1));
+//                    match.getPlayers().add(entityManager.find(Player.class, 2));
 
 
                     team1.addMatch(match);
@@ -171,8 +172,8 @@ public class MatchController {
                     match.addPlayer(player2);
 //                    match.getTeams().add(null);
 //                    match.getTeams().add(null);
-                    match.addTeam(entityManager.find(Team.class, 1));
-                    match.addTeam(entityManager.find(Team.class, 2));
+//                    match.addTeam(entityManager.find(Team.class, 1));
+//                    match.addTeam(entityManager.find(Team.class, 2));
 
 
                     player1.addMatch(match);
@@ -290,7 +291,6 @@ public class MatchController {
     }
 
 
-
     //Update
     public boolean updateMatch(Match match) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -311,10 +311,11 @@ public class MatchController {
         }
         return false;
     }
+
+
     public boolean removePlayerOrTeamFromMatch(int matchId) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
-
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
@@ -322,16 +323,21 @@ public class MatchController {
             // Find the Player and match entities
             Match match = entityManager.find(Match.class, matchId);
 
+
+            match.setGame(null);
             //om ett lag så tar vi bort lagen ifrån matchen och vi tar bort matchen ifrån lagen
             if (match.getTeamGame()) {
                 Team team1 = entityManager.find(Team.class, match.getTeams().get(0).getId());
                 Team team2 = entityManager.find(Team.class, match.getTeams().get(1).getId());
-
                 if (team1 != null && team2 != null) {
-                    match.getTeams().remove(team1);
-                    match.getTeams().remove(team2);
+
+
                     team1.getMatches().remove(match);
                     team2.getMatches().remove(match);
+
+                    match.getTeams().remove(team1);
+                    match.getTeams().remove(team2);
+
 
                     entityManager.merge(match);
                     entityManager.merge(team1);
@@ -342,14 +348,15 @@ public class MatchController {
             else {
                 Player player1 = entityManager.find(Player.class, match.getPlayers().get(0).getId());
                 Player player2 = entityManager.find(Player.class, match.getPlayers().get(1).getId());
-
                 if (player1 != null && player2 != null) {
 
+
                     //tar bort matchen ifrån spelarens matchlista och tar bort spelare ifrån matchens spelar lista
-                    match.getPlayers().remove(player1);
-                    match.getPlayers().remove(player2);
                     player1.getMatches().remove(match);
                     player2.getMatches().remove(match);
+                    match.getPlayers().remove(player1);
+                    match.getPlayers().remove(player2);
+
 
                     entityManager.merge(match);
                     entityManager.merge(player1);
@@ -370,6 +377,7 @@ public class MatchController {
         }
         return false;
     }
+
     public boolean replaceOnePlayerOrTeamFromMatch(int matchId, int playerOrTeamToRemoveIndex, int playerOrTeamIdToChangeTo) {
 
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -396,8 +404,7 @@ public class MatchController {
                     entityManager.merge(teamToRemove);
                     entityManager.merge(teamToChangeTo);
                 }
-            }
-            else {
+            } else {
                 //Find the players
                 Player playerToRemove = entityManager.find(Player.class, match.getPlayers().get(playerOrTeamToRemoveIndex).getId());
                 Player playerToChangeTo = entityManager.find(Player.class, playerOrTeamIdToChangeTo);
