@@ -507,7 +507,7 @@ public class MatchGraphics extends Application {
     }
 
 
-    public void setVBoxBackGround(VBox vBox) {
+    public static void setVBoxBackGround(VBox vBox) {
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(10);
         // Create a background with the image

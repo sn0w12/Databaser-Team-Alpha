@@ -8,7 +8,7 @@ import com.teamalpha.teamalphapipergames.controller.PlayerController;
 import com.teamalpha.teamalphapipergames.controller.TeamController;
 import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.view.MatchGraphics;
-
+import com.teamalpha.teamalphapipergames.view.StaffGraphics;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,7 +19,7 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
 
-        // lägger till några spelare och en match för att ha lite att testa med
+     /*   // lägger till några spelare och en match för att ha lite att testa med
 
         MatchController matchController = new MatchController();
         TeamController teamController=new TeamController();
@@ -55,7 +55,7 @@ public class HelloApplication extends Application {
         matchController.addNewMatch(1,true,1,2, LocalDate.of(2020,5,5));
         System.out.println(  matchController.getAllMatches().get(0).getMatchDate());
 
-        System.out.println("idag är det den: "+LocalDate.now());
+        System.out.println("idag är det den: "+LocalDate.now());*/
 
 
         launch(args);
@@ -65,13 +65,16 @@ public class HelloApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         //kommentera in för att få startsida och välja staff
-//        StaffGraphics staffGraphics = new StaffGraphics();
-//        staffGraphics.displayStaffUI();
+      StaffGraphics staffGraphics = new StaffGraphics();
+      staffGraphics.displayStaffUI();
+
+
 
         //kommentera in för att få matchsida och välja matcher
         //MatchGraphics matchGraphics = new MatchGraphics();
-        //matchGraphics.start(new Stage());
+       //matchGraphics.start(new Stage());
     }
+
 }
 
 

@@ -1,4 +1,3 @@
-
 package com.teamalpha.teamalphapipergames.model;
 
 import javax.persistence.*;
