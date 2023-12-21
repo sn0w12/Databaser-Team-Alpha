@@ -36,7 +36,7 @@ public class Match {
 //    private String team1;
 //    @Column(name = "team_2")
 //    private String team2;
-//    @Column(name = "match_date")
+   @Column(name = "match_date")
     private LocalDate matchDate;
     @Column(name = "match_played")
     private boolean matchPlayed;

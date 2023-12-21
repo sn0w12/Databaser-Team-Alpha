@@ -248,6 +248,9 @@ public class GameController {
 
         return false;
     }
+
+
+    //den här är bara mot team klassen??
     public Game getGameById(int id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -278,5 +281,32 @@ public class GameController {
     }
     // -- Fredrik
 
+
+
+    //Malin
+    public Game getGameByIdUniversal(int gameId){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        Game gameToReturn = null;
+
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            gameToReturn = entityManager.find(Game.class,gameId);
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+
+        return gameToReturn;
+
+    }
 }
 
