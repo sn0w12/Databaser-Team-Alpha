@@ -36,6 +36,10 @@ public class Team {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "team")
     private List<Player> ownedPlayers = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
+
     public Team() {
     }
 
@@ -52,6 +56,14 @@ public class Team {
         this.id = id;
         this.name = name;
         this.game = game;
+    }
+
+    public List<Match> getTeamMatches() {
+        return teamMatches;
+    }
+
+    public void setTeamMatches(List<Match> teamMatches) {
+        this.teamMatches = teamMatches;
     }
 
     public void addPlayer(Player player){
@@ -95,6 +107,14 @@ public class Team {
         this.match = match;
     }
 
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
+
     public List<Player> getOwnedPlayers() {
         return ownedPlayers;
     }
@@ -110,6 +130,8 @@ public class Team {
     public void setMatches(List<Match> matches) {
         this.teamMatches = matches;
     }
+
+
 
     @Override
     public String toString() {

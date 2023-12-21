@@ -28,6 +28,10 @@ public class Game {
     @Fetch(FetchMode.SUBSELECT)
     private List<Player> individualPlayers = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "game")
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Tournament> tournamentGameList = new ArrayList<>();
+
     // Constructors, getters, setters
 
     public Game(String name) {
@@ -60,6 +64,11 @@ public class Game {
                 }
             }
         }
+    }
+
+    public void addTournament(Tournament tournament) {
+        tournament.setGame(this);
+        tournamentGameList.add(tournament);
     }
 
     public void addPlayer(Player player) {
@@ -97,6 +106,19 @@ public class Game {
 
     public void setIndividualPlayers(List<Player> individualPlayers) {
         this.individualPlayers = individualPlayers;
+    }
+
+    public List<Tournament> getTournamentGameList() {
+        return tournamentGameList;
+    }
+
+    public void setTournamentGameList(List<Tournament> tournamentGameList) {
+        this.tournamentGameList = tournamentGameList;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
 
