@@ -136,4 +136,26 @@ public class PlayerController {
         return false;
     }
 
+    // Bulk save a list of players to the database
+    public boolean saveAll(List<Player> players) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            for (Player player : players) {
+                entityManager.persist(player);
+            }
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+        return false;
+    }
 }

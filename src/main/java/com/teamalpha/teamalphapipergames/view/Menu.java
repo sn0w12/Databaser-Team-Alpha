@@ -6,6 +6,7 @@ import com.teamalpha.teamalphapipergames.model.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Simple menu, gets the job done
@@ -16,6 +17,8 @@ public class Menu {
     private PlayerController playerController;
     private StaffController staffController;
     private MatchController matchController;
+    Map<String, String> teamGameMap = new HashMap<>();
+    Map<String, String> playerTeamMap = new HashMap<>();
 
     public Menu(GameController gameController) {
         this.gameController = gameController;
@@ -23,9 +26,153 @@ public class Menu {
         playerController = new PlayerController();
         staffController = new StaffController();
         matchController = new MatchController();
+
+        initializeMaps();
     }
 
     // ----------------------------------------
+    public void initializeMaps() {
+        // Mapping teams to their respective games
+        teamGameMap.put("NaVi", "Counter-Strike 2");
+        teamGameMap.put("ENCE", "Counter-Strike 2");
+        teamGameMap.put("Cloud9", "Counter-Strike 2");
+        teamGameMap.put("FaZe", "Counter-Strike 2");
+        teamGameMap.put("Heroic", "Counter-Strike 2");
+        teamGameMap.put("Complexity", "Counter-Strike 2");
+        teamGameMap.put("Vitality", "Counter-Strike 2");
+        teamGameMap.put("MOUZ", "Counter-Strike 2");
+
+        teamGameMap.put("AFC Ajax Brazil", "EA Sports FC 24");
+        teamGameMap.put("Team Gullit", "EA Sports FC 24");
+        teamGameMap.put("DUX America", "EA Sports FC 24");
+        teamGameMap.put("RBLZ Gaming", "EA Sports FC 24");
+        teamGameMap.put("Team FUTWIZ", "EA Sports FC 24");
+        teamGameMap.put("Atlanta United FC", "EA Sports FC 24");
+        teamGameMap.put("TG NIP", "EA Sports FC 24");
+        teamGameMap.put("Team Exeed", "EA Sports FC 24");
+
+        teamGameMap.put("NRG eSports", "League of Legends");
+        teamGameMap.put("G2 eSports", "League of Legends");
+        teamGameMap.put("Fnatic", "League of Legends");
+        teamGameMap.put("MAD Lions", "League of Legends");
+        teamGameMap.put("Cloud9LOL", "League of Legends");
+        teamGameMap.put("LOUD", "League of Legends");
+        teamGameMap.put("Team Liquid", "League of Legends");
+        teamGameMap.put("Team BDS", "League of Legends");
+
+        playerTeamMap.put("b1t", "NaVi");
+        playerTeamMap.put("jL", "NaVi");
+        playerTeamMap.put("Aleksib", "NaVi");
+        playerTeamMap.put("iM", "NaVi");
+        playerTeamMap.put("w0nderful", "NaVi");
+
+        playerTeamMap.put("gla1ve", "ENCE");
+        playerTeamMap.put("dycha", "ENCE");
+        playerTeamMap.put("maden", "ENCE");
+        playerTeamMap.put("SunPayus", "ENCE");
+        playerTeamMap.put("NertZ", "ENCE");
+
+        playerTeamMap.put("HObbit", "Cloud9");
+        playerTeamMap.put("Perfecto", "Cloud9");
+        playerTeamMap.put("Boombl4", "Cloud9");
+        playerTeamMap.put("electroNic", "Cloud9");
+        playerTeamMap.put("sh1ro", "Cloud9");
+
+        playerTeamMap.put("Broky", "FaZe");
+        playerTeamMap.put("ropz", "FaZe");
+        playerTeamMap.put("KARRIGAN", "FaZe");
+        playerTeamMap.put("OLOFMEISTER", "FaZe");
+        playerTeamMap.put("RAIN", "FaZe");
+
+        playerTeamMap.put("TeSeS", "Heroic");
+        playerTeamMap.put("sjuush", "Heroic");
+        playerTeamMap.put("dupreeh", "Heroic");
+        playerTeamMap.put("Zyphon", "Heroic");
+        playerTeamMap.put("cadiaN", "Heroic");
+
+        playerTeamMap.put("EliGE", "Complexity");
+        playerTeamMap.put("hallzerk", "Complexity");
+        playerTeamMap.put("Grim", "Complexity");
+        playerTeamMap.put("floppy", "Complexity");
+        playerTeamMap.put("JT", "Complexity");
+
+        playerTeamMap.put("mezii", "Vitality");
+        playerTeamMap.put("flameZ", "Vitality");
+        playerTeamMap.put("Spinx", "Vitality");
+        playerTeamMap.put("ZywOo", "Vitality");
+        playerTeamMap.put("apEX", "Vitality");
+
+        playerTeamMap.put("torzsi", "MOUZ");
+        playerTeamMap.put("Jimpphat", "MOUZ");
+        playerTeamMap.put("siuhy", "MOUZ");
+        playerTeamMap.put("xertioN", "MOUZ");
+        playerTeamMap.put("sycrone", "MOUZ");
+
+        playerTeamMap.put("Dhokla", "NRG eSports");
+        playerTeamMap.put("Contractz", "NRG eSports");
+        playerTeamMap.put("Palafox", "NRG eSports");
+        playerTeamMap.put("IgNar", "NRG eSports");
+        playerTeamMap.put("FBI", "NRG eSports");
+
+        playerTeamMap.put("BrokenBlade", "G2 eSports");
+        playerTeamMap.put("Yike", "G2 eSports");
+        playerTeamMap.put("Caps", "G2 eSports");
+        playerTeamMap.put("Hans Sama", "G2 eSports");
+        playerTeamMap.put("Mikyx", "G2 eSports");
+
+        playerTeamMap.put("Oscarinin", "Fnatic");
+        playerTeamMap.put("Razork", "Fnatic");
+        playerTeamMap.put("Humanoid", "Fnatic");
+        playerTeamMap.put("Noah", "Fnatic");
+        playerTeamMap.put("Jun", "Fnatic");
+
+        playerTeamMap.put("Elyoya", "MAD Lions");
+        playerTeamMap.put("Nisqy", "MAD Lions");
+        playerTeamMap.put("Hylissang", "MAD Lions");
+        playerTeamMap.put("Carzzy", "MAD Lions");
+        playerTeamMap.put("Chasy", "MAD Lions");
+
+        playerTeamMap.put("Fudge", "Cloud9LOL");
+        playerTeamMap.put("Blaber", "Cloud9LOL");
+        playerTeamMap.put("Jojopyun", "Cloud9LOL");
+        playerTeamMap.put("Berserker", "Cloud9LOL");
+        playerTeamMap.put("Vulcan", "Cloud9LOL");
+
+        playerTeamMap.put("Robo", "LOUD");
+        playerTeamMap.put("Croc", "LOUD");
+        playerTeamMap.put("tinowns", "LOUD");
+        playerTeamMap.put("Route", "LOUD");
+        playerTeamMap.put("Ceos", "LOUD");
+
+        playerTeamMap.put("Impact", "Team Liquid");
+        playerTeamMap.put("UmTi", "Team Liquid");
+        playerTeamMap.put("APA", "Team Liquid");
+        playerTeamMap.put("Yeon", "Team Liquid");
+        playerTeamMap.put("Corejj", "Team Liquid");
+
+        playerTeamMap.put("Adam", "Team BDS");
+        playerTeamMap.put("Sheo", "Team BDS");
+        playerTeamMap.put("nuc", "Team BDS");
+        playerTeamMap.put("Crownshot", "Team BDS");
+        playerTeamMap.put("Labrov", "Team BDS");
+
+        playerTeamMap.put("PHzin", "AFC Ajax Brazil");
+
+        playerTeamMap.put("Manu", "Team Gullit");
+
+        playerTeamMap.put("Neat", "DUX America");
+
+        playerTeamMap.put("Umut", "RBLZ Gaming");
+
+        playerTeamMap.put("Mark11", "Team FUTWIZ");
+
+        playerTeamMap.put("PauloNeto999", "Atlanta United FC");
+
+        playerTeamMap.put("Ollelito", "TG NIP");
+
+        playerTeamMap.put("Obrun2002", "Team Exeed");
+
+    }
 
     // Main menu
     public void showMainMenu() {
@@ -50,6 +197,7 @@ public class Menu {
 
     public void createPlayersAndTeamsDataForStaff() {
         if (gameController.getAllGames(false).isEmpty()) {
+            long startTime = System.currentTimeMillis();
             List<Game> gamesToAdd = new ArrayList<>();
             List<Team> teamsToAdd = new ArrayList<>();
             List<Player> playersToAdd = new ArrayList<>();
@@ -197,201 +345,39 @@ public class Menu {
                     System.out.println(game.getName() + " added");
                 }
             }
-            // Add teams to games
+
+            // Bulk save games and teams
+            teamController.saveAll(teamsToAdd);
+            playerController.saveAll(playersToAdd);
+
+            // Caching games and teams to reduce database calls
+            Map<String, Game> cachedGames = new HashMap<>();
+            Map<String, Team> cachedTeams = new HashMap<>();
+
+            int teamCounter = 0;
             for (Team team : teamsToAdd) {
-                if (teamController.save(team)) {
-                    System.out.println(team.getName() + " added");
-
-                    // Check if the team belongs to specific games
-                    if (team.getName().equals("NaVi") || team.getName().equals("ENCE") || team.getName().equals("Cloud9")
-                            || team.getName().equals("FaZe") || team.getName().equals("Heroic") || team.getName().equals("Complexity")
-                            || team.getName().equals("Vitality") || team.getName().equals("MOUZ")) {
-                        Game cs2Game = gameController.getGameByName("Counter-Strike 2");
-                        cs2Game.addTeam(team);
-                        gameController.updateGame(cs2Game);
-                        System.out.println(team.getName() + " added to " + cs2Game.getName());
-                    } else if (team.getName().equals("AFC Ajax Brazil") || team.getName().equals("Team Gullit")
-                            || team.getName().equals("DUX America") || team.getName().equals("RBLZ Gaming")
-                            || team.getName().equals("Team FUTWIZ") || team.getName().equals("Atlanta United FC")
-                            || team.getName().equals("TG NIP") || team.getName().equals("Team Exeed")) {
-                        Game eaGame = gameController.getGameByName("EA Sports FC 24");
-                        eaGame.addTeam(team);
-                        gameController.updateGame(eaGame);
-                        System.out.println(team.getName() + " added to " + eaGame.getName());
-                    } else if (team.getName().equals("NRG eSports") || team.getName().equals("G2 eSports")
-                            || team.getName().equals("Fnatic") || team.getName().equals("MAD Lions")
-                            || team.getName().equals("Cloud9LOL") || team.getName().equals("LOUD")
-                            || team.getName().equals("Team Liquid") || team.getName().equals("Team BDS")) {
-                        Game lolGame = gameController.getGameByName("League of Legends");
-                        lolGame.addTeam(team);
-                        gameController.updateGame(lolGame);
-                        System.out.println(team.getName() + " added to " + lolGame.getName());
-
-                    }
+                String gameName = teamGameMap.get(team.getName());
+                if (gameName != null) {
+                    Game game = cachedGames.computeIfAbsent(gameName, k -> gameController.getGameByName(k));
+                    game.addTeam(team);
+                    teamCounter++;
                 }
             }
-            // Add players to teams (continued)
+            gameController.updateAll(cachedGames.values()); // Bulk update
+            System.out.println(teamCounter + " teams added");
+
+            int playerCounter = 0;
             for (Player player : playersToAdd) {
-                if (playerController.save(player)) {
-                    System.out.println(player.getNickName() + " added");
-
-                    // Check if the player belongs to specific teams
-                    if (player.getNickName().equals("b1t") || player.getNickName().equals("jL")
-                            || player.getNickName().equals("Aleksib") || player.getNickName().equals("iM")
-                            || player.getNickName().equals("w0nderful")) {
-                        Team naviTeam = teamController.getTeamByName("NaVi");
-                        naviTeam.addPlayer(player);
-                        teamController.updateTeam(naviTeam);
-                        System.out.println(player.getNickName() + " added to " + naviTeam.getName());
-                    } else if (player.getNickName().equals("gla1ve") || player.getNickName().equals("dycha")
-                            || player.getNickName().equals("maden") || player.getNickName().equals("SunPayus")
-                            || player.getNickName().equals("NertZ")) {
-                        Team enceTeam = teamController.getTeamByName("ENCE");
-                        enceTeam.addPlayer(player);
-                        teamController.updateTeam(enceTeam);
-                        System.out.println(player.getNickName() + " added to " + enceTeam.getName());
-                    } else if (player.getNickName().equals("HObbit") || player.getNickName().equals("Perfecto")
-                            || player.getNickName().equals("Boombl4") || player.getNickName().equals("electroNic")
-                            || player.getNickName().equals("sh1ro")) {
-                        Team cloud9Team = teamController.getTeamByName("Cloud9");
-                        cloud9Team.addPlayer(player);
-                        teamController.updateTeam(cloud9Team);
-                        System.out.println(player.getNickName() + " added to " + cloud9Team.getName());
-                    } else if (player.getNickName().equals("Broky") || player.getNickName().equals("ropz")
-                            || player.getNickName().equals("KARRIGAN") || player.getNickName().equals("OLOFMEISTER")
-                            || player.getNickName().equals("RAIN")) {
-                        Team fazeTeam = teamController.getTeamByName("FaZe");
-                        fazeTeam.addPlayer(player);
-                        teamController.updateTeam(fazeTeam);
-                        System.out.println(player.getNickName() + " added to " + fazeTeam.getName());
-                    } else if (player.getNickName().equals("TeSeS") || player.getNickName().equals("sjuush")
-                            || player.getNickName().equals("dupreeh") || player.getNickName().equals("Zyphon")
-                            || player.getNickName().equals("cadiaN")) {
-                        Team heroicTeam = teamController.getTeamByName("Heroic");
-                        heroicTeam.addPlayer(player);
-                        teamController.updateTeam(heroicTeam);
-                        System.out.println(player.getNickName() + " added to " + heroicTeam.getName());
-                    } else if (player.getNickName().equals("EliGE") || player.getNickName().equals("hallzerk")
-                            || player.getNickName().equals("Grim") || player.getNickName().equals("floppy")
-                            || player.getNickName().equals("JT")) {
-                        Team complexityTeam = teamController.getTeamByName("Complexity");
-                        complexityTeam.addPlayer(player);
-                        teamController.updateTeam(complexityTeam);
-                        System.out.println(player.getNickName() + " added to " + complexityTeam.getName());
-                    } else if (player.getNickName().equals("mezii") || player.getNickName().equals("flameZ")
-                            || player.getNickName().equals("Spinx") || player.getNickName().equals("ZywOo")
-                            || player.getNickName().equals("apEX")) {
-                        Team vitalityTeam = teamController.getTeamByName("Vitality");
-                        vitalityTeam.addPlayer(player);
-                        teamController.updateTeam(vitalityTeam);
-                        System.out.println(player.getNickName() + " added to " + vitalityTeam.getName());
-                    } else if (player.getNickName().equals("torzsi") || player.getNickName().equals("Jimpphat")
-                            || player.getNickName().equals("siuhy") || player.getNickName().equals("xertioN")
-                            || player.getNickName().equals("sycrone")) {
-                        Team mouzTeam = teamController.getTeamByName("MOUZ");
-                        mouzTeam.addPlayer(player);
-                        teamController.updateTeam(mouzTeam);
-                        System.out.println(player.getNickName() + " added to " + mouzTeam.getName());
-                    } else if (player.getNickName().equals("Dhokla") || player.getNickName().equals("Contractz")
-                            || player.getNickName().equals("Palafox") || player.getNickName().equals("IgNar")
-                            || player.getNickName().equals("FBI")) {
-                        Team nrgTeam = teamController.getTeamByName("NRG eSports");
-                        nrgTeam.addPlayer(player);
-                        teamController.updateTeam(nrgTeam);
-                        System.out.println(player.getNickName() + " added to " + nrgTeam.getName());
-                    } else if (player.getNickName().equals("BrokenBlade") || player.getNickName().equals("Yike")
-                            || player.getNickName().equals("Caps") || player.getNickName().equals("Hans Sama")
-                            || player.getNickName().equals("Mikyx")) {
-                        Team g2Team = teamController.getTeamByName("G2 eSports");
-                        g2Team.addPlayer(player);
-                        teamController.updateTeam(g2Team);
-                        System.out.println(player.getNickName() + " added to " + g2Team.getName());
-                    } else if (player.getNickName().equals("Oscarinin") || player.getNickName().equals("Razork")
-                            || player.getNickName().equals("Humanoid") || player.getNickName().equals("Noah")
-                            || player.getNickName().equals("Jun")) {
-                        Team fnaticTeam = teamController.getTeamByName("Fnatic");
-                        fnaticTeam.addPlayer(player);
-                        teamController.updateTeam(fnaticTeam);
-                        System.out.println(player.getNickName() + " added to " + fnaticTeam.getName());
-                    } else if (player.getNickName().equals("Elyoya") || player.getNickName().equals("Nisqy")
-                            || player.getNickName().equals("Hylissang") || player.getNickName().equals("Carzzy")
-                            || player.getNickName().equals("Chasy")) {
-                        Team madTeam = teamController.getTeamByName("MAD Lions");
-                        madTeam.addPlayer(player);
-                        teamController.updateTeam(madTeam);
-                        System.out.println(player.getNickName() + " added to " + madTeam.getName());
-                    } else if (player.getNickName().equals("Fudge") || player.getNickName().equals("Blaber")
-                            || player.getNickName().equals("Jojopyun") || player.getNickName().equals("Berserker")
-                            || player.getNickName().equals("Vulcan")) {
-                        Team c9Team = teamController.getTeamByName("Cloud9LOL");
-                        c9Team.addPlayer(player);
-                        teamController.updateTeam(c9Team);
-                        System.out.println(player.getNickName() + " added to " + c9Team.getName());
-                    } else if (player.getNickName().equals("Robo") || player.getNickName().equals("Croc")
-                            || player.getNickName().equals("tinowns") || player.getNickName().equals("Route")
-                            || player.getNickName().equals("Ceos")) {
-                        Team loudTeam = teamController.getTeamByName("LOUD");
-                        loudTeam.addPlayer(player);
-                        teamController.updateTeam(loudTeam);
-                        System.out.println(player.getNickName() + " added to " + loudTeam.getName());
-                    } else if (player.getNickName().equals("Impact") || player.getNickName().equals("UmTi")
-                            || player.getNickName().equals("APA") || player.getNickName().equals("Yeon")
-                            || player.getNickName().equals("Corejj")) {
-                        Team liquidTeam = teamController.getTeamByName("Team Liquid");
-                        liquidTeam.addPlayer(player);
-                        teamController.updateTeam(liquidTeam);
-                        System.out.println(player.getNickName() + " added to " + liquidTeam.getName());
-                    } else if (player.getNickName().equals("Adam") || player.getNickName().equals("Sheo")
-                            || player.getNickName().equals("nuc") || player.getNickName().equals("Crownshot")
-                            || player.getNickName().equals("Labrov")) {
-                        Team bdsTeam = teamController.getTeamByName("Team BDS");
-                        bdsTeam.addPlayer(player);
-                        teamController.updateTeam(bdsTeam);
-                        System.out.println(player.getNickName() + " added to " + bdsTeam.getName());
-                    } else if (player.getNickName().equals("PHzin")) {
-                        Team ajaxTeam = teamController.getTeamByName("AFC Ajax Brazil");
-                        ajaxTeam.addPlayer(player);
-                        teamController.updateTeam(ajaxTeam);
-                        System.out.println(player.getNickName() + " added to " + ajaxTeam.getName());
-                    } else if (player.getNickName().equals("Manu")) {
-                        Team gullitTeam = teamController.getTeamByName("Team Gullit");
-                        gullitTeam.addPlayer(player);
-                        teamController.updateTeam(gullitTeam);
-                        System.out.println(player.getNickName() + " added to " + gullitTeam.getName());
-                    } else if (player.getNickName().equals("Neat")) {
-                        Team duxTeam = teamController.getTeamByName("DUX America");
-                        duxTeam.addPlayer(player);
-                        teamController.updateTeam(duxTeam);
-                        System.out.println(player.getNickName() + " added to " + duxTeam.getName());
-                    } else if (player.getNickName().equals("Umut")) {
-                        Team rblzTeam = teamController.getTeamByName("RBLZ Gaming");
-                        rblzTeam.addPlayer(player);
-                        teamController.updateTeam(rblzTeam);
-                        System.out.println(player.getNickName() + " added to " + rblzTeam.getName());
-                    } else if (player.getNickName().equals("Mark11")) {
-                        Team futTeam = teamController.getTeamByName("Team FUTWIZ");
-                        futTeam.addPlayer(player);
-                        teamController.updateTeam(futTeam);
-                        System.out.println(player.getNickName() + " added to " + futTeam.getName());
-                    } else if (player.getNickName().equals("PauloNeto999")) {
-                        Team atlTeam = teamController.getTeamByName("Atlanta United FC");
-                        atlTeam.addPlayer(player);
-                        teamController.updateTeam(atlTeam);
-                        System.out.println(player.getNickName() + " added to " + atlTeam.getName());
-                    } else if (player.getNickName().equals("Ollelito")) {
-                        Team nipTeam = teamController.getTeamByName("TG NIP");
-                        nipTeam.addPlayer(player);
-                        teamController.updateTeam(nipTeam);
-                        System.out.println(player.getNickName() + " added to " + nipTeam.getName());
-                    } else if (player.getNickName().equals("Obrun2002")) {
-                        Team exeedTeam = teamController.getTeamByName("Team Exeed");
-                        exeedTeam.addPlayer(player);
-                        teamController.updateTeam(exeedTeam);
-                        System.out.println(player.getNickName() + " added to " + exeedTeam.getName());
-                    }
+                String teamName = playerTeamMap.get(player.getNickName());
+                if (teamName != null) {
+                    Team team = cachedTeams.computeIfAbsent(teamName, k -> teamController.getTeamByName(k));
+                    team.addPlayer(player);
+                    playerCounter++;
                 }
-
             }
+            teamController.updateAll(cachedTeams.values()); // Bulk update
+            System.out.println(playerCounter + " players added");
+
             Team cloud9LoLTeam = teamController.getTeamByName("Cloud9LOL");
             if (cloud9LoLTeam != null) {
                 cloud9LoLTeam.setName("Cloud9");
@@ -399,15 +385,25 @@ public class Menu {
                 System.out.println("Team renamed to Cloud9");
             }
 
-            // adding player to specific game as well
+            Map<Integer, List<Integer>> playersByGame = new HashMap<>();
             for (Player player : playersToAdd) {
-                    gameController.addPlayerToGame(player.getId(), player.getTeam().getGame().getGame_id());
-                    System.out.println(player.getNickName() + " added to: " + player.getTeam().getGame().getName());
+                int gameId = player.getTeam().getGame().getGame_id();
+                playersByGame.computeIfAbsent(gameId, k -> new ArrayList<>()).add(player.getId());
             }
+
+            for (Map.Entry<Integer, List<Integer>> entry : playersByGame.entrySet()) {
+                int gameId = entry.getKey();
+                List<Integer> playerIds = entry.getValue();
+
+                gameController.addAllPlayersToGame(playerIds, gameId);
+                System.out.println(playerIds.size() + " players added to game ID: " + gameId);
+            }
+
+            long endTime = System.currentTimeMillis();
+            long elapsedTimeMillis = endTime - startTime;
+            System.out.println("Elapsed Time: " + (double)elapsedTimeMillis / 1000 + " seconds");
         }
-
     }
-
 
     //
     public void createMatches() {
