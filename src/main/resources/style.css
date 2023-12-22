@@ -144,3 +144,42 @@
 .table-view .column-header-background .filler {
     -fx-background-color: -color-table-header;
 }
+
+/* Style for ListView */
+.list-view {
+    -fx-background-color: -color-background-primary;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent -color-border transparent -color-border;
+    -fx-border-width: 1;
+}
+
+/* Style for selected items in ListView */
+.list-view .list-cell:selected {
+    -fx-background-color: -color-selected;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent;
+}
+/* Style for list cell */
+.list-cell:even,
+.list-view:even {
+    -fx-background-color: -color-background-primary;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent -color-border transparent -color-border;
+    -fx-border-width: 1;
+}
+
+/* Style for alternate list cell */
+.list-cell:odd,
+.list-view:odd {
+    -fx-background-color: -color-dialog-pane;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent -color-border transparent -color-border;
+    -fx-border-width: 1;
+}
+
+/* Style for selected list cell */
+.list-view .list-cell:selected {
+    -fx-background-color: -color-selected;
+    -fx-text-fill: -color-text;
+    -fx-border-color: transparent;
+}
