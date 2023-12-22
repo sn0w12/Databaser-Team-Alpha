@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-//TODO Få det att funka med att ta bort en match
 public class MatchGraphics extends Application {
 
     Stage stage;
@@ -61,14 +60,6 @@ public class MatchGraphics extends Application {
         matchStage.setTitle("Matches");
         matchStage.setMinHeight(800);
         matchStage.setMinWidth(750);
-//        matchStage.setWidth(800);
-//        matchStage.setHeight(600);
-
-
-        //TODO sätta vit text på alla labels
-        // centrera/få saker snyggare placerade
-        //TODO fixa så när man skapar en ny match med teams ifrån olika games ska lable ändras
-        //fixa så storlek på fönstret så den håller sig samma även om man backar och går tillbaka
 
         AtomicBoolean showAllMatches = new AtomicBoolean(true);
         AtomicBoolean showPlayedMatches = new AtomicBoolean(false);
@@ -125,7 +116,8 @@ public class MatchGraphics extends Application {
 
         Button buttonAlterMatch = new Button("Alter match");
         buttonAlterMatch.setOnAction(event -> {
-            vBoxChange.getChildren().set(0, alterMatchTestPlayerAndTeam(showAllMatches, showPlayedMatches, vBoxMatchesShown));
+//            vBoxChange.getChildren().set(0, alterMatchTestPlayerAndTeam(showAllMatches, showPlayedMatches, vBoxMatchesShown));
+            vBoxChange.getChildren().set(0, alterMatch(showAllMatches, showPlayedMatches, vBoxMatchesShown));
         });
 
         Button buttonRemoveMatch = new Button("Remove match");
@@ -144,23 +136,6 @@ public class MatchGraphics extends Application {
             matchStage.close();
         });
 
-//        Button buttonUpdateTable = new Button("Update table");
-//        buttonUpdateTable.setOnAction(event -> {
-//            // Fetch data
-//            ObservableList<Match> updatedMatchData = FXCollections.observableArrayList(matchController.getAllMatches());
-//            if (showAllMatches.get()) {
-//                vBoxMatchesShown.getChildren().set(0, showMatches(true, false));
-//                //vBoxMatchesShown.getChildren().addAll(showMatches(true, false, updatedMatchData));
-//            } else {
-//                if (showPlayedMatches.get()) {
-//                    //vBoxMatchesShown.getChildren().addAll(showMatches(false, true, updatedMatchData));
-//                    vBoxMatchesShown.getChildren().set(0, showMatches(false, true));
-//                } else {
-//                    vBoxMatchesShown.getChildren().set(0, showMatches(false, false));
-//                }
-//            }
-//        });
-
 
         // setVBoxBackGround(vBoxButtons);
         vBoxButtons.getChildren().addAll(buttonAddMatch, buttonAddResults, buttonAlterMatch, buttonRemoveMatch, buttonBack);
@@ -169,20 +144,15 @@ public class MatchGraphics extends Application {
 
         //skapar en Hbox där jag lägger in vboxButtons och vboxChange (läggs längst ner i fönstret)
         HBox hboxChoises = new HBox();
-        hboxChoises.setMinHeight(280);  //TODO se till att textfielt får plats att visas efter man ex lagt till en match
+        hboxChoises.setMinHeight(280);
         hboxChoises.getChildren().addAll(vBoxButtons, vBoxChange);
         hboxChoises.setSpacing(100);
 
         //För design, skapar en lista med alla knappar och sätter design
         Button[] buttonList = {buttonAddMatch, buttonShowAllMatches, buttonShowPlayedMatches, buttonShowUnplayedMatches, buttonAddResults, buttonAlterMatch, buttonRemoveMatch, buttonBack};
         for (Button button : buttonList) {
-            button.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;");
-            button.setOnMouseEntered(event -> button.setStyle("-fx-text-fill: #174b54; -fx-background-color: #75e8bd"));
-            button.setOnMouseExited(event -> button.setStyle("-fx-text-fill: white; -fx-background-color: #174b54;"));
-            button.setPrefWidth(190);
-            button.setAlignment(Pos.BASELINE_LEFT);
+            setButtonStyle(button);
         }
-
 
         VBox vBoxAll = new VBox();
         vBoxAll.setStyle("-fx-background-color: #174b54;");
@@ -321,6 +291,7 @@ public class MatchGraphics extends Application {
         Button addMatchbutton = new Button("Add match");
         setButtonStyle(addMatchbutton);
         Label messageLabel = new Label();
+        messageLabel.setTextFill(Color.WHITE);
 
         addMatchbutton.setOnAction(event -> {
             int gameId;
@@ -343,9 +314,9 @@ public class MatchGraphics extends Application {
 
                 if (matchController.addNewMatch(gameId, teamGame, contestant1_id, contestant2_id, LocalDate.of(year, monthInteger, dayInteger))) {  //heter addNewMatch istället för save för jag testade att skriva om save och gjorde det med ett annat namn då
                     updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
-                    messageLabel.setText("Match added, add new match or close window");
+                    messageLabel.setText("Match added");
                 } else {
-                    messageLabel.setText("failed to add match");
+                    messageLabel.setText("Failed to add new match");
                 }
 
             } catch (Exception e) {
@@ -397,7 +368,7 @@ public class MatchGraphics extends Application {
                             updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
                         }
                     } else {
-                        messageLabel.setText("enter results correctly \"xx-xx\"");
+                        messageLabel.setText("Enter results correctly \"xx-xx\"");
                     }
                 } else {
                     messageLabel.setText("Match not played");
@@ -438,7 +409,7 @@ public class MatchGraphics extends Application {
         }
     }
 
-//    public VBox alterMatchTestPlayerAndTeam(AtomicBoolean showAllMatches, AtomicBoolean showPlayedMatches, VBox vBoxMatchesShown) {
+//    public VBox alterMatch(AtomicBoolean showAllMatches, AtomicBoolean showPlayedMatches, VBox vBoxMatchesShown) {
 //
 //        Label matchIdLabel = new Label("Enter id for match to change");
 //        matchIdLabel.setTextFill(Color.WHITE);
@@ -457,235 +428,176 @@ public class MatchGraphics extends Application {
 //        TextField dateTextField = new TextField();
 //        Button alterMatchButton = new Button("Change match");
 //        setButtonStyle(alterMatchButton);
-//
-//
-//        alterMatchButton.setOnAction(event -> {
-//            int matchId;
-//            int idOfNewplayerOrTeam;
-//
-//
-//            matchId = Integer.parseInt(matchIdTextField.getText());
-//            Match matchToUpdate = matchController.getMatchById(matchId);
-//            if (matchToUpdate.getTeamGame()) {
-//
-//                //ändra team1
-//                if (!playerOrTeam1TextField.getText().isEmpty()) {
-//                    try {
-//                        idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
-//
-//                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-//                            System.out.println("lyckats ändra hoppas jag ");
-//                        } else {
-//                            System.out.println("nähä inte nu heller");
-//                        }
-//                    } catch (Exception e) {
-//                        System.out.println(e + "fel för jag försöker inte ändra player 2");
-//                    }
-//                }
-//                if (!playerOrTeam2TextField.getText().isEmpty()) {
-//                    //ändra team2
-//                    try {
-//                        matchId = Integer.parseInt(matchIdTextField.getText());
-//
-//                        idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
-//                        System.out.println("changing team1 to id: " + idOfNewplayerOrTeam);
-//
-//                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-//                            System.out.println("lyckats ändra hoppas jag ");
-//                        } else {
-//                            System.out.println("nähä inte nu heller");
-//                        }
-//                    } catch (Exception e) {
-//                        System.out.println(e + "fel för jag försöker inte ändra player 2");
-//                    }
-//                }
-//            } else {
-//
-//
-//
-//
-//                if (playerOrTeam1TextField.getText() != null) {       //  ändra spelare 1
-//                    try {
-//                        matchId = Integer.parseInt(matchIdTextField.getText());
-//                        idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
-//                        System.out.println("changing player1 to id: " + idOfNewplayerOrTeam);
-//
-//                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-//                            System.out.println("lyckats ändra hoppas jag ");
-//                        } else {
-//                            System.out.println("nähä inte nu heller");
-//                        }
-//                    } catch (Exception e) {
-//                        System.out.println(e);
-//                    }
-//                }
-//
-//                if (playerOrTeam2TextField.getText() != null) {     //ändra spelare 2
-//                    try {
-//                        matchId = Integer.parseInt(matchIdTextField.getText());
-//                        idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
-//                        System.out.println("changing player2 to id: " + idOfNewplayerOrTeam);
-//
-//                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-//                            System.out.println("lyckats ändra hoppas jag ");
-//                        } else {
-//                            System.out.println("nähä inte nu heller");
-//                        }
-//                    } catch (Exception e) {
-//                        System.out.println(e + "fel för jag försöker inte ändra player 2");
-//                    }
-//                }
-//            }
-//
-//            //ändra datum
-//            String[] dateList = dateTextField.getText().split("-");
-//            if (dateList != null) {
-//
-//                try {
-//                    int year = Integer.parseInt(dateList[0]);
-//                    int month = Integer.parseInt(dateList[1]);
-//                    int day = Integer.parseInt(dateList[2]);
-//
-//                    matchToUpdate.setMatchDate(LocalDate.of(year, month, day));
-//
-//                    if (matchController.updateMatch(matchToUpdate)) {
-//                        System.out.println("Date updated");
-//                    }
-//                } catch (Exception e) {
-//                }
-//            }
-//
-//            //TODO lägga till funktion för att ändra spel
-//
-//
-//            updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
-//        });
-//
-//
-//
-//        VBox vBoxAlterMatch = new VBox();
-//        vBoxAlterMatch.getChildren().addAll(matchIdLabel, matchIdTextField, gameIdLabel, gameIdTextField, playerOrTeam1Label, playerOrTeam1TextField, playerOrTeam2Label, playerOrTeam2TextField,
-//                dateLabel, dateTextField, alterMatchButton);
-//        vBoxAlterMatch.setStyle("-fx-background-color: #174b54;");
-//        return vBoxAlterMatch;
-//    }
-
-//    public VBox alterMatchTestPlayerAndTeam(AtomicBoolean showAllMatches, AtomicBoolean showPlayedMatches, VBox vBoxMatchesShown) {
-//
-//        Label matchIdLabel = new Label("Enter id for match to change");
-//        matchIdLabel.setTextFill(Color.WHITE);
-//        TextField matchIdTextField = new TextField();
-//        Label gameIdLabel = new Label("Enter id for new game");
-//        gameIdLabel.setTextFill(Color.WHITE);
-//        TextField gameIdTextField = new TextField();
-//        Label playerOrTeam1Label = new Label("Enter new id for player/team 1");
-//        playerOrTeam1Label.setTextFill(Color.WHITE);
-//        TextField playerOrTeam1TextField = new TextField();
-//        Label playerOrTeam2Label = new Label("Enter new id for player/team 2");
-//        playerOrTeam2Label.setTextFill(Color.WHITE);
-//        TextField playerOrTeam2TextField = new TextField();
-//        Label dateLabel = new Label("Enter new date for match");
-//        dateLabel.setTextFill(Color.WHITE);
-//        TextField dateTextField = new TextField();
-//        Button alterMatchButton = new Button("Change match");
-//        setButtonStyle(alterMatchButton);
-//        Label messageLabel = new Label();
+//        Label messageLabel = new Label("");
 //        messageLabel.setTextFill(Color.WHITE);
 //
+//
 //        alterMatchButton.setOnAction(event -> {
-//            int idOfNewplayerOrTeam1;
-//            int idOfNewplayerOrTeam2;
+//                    int matchId;
+//                    int idOfNewplayerOrTeam;
+//                    messageLabel.setText(" ");
+//                    try {
+//                        matchId = Integer.parseInt(matchIdTextField.getText());
+//                        Match matchToUpdate = matchController.getMatchById(matchId);
 //
-//            try {
-//                int matchId = Integer.parseInt(matchIdTextField.getText());
-//                Match matchToUpdate = matchController.getMatchById(matchId);
 //
-//                //ändra team
-//                if (matchToUpdate.getTeamGame()) {
+//                        //ändra game- kan bara ändra game på matcher som är player
+//                        if (!gameIdTextField.getText().isEmpty()) {
+////                            try {
+//                            int gameId = Integer.parseInt(gameIdTextField.getText());
 //
-//                    //ändra team1
-//                    if (!playerOrTeam1TextField.getText().isEmpty()) {
-//                        idOfNewplayerOrTeam1 = Integer.parseInt(playerOrTeam1TextField.getText());
-//                        if (idOfNewplayerOrTeam1 > 0 && idOfNewplayerOrTeam1 < (teamController.getAll(false).size() + 1)) {
-//                            if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam1)) {  //står noll där för det är spelare ett jag vill ändra
+//                            if (!matchToUpdate.getTeamGame()) {
+//                                if (matchController.updateGameInMatch(matchToUpdate, gameId)) {
+//                                    messageLabel.setText("Updated");
+//                                    System.out.println("Game updated");
+//                                } else {
+//                                    messageLabel.setText("Failed to update Game");
+//                                }
+//                            } else {
+//                                messageLabel.setText("Failed, Can only change game for player matches");
+//                            }
+////                            } catch (Exception e) {
+////                                messageLabel.setText("Failed to update game");
+////                            }
+//                        }
+//
+//
+//                        //ändra team
+//                        if (matchToUpdate.getTeamGame()) {
+//                            //ändra team1
+//                            if (!playerOrTeam1TextField.getText().isEmpty()) {
+////                                try {
+//                                idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
+//                                if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+//
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Updated");
+//                                    }
+//                                } else {
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Failed to update team1");
+//                                    }
+//                                }
+//
+////                                } catch (Exception e) {
+////                                    if (!messageLabel.getText().contains("Failed")) {
+////                                        messageLabel.setText("Failed to update team1");
+////                                    }
+////                                }
+//                            }
+//
+//
+//                            //ändra team2
+//                            if (!playerOrTeam2TextField.getText().isEmpty()) {
+////                                try {
+//                                idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
+//                                matchId = Integer.parseInt(matchIdTextField.getText());
+//                                if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Updated");
+//                                    }
+//                                } else {
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Failed to update team2");
+//                                    }
+//                                }
+//
+////                                } catch (Exception e) {
+////                                    if (!messageLabel.getText().contains("Failed")) {
+////                                        messageLabel.setText("Failed to update team2");
+////                                    }
+////                                }
+//                            }
+//                            //ändra  player
+//                        } else { //  ändra player1
+//                            if (!playerOrTeam1TextField.getText().isEmpty()) {
+////                                try {
+//                                idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
+//                                matchId = Integer.parseInt(matchIdTextField.getText());
+//
+//
+//                                if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
+//                                    System.out.println("lyckats ändra hoppas jag ");
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Updated");
+//                                    }
+//                                } else {
+//                                    System.out.println("nähä inte nu heller");
+//                                    if (!messageLabel.getText().contains("Failed")) {
+//                                        messageLabel.setText("Failed to update player1");
+//                                    }
+//                                }
+////                                } catch (Exception e) {
+////                                    System.out.println(e);
+////                                    if (!messageLabel.getText().contains("Failed")) {
+////                                        messageLabel.setText("Failed to update player1");
+////                                    }
+//                            }
+//                        }
+//
+//
+//                        //ändra player2
+//                        if (!playerOrTeam2TextField.getText().isEmpty()) {
+////                                try {
+//                            idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
+//
+//                            matchId = Integer.parseInt(matchIdTextField.getText());
+//                            if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
 //                                System.out.println("lyckats ändra hoppas jag ");
+//                                if (!messageLabel.getText().contains("Failed")) {
+//                                    messageLabel.setText("Updated");
+//                                }
 //                            } else {
 //                                System.out.println("nähä inte nu heller");
+//                                if (!messageLabel.getText().contains("Failed")) {
+//                                    messageLabel.setText("Failed to update player2");
+//                                }
 //                            }
-//                        } else {
-//                            messageLabel.setText("Team1 id out of bounce");
-//                        }
-//                    }
-//                    if (!playerOrTeam2TextField.getText().isEmpty()) {
-//                        //ändra team2
-//                        idOfNewplayerOrTeam2 = Integer.parseInt(playerOrTeam2TextField.getText());
-//                        if (idOfNewplayerOrTeam2 > 0 && idOfNewplayerOrTeam2 < (teamController.getAll(false).size() + 1)) {
-//                            System.out.println("changing team1 to id: " + idOfNewplayerOrTeam2);
 //
-//                            if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam2)) {  //står noll där för det är spelare ett jag vill ändra
-//                                System.out.println("lyckats ändra hoppas jag ");
+////                                } catch (Exception e) {
+////                                    System.out.println(e + "fel för jag försöker inte ändra player 2");
+////                                    if (!messageLabel.getText().contains("Failed")) {
+////                                        messageLabel.setText("Failed to update player2");
+////                                    }
+////                                }
+////                            }
+//                        }
+//
+//                        //ändra datum
+//                        if (!dateTextField.getText().isEmpty()) {
+////                            try {
+//                            String[] dateList = dateTextField.getText().split("-");
+//                            int year = Integer.parseInt(dateList[0]);
+//                            int month = Integer.parseInt(dateList[1]);
+//                            int day = Integer.parseInt(dateList[2]);
+//
+//                            matchToUpdate.setMatchDate(LocalDate.of(year, month, day));
+//
+//                            if (matchController.updateMatch(matchToUpdate)) {
+//                                if (!messageLabel.getText().contains("Failed")) {
+//                                    messageLabel.setText("Updated");
+//                                }
 //                            } else {
-//                                System.out.println("nähä inte nu heller");
+//                                if (!messageLabel.getText().contains("Failed")) {
+//                                    messageLabel.setText("Failed to update date");
+//                                }
 //                            }
-//                        } else {
-//                            messageLabel.setText("Team1 id out of bounce");
+////                            } catch (Exception e) {
+////                                if (!messageLabel.getText().contains("Failed")) {
+////                                    messageLabel.setText("Failed to update date");
+////                                }
+////                            }
 //                        }
-//                    }
 //
-//                } else { //ändra player
-//                    //  ändra spelare 1
-//                    if (!playerOrTeam1TextField.getText().isEmpty()) {
-//                        idOfNewplayerOrTeam1 = Integer.parseInt(playerOrTeam1TextField.getText());
-//                        if (idOfNewplayerOrTeam1 > 0 && idOfNewplayerOrTeam1 < (playerController.getAll(false).size() + 1)) {
-//                            if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam1)) {  //står noll där för det är spelare ett jag vill ändra
-//                                System.out.println("lyckats ändra hoppas jag ");
-//                            } else {
-//                                System.out.println("nähä inte nu heller");
-//                            }
-//                        } else {
-//                            messageLabel.setText("Team1 id out of bounce");
+//                        if (!messageLabel.getText().contains("Failed")) {
+//                            updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
 //                        }
+//
+//                    } catch (Exception e) {
+//                        messageLabel.setText("Failed to update match");
 //                    }
-//                    //ändra spelare 2
-//                    if (!playerOrTeam2TextField.getText().isEmpty()) {
-//                        idOfNewplayerOrTeam2 = Integer.parseInt(playerOrTeam2TextField.getText());
-//                        if (idOfNewplayerOrTeam2 > 0 && idOfNewplayerOrTeam2 < (playerController.getAll(false).size() + 1)) {
-//                            System.out.println("changing player2 to id: " + idOfNewplayerOrTeam2);
-//
-//                            if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam2)) {  //står noll där för det är spelare ett jag vill ändra
-//                                System.out.println("lyckats ändra hoppas jag ");
-//                            } else {
-//                                System.out.println("nähä inte nu heller");
-//                            }
-//                        } else {
-//                            messageLabel.setText("Player2 id out of bounce");
-//                        }
-//                    }
-//
-//                    //ändra datum
-//                    if (!dateTextField.getText().isEmpty()) {
-//                        String[] dateList = dateTextField.getText().split("-");
-//                        int year = Integer.parseInt(dateList[0]);
-//                        int month = Integer.parseInt(dateList[1]);
-//                        int day = Integer.parseInt(dateList[2]);
-//
-//                        matchToUpdate.setMatchDate(LocalDate.of(year, month, day));
-//
-//                        if (matchController.updateMatch(matchToUpdate)) {
-//                            System.out.println("Date updated");
-//                        }
-//                    }
-//
-//                    messageLabel.setText("match updated");
-//
-//                    //TODO lägga till funktion för att ändra spel
 //                }
-//            } catch (Exception e) {
-//                System.out.println(e);
-//                messageLabel.setText("Failed to update match");
-//            }
-//            updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
-//        });
+//        );
 //
 //
 //        VBox vBoxAlterMatch = new VBox();
@@ -694,8 +606,9 @@ public class MatchGraphics extends Application {
 //        vBoxAlterMatch.setStyle("-fx-background-color: #174b54;");
 //        return vBoxAlterMatch;
 //    }
+//
 
-    public VBox alterMatchTestPlayerAndTeam(AtomicBoolean showAllMatches, AtomicBoolean showPlayedMatches, VBox vBoxMatchesShown) {
+    public VBox alterMatch(AtomicBoolean showAllMatches, AtomicBoolean showPlayedMatches, VBox vBoxMatchesShown) {
 
         Label matchIdLabel = new Label("Enter id for match to change");
         matchIdLabel.setTextFill(Color.WHITE);
@@ -720,170 +633,74 @@ public class MatchGraphics extends Application {
 
         alterMatchButton.setOnAction(event -> {
                     int matchId;
-                    int idOfNewplayerOrTeam;
+                    int newGameId;
                     messageLabel.setText(" ");
+
+                    int newPlayerOrTeam1 = 0;
+                    int newPlayerOrTeam2 = 0;
+                    String newDate;
+
                     try {
                         matchId = Integer.parseInt(matchIdTextField.getText());
                         Match matchToUpdate = matchController.getMatchById(matchId);
 
-
                         //ändra game- kan bara ändra game på matcher som är player
                         if (!gameIdTextField.getText().isEmpty()) {
-
-                            try {
-                                int gameId = Integer.parseInt(gameIdTextField.getText());
-
-                                if (!matchToUpdate.getTeamGame()) {
-                                    matchToUpdate.setGame(gameController.getGameByIdUniversal(gameId));
-                                    if (matchController.updateMatch(matchToUpdate)) {
-                                        messageLabel.setText("Updated");
-                                        System.out.println("Game updated");
-                                    } else {
-                                        messageLabel.setText("Failed to update Game");
-                                    }
-                                } else {
-                                    messageLabel.setText("Failed, Can only change game for player matches");
-                                }
-                            } catch (Exception e) {
-                                messageLabel.setText("Failed to update game");
-                            }
+                            newGameId = Integer.parseInt(gameIdTextField.getText());
+                        } else {
+                            newGameId = 0;
                         }
-
 
                         //ändra team
                         if (matchToUpdate.getTeamGame()) {
                             //ändra team1
                             if (!playerOrTeam1TextField.getText().isEmpty()) {
-                                try {
-                                    idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
-                                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Updated");
-                                                System.out.println("lyckats ändra hoppas jag ");
-                                            }
-                                        } else {
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Failed to update team1");
-                                                System.out.println("nähä inte nu heller");
-                                            }
-                                        }
-
-                                } catch (Exception e) {
-                                    System.out.println(e + "fel för jag försöker inte ändra player 2");
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Failed to update team1");
-                                    }
-                                }
+                                System.out.println("ändra team1");
+                                String team1 = playerOrTeam1TextField.getText();
+                                System.out.println("String team1; " + team1);
+                                // newPlayerOrTeam1 = Integer.parseInt(playerOrTeam1Label.getText());
+                                newPlayerOrTeam1 = Integer.parseInt(team1);
+                                System.out.println("int team1; " + newPlayerOrTeam1);
                             }
-
 
                             //ändra team2
                             if (!playerOrTeam2TextField.getText().isEmpty()) {
-                                try {
-                                    idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
-                                        matchId = Integer.parseInt(matchIdTextField.getText());
-                                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                                            System.out.println("lyckats ändra hoppas jag ");
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Updated");
-                                            }
-                                        } else {
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Failed to update team2");
-                                            }
-                                        }
-
-                                } catch (Exception e) {
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Failed to update team2");
-                                    }
-                                }
+                                System.out.println("ändra team2");
+                                String team2 = playerOrTeam2TextField.getText();
+                                System.out.println("Sträng team2: " + team2);
+                                newPlayerOrTeam2 = Integer.parseInt(team2);
+                                System.out.println("ändra team2");
                             }
-                        //ändra  player
-                        } else { //  ändra player1
+
+                            //ändra player
+                        } else {
+                            //  ändra player1
                             if (!playerOrTeam1TextField.getText().isEmpty()) {
-                                try {
-                                    idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam1TextField.getText());
-                                        matchId = Integer.parseInt(matchIdTextField.getText());
-
-
-                                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 0, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                                            System.out.println("lyckats ändra hoppas jag ");
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Updated");
-                                            }
-                                        } else {
-                                            System.out.println("nähä inte nu heller");
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Failed to update player1");
-                                            }
-                                        }
-                                } catch (Exception e) {
-                                    System.out.println(e);
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Failed to update player1");
-                                    }
-                                }
+                                System.out.println("ändra player1");
+                                newPlayerOrTeam1 = Integer.parseInt(playerOrTeam1TextField.getText());
                             }
 
 
                             //ändra player2
                             if (!playerOrTeam2TextField.getText().isEmpty()) {
-                                try {
-                                    idOfNewplayerOrTeam = Integer.parseInt(playerOrTeam2TextField.getText());
-
-                                        matchId = Integer.parseInt(matchIdTextField.getText());
-                                        if (matchController.replaceOnePlayerOrTeamFromMatch(matchId, 1, idOfNewplayerOrTeam)) {  //står noll där för det är spelare ett jag vill ändra
-                                            System.out.println("lyckats ändra hoppas jag ");
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Updated");
-                                            }
-                                        } else {
-                                            System.out.println("nähä inte nu heller");
-                                            if (!messageLabel.getText().contains("Failed")) {
-                                                messageLabel.setText("Failed to update player2");
-                                            }
-                                        }
-
-                                } catch (Exception e) {
-                                    System.out.println(e + "fel för jag försöker inte ändra player 2");
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Failed to update player2");
-                                    }
-                                }
+                                newPlayerOrTeam2 = Integer.parseInt(playerOrTeam2TextField.getText());
+                                System.out.println("ändra player2");
                             }
                         }
 
                         //ändra datum
                         if (!dateTextField.getText().isEmpty()) {
-                            try {
-                                String[] dateList = dateTextField.getText().split("-");
-                                int year = Integer.parseInt(dateList[0]);
-                                int month = Integer.parseInt(dateList[1]);
-                                int day = Integer.parseInt(dateList[2]);
-
-                                matchToUpdate.setMatchDate(LocalDate.of(year, month, day));
-
-                                if (matchController.updateMatch(matchToUpdate)) {
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Updated");
-                                    }
-                                    System.out.println("Date updated");
-                                } else {
-                                    if (!messageLabel.getText().contains("Failed")) {
-                                        messageLabel.setText("Failed to update date");
-                                    }
-                                }
-                            } catch (Exception e) {
-                                if (!messageLabel.getText().contains("Failed")) {
-                                    messageLabel.setText("Failed to update date");
-                                }
-                            }
+                            newDate = dateTextField.getText();
+                        } else {
+                            newDate = null;
                         }
-
-                        if (!messageLabel.getText().contains("Failed")) {
+                        System.out.println("player/team1 id: " + newPlayerOrTeam1);
+                        System.out.println("player/team2 id: " + newPlayerOrTeam2);
+                        if (matchController.alterMatch(matchId, newPlayerOrTeam1, newPlayerOrTeam2, newGameId, newDate)) {
+                            messageLabel.setText("MatchUpdated");
                             updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
+                        } else {
+                            messageLabel.setText("Failed to update match");
                         }
 
                     } catch (Exception e) {
@@ -915,14 +732,14 @@ public class MatchGraphics extends Application {
         removeMatchButton.setOnAction(event -> {
             try {
                 int id = Integer.parseInt(removeMatchIdTextField.getText());
-                    if (matchController.removePlayerOrTeamFromMatch(id)) {
-                        if (matchController.deleteMatch(id)) {
-                            messageLabel.setText("Match removed");
-                            updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
-                        }
-                    } else {
-                        messageLabel.setText("Failed to delete match");
+                if (matchController.removePlayerOrTeamFromMatch(id)) {
+                    if (matchController.deleteMatch(id)) {
+                        messageLabel.setText("Match removed");
+                        updateTable(showAllMatches, showPlayedMatches, vBoxMatchesShown);
                     }
+                } else {
+                    messageLabel.setText("Failed to delete match");
+                }
             } catch (Exception e) {
                 messageLabel.setText("Failed to remove match");
             }
