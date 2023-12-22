@@ -32,8 +32,8 @@ public class HelloApplication extends Application {
 //        MatchGraphics matchGraphics = new MatchGraphics(gameController, teamController, playerController, matchController, staffController);
 //        matchGraphics.start(stage);
 
-
-        //kör hela från början
+//
+//        //kör hela från början
         MainWindow mainWindow = new MainWindow();
         mainWindow.start(new Stage());
 

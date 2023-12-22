@@ -46,7 +46,9 @@ public class MatchController {
                         team1 = possiblyATeam1.get();
                         team2 = possiblyATeam2.get();
 
-                        if (team1.getGame().equals(team2.getGame()) && !team1.equals(team2)) {
+                        //    if (team1.getGame().equals(team2.getGame()) && !team1.equals(team2)) {
+                        if (team1.getGame().getGame_id() == gameId && team2.getGame().getGame_id() == gameId && !team1.equals(team2)) {
+
                             match = new Match();
 
                             //lägger till team i match och match till team
@@ -87,7 +89,7 @@ public class MatchController {
 
                             match.addPlayer(player1);
                             match.addPlayer(player2);
-=======
+
 //                     match.addPlayer(player1);
 //                     match.addPlayer(player2);
 
@@ -475,12 +477,12 @@ public class MatchController {
                         Player player2ToRemove = possiblyplayer2ToRemove.get();
                         Player player2ToChangeTo = possiblyplayer2ToChangeTo.get();
 
-                            player2ToChangeTo.getMatches().add(matchToUpdate);
-                            player2ToRemove.getMatches().remove(matchToUpdate);
-                            matchToUpdate.setPlayersByIndexInPlayersList(1, player2ToChangeTo);
-                            entityManager.merge(matchToUpdate);
-                            entityManager.merge(player2ToRemove);
-                            entityManager.merge(player2ToChangeTo);
+                        player2ToChangeTo.getMatches().add(matchToUpdate);
+                        player2ToRemove.getMatches().remove(matchToUpdate);
+                        matchToUpdate.setPlayersByIndexInPlayersList(1, player2ToChangeTo);
+                        entityManager.merge(matchToUpdate);
+                        entityManager.merge(player2ToRemove);
+                        entityManager.merge(player2ToChangeTo);
 
                     } else return false;
                 }

@@ -23,6 +23,7 @@ import javafx.scene.layout.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -58,8 +59,6 @@ public class MatchGraphics extends Application {
 
     public void mainWindow(Stage matchStage) {
         matchStage.setTitle("Matches");
-        matchStage.setMinHeight(800);
-        matchStage.setMinWidth(750);
 
         AtomicBoolean showAllMatches = new AtomicBoolean(true);
         AtomicBoolean showPlayedMatches = new AtomicBoolean(false);
@@ -99,6 +98,8 @@ public class MatchGraphics extends Application {
 
         //Skapar en vbox där det visas vad man vill göra och man kan fylla i vad man vill göra
         VBox vBoxChange = new VBox();
+        vBoxChange.setAlignment(Pos.CENTER);
+        vBoxChange.setSpacing(10);
         Label empty = new Label(); //lägger till en tom lable för att det ska finnas ett index att byta till
         vBoxChange.getChildren().add(0, empty);
 
@@ -116,7 +117,6 @@ public class MatchGraphics extends Application {
 
         Button buttonAlterMatch = new Button("Alter match");
         buttonAlterMatch.setOnAction(event -> {
-//            vBoxChange.getChildren().set(0, alterMatchTestPlayerAndTeam(showAllMatches, showPlayedMatches, vBoxMatchesShown));
             vBoxChange.getChildren().set(0, alterMatch(showAllMatches, showPlayedMatches, vBoxMatchesShown));
         });
 
@@ -137,7 +137,6 @@ public class MatchGraphics extends Application {
         });
 
 
-        // setVBoxBackGround(vBoxButtons);
         vBoxButtons.getChildren().addAll(buttonAddMatch, buttonAddResults, buttonAlterMatch, buttonRemoveMatch, buttonBack);
         vBoxButtons.setAlignment(Pos.CENTER);
         vBoxButtons.setSpacing(10);
@@ -145,8 +144,10 @@ public class MatchGraphics extends Application {
         //skapar en Hbox där jag lägger in vboxButtons och vboxChange (läggs längst ner i fönstret)
         HBox hboxChoises = new HBox();
         hboxChoises.setMinHeight(280);
+        hboxChoises.setMaxHeight(280);
+        hboxChoises.setAlignment(Pos.CENTER_LEFT);
         hboxChoises.getChildren().addAll(vBoxButtons, vBoxChange);
-        hboxChoises.setSpacing(100);
+        hboxChoises.setSpacing(10);
 
         //För design, skapar en lista med alla knappar och sätter design
         Button[] buttonList = {buttonAddMatch, buttonShowAllMatches, buttonShowPlayedMatches, buttonShowUnplayedMatches, buttonAddResults, buttonAlterMatch, buttonRemoveMatch, buttonBack};
@@ -157,7 +158,9 @@ public class MatchGraphics extends Application {
         VBox vBoxAll = new VBox();
         vBoxAll.setStyle("-fx-background-color: #174b54;");
         vBoxAll.getChildren().addAll(hBoxChooseMatchesToShow, vBoxMatchesShown, hboxChoises);
-        Scene sceneAlternatives = new Scene(vBoxAll, 800, 750);
+        Scene sceneAlternatives = new Scene(vBoxAll, 750, 625);
+
+        // sceneAlternatives.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
         matchStage.setScene(sceneAlternatives);
         matchStage.show();
     }
@@ -165,7 +168,6 @@ public class MatchGraphics extends Application {
 
     public VBox showMatches(boolean showAllmatches, boolean showPlayedMatches) {
         TableView<Match> allMatchesTable = new TableView<>();
-
 //skapar kolumner
         TableColumn<Match, Integer> matchId = new TableColumn<>("Match id");
         TableColumn<Match, String> game = new TableColumn<>("Game");
@@ -250,11 +252,11 @@ public class MatchGraphics extends Application {
 
         //lägger in olika listor i tabellen beroende på vilka matcher som ska visas
         allMatchesTable.setItems(matchData);
-        allMatchesTable.setPrefSize(700, 700);
-
+//        allMatchesTable.setPrefSize(700, 700);
+//
         //skapar en vBox där jag lägger in tabellen och returnerar
         VBox vbox = new VBox();
-        vbox.setPrefSize(700, 700);
+        //  vbox.setPrefSize(700, 700);
         vbox.getChildren().add(allMatchesTable);
         vbox.setStyle("-fx-background-color: #174b54;");
         return vbox;
