@@ -6,6 +6,7 @@ import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -307,6 +308,58 @@ public class GameController {
 
         return gameToReturn;
 
+    }
+    public void addAllPlayersToGame(List<Integer> playerIds, int gameId) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            Game game = entityManager.find(Game.class, gameId);
+            if (game == null) {
+                System.out.println("Game not found.");
+            }
+
+            for (int playerId : playerIds) {
+                Player player = entityManager.find(Player.class, playerId);
+                if (player != null) {
+                    game.addPlayer(player);
+                }
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    // Bulk update a list of games in the database
+    public boolean updateAll(Collection<Game> games) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            for (Game game : games) {
+                entityManager.merge(game);
+            }
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            entityManager.close();
+        }
     }
 }
 

@@ -21,11 +21,11 @@ import java.util.Optional;
 public class TeamGraphics {
 
   Stage stage;
-  private GameController gameController;
-  private TeamController teamController;
-  private PlayerController playerController;
-  private MatchController matchController;
-  private StaffController staffController;
+  private final GameController gameController;
+  private final TeamController teamController;
+  private final PlayerController playerController;
+  private final MatchController matchController;
+  private final StaffController staffController;
 //  private TournamentController tournamentController;
 
   public TeamGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {

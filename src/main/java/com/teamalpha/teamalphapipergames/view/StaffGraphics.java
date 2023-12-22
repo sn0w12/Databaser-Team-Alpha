@@ -7,24 +7,35 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.hibernate.sql.Delete;
+
 import java.util.List;
+import java.util.Objects;
+
 
 public class StaffGraphics extends Application {
     Stage stage;
-    private GameController gameController;
-    private TeamController teamController;
-    private PlayerController playerController;
-    private MatchController matchController;
+    private final GameController gameController;
+    private final TeamController teamController;
+    private final PlayerController playerController;
+    private final MatchController matchController;
     private StaffController staffController;
     //  private TournamentController tournamentController;
     private Stage editStaffStage;
     Stage staffStage = new Stage();
+    private FilteredList<Staff> filteredStaff;
+
 
     public StaffGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
         this.gameController = gameController;
@@ -39,10 +50,11 @@ public class StaffGraphics extends Application {
         try {
             this.stage = primaryStage;
             Platform.runLater(() -> {
-                displayStaffUI();
+                showTabsForStaff(primaryStage);
             });
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 
@@ -51,13 +63,13 @@ public class StaffGraphics extends Application {
         Stage primaryStage = new Stage();
         StaffController staffController = new StaffController();
 
-        // Create initial staff if they don't exist already
+        // Skapa initial personal om de inte redan finns
         staffController.createInitialStaffIfNotExists();
 
-        // Retrieve all records from the staff table
+        // Hämta alla poster från personaltabellen
         List<Staff> staffList = staffController.getAllStaff();
 
-        // Create a list to store staff names
+        // Skapa en lista för att lagra personalens namn
         ObservableList<String> items = FXCollections.observableArrayList();
 
         if (staffList != null) {
@@ -68,29 +80,31 @@ public class StaffGraphics extends Application {
             items.add("Failed to fetch data from the staff table.");
         }
 
-        // Create a ListView to display staff information
+        // Skapa en ListView för att visa personalinformation
         ListView<String> staffListView = new ListView<>(items);
 
-        Label selectedStaffLabel = new Label("Selected staff: ");
+
+        Label selectedStaffLabel = new Label("Selected staff:");
         Button continueButton = new Button("Continue");
-        Button exitButton = new Button("Exit");
+        Button backButton = new Button("Back to main");
 
         staffListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedStaffLabel.setText("Selected staff: " + newValue);
-            continueButton.setDisable(false); // Enable the button when a staff is selected
+            continueButton.setDisable(false); // Aktivera knappen när en personal är vald
         });
 
         continueButton.setOnAction(event -> {
             String selectedStaff = staffListView.getSelectionModel().getSelectedItem();
             if (selectedStaff != null) {
                 assert staffList != null;
-                int selectedStaffId = getStaffIdFromName(selectedStaff, staffList);
+                int selectedStaffId = staffController.getStaffIdFromName(selectedStaff, staffList);
                 if (selectedStaffId != -1) {
                     showTabsForStaff(primaryStage);
                 }
             } else {
-                // If no staff is selected, show an alert prompting the user to select one
+                // Om ingen personal är vald, visa en varning för att användaren ska välja en
                 Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
                 alert.setTitle("Warning");
                 alert.setHeaderText("No staff selected");
                 alert.setContentText("Please select an staff before continuing.");
@@ -98,254 +112,146 @@ public class StaffGraphics extends Application {
             }
         });
 
-        exitButton.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation");
-            alert.setHeaderText("Confirm Exit");
-            alert.setContentText("Are you sure you want to exit?");
+        backButton.setOnAction(event -> {
+            Stage staffMainMenuStage = new Stage();
+            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
 
-            // Display a confirmation dialog and wait for the user's response
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    // If the user selects "OK", close the application
-                    primaryStage.close();
-                }
-            });
+            // Skapa en instans av StaffMainMenu och öppna den
+            try {
+                staffMainMenu.start(staffMainMenuStage);
+            } catch (Exception e) {
+                e.printStackTrace(); // Hantera eventuella undantag
+            }
+
+            primaryStage.close();
         });
+        // Skapa en HBox för att placera knapparna och texten ovanför listan
+        HBox buttonBox = new HBox(10);
+        buttonBox.getChildren().addAll(selectedStaffLabel, continueButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
 
-
-        VBox vbox = new VBox(staffListView, selectedStaffLabel, continueButton, exitButton);
+// Skapa en VBox för att placera komponenterna
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(buttonBox, staffListView);
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
-        Scene scene = new Scene(vbox, 300, 250);
+        vbox.getStyleClass().add("vbox-background"); // Lägger till stilklassen för VBox
 
-        primaryStage.setTitle("Welcome to Piper Games");
+        // Ladda in stilfilen för JavaFX-scenen
+        Scene scene = new Scene(vbox, 800, 600);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
+        // Sätt stilar för knapparna genom att tilldela stilklassen
+        continueButton.getStyleClass().add("button-common");
+        backButton.getStyleClass().add("button-common");
+
+        primaryStage.setTitle("Staff Management");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+
     private void showTabsForStaff(Stage primaryStage) {
-
-
         TabPane tabPane = new TabPane();
-
         Tab staffTab = new Tab("Staff");
-
-        
         tabPane.getTabs().addAll(staffTab);
 
-        VBox staffLayout = new VBox(); // VBox to hold TableView and buttons
         StaffController staffController = new StaffController();
         List<Staff> staffList = staffController.getAllStaff();
-
-        TableView<Staff> staffTableView = createStaffTableView(staffList);
+        TableView<Staff> staffTableView = staffController.createStaffTableView(staffList);
+        staffTableView.setMaxWidth(788);
 
         primaryStage.close();
 
-        // Buttons for staff options
-        Button backButton = new Button("Back to Main");
+        Button backButton = new Button("Back");
         backButton.setOnAction(event -> {
-            primaryStage.show(); // Show the main screen interface again
-            staffStage.close(); // Close the window for the tabs
+            primaryStage.show();
+            staffStage.close(); // Stäng fönstret för flikarna
         });
-
         Button addButton = new Button("Add Staff");
-        addButton.setOnAction(event -> {
-            Stage addStaffStage = createAddStaffWindow();
-            addStaffStage.show();
-
-        });
+        addButton.setOnAction(event -> createAddStaffWindow());
 
         Button editButton = new Button("Edit Staff");
-        editButton.setOnAction(event -> {
-            Stage editStaffStage = createEditStaffWindow();
-            editStaffStage.show();
-
-        });
-
+        editButton.setOnAction(event -> createEditStaffWindow().show());
 
         Button deleteButton = new Button("Delete Staff");
-        deleteButton.setOnAction(event -> {
-            Stage deleteStaffStage = createDeleteStaffWindow();
-            deleteStaffStage.show();
+        deleteButton.setOnAction(event -> createDeleteStaffWindow());
 
-        });
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search for staff...");
 
 
-        VBox buttonLayout = new VBox(addButton, editButton, deleteButton, backButton);
-        staffLayout.getChildren().addAll(staffTableView, buttonLayout);
+        HBox buttonLayout = new HBox(10);
+        buttonLayout.getChildren().addAll(addButton, editButton, deleteButton, backButton);
+
+        HBox searchLayout = new HBox(10);
+        searchLayout.getChildren().addAll(searchField);
+
+        // Spacer to push the search box to the right
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        spacer.setMinSize(10, 1);
+
+        // Parent HBox that contains both the buttonLayout and searchLayout
+        HBox parentLayout = new HBox();
+        parentLayout.getChildren().addAll(buttonLayout, spacer, searchLayout);
+
+        // Sätt stilar för knapparna
+        Button[] buttonList = {backButton, addButton, editButton, deleteButton};
+        for (Button button : buttonList) {
+            button.getStyleClass().add("my-button-style");
+            // Skapar en temporär Text för att beräkna bredden baserat på texten i knappen
+            Text text = new Text(button.getText());
+            text.snapshot(null, null); // för att säkerställa att texten är beräknad
+
+            // Ställer in bredden på knappen baserat på textens bredd och lägg till en marginal
+            button.setPrefWidth(text.getLayoutBounds().getWidth() + 20);
+
+
+            button.setMaxWidth(100);
+        }
+
+        VBox staffLayout = new VBox();
+        staffLayout.getStyleClass().add("vbox-background");
+        staffLayout.getChildren().addAll(parentLayout, staffTableView); // Lägg till parentLayout för knappar och sökfält här
+
+        VBox.setVgrow(staffTableView, Priority.ALWAYS); // Så att staffTableView tar upp all tillgänglig plats vertikalt
+        HBox.setHgrow(parentLayout, Priority.ALWAYS); // Så att parentLayout (med knappar och sökfält) expanderar horisontellt
 
         staffTab.setContent(staffLayout);
 
 
         Scene staffScene = new Scene(tabPane, 800, 600);
+        staffScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
-        staffStage.setTitle("Staff Options");
+        staffStage.setTitle("Staff Management");
         staffStage.setScene(staffScene);
+
         staffStage.show();
+
+        FilteredList<Staff> filteredStaff = new FilteredList<>(FXCollections.observableArrayList(staffList));
+        staffController.searchStaff(staffTableView, searchField, filteredStaff);
     }
 
-    private int getStaffIdFromName(String selectedName, List<Staff> staffList) {
-        for (Staff staff : staffList) {
-            String fullName = staff.getFirstName() + " " + staff.getLastName();
-            if (selectedName.equals(fullName)) {
-                return staff.getStaffId();
-            }
-        }
-        return -1;
-    }
-
-    private TableView<Staff> createStaffTableView(List<Staff> staffList) {
-        TableView<Staff> staffTableView = new TableView<>();
-
-        if (staffList != null && !staffList.isEmpty()) {
-            ObservableList<Staff> data = FXCollections.observableArrayList(staffList);
-
-            TableColumn<Staff, Integer> staffIdCol = new TableColumn<>("Staff ID");
-            staffIdCol.setCellValueFactory(new PropertyValueFactory<>("staffId"));
-
-            TableColumn<Staff, String> firstNameCol = new TableColumn<>("First Name");
-            firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-            TableColumn<Staff, String> lastNameCol = new TableColumn<>("Last Name");
-            lastNameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-
-            TableColumn<Staff, String> nickNameCol = new TableColumn<>("Nick Name");
-            nickNameCol.setCellValueFactory(new PropertyValueFactory<>("nickname"));
-
-            TableColumn<Staff, String> addressCol = new TableColumn<>("Address");
-            addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
-
-            TableColumn<Staff, String> zipCodeCol = new TableColumn<>("Zip Code");
-            zipCodeCol.setCellValueFactory(new PropertyValueFactory<>("zipCode"));
-
-            TableColumn<Staff, String> postalAddressCol = new TableColumn<>("Postal Address");
-            postalAddressCol.setCellValueFactory(new PropertyValueFactory<>("postalAddress"));
-
-            TableColumn<Staff, String> countryCol = new TableColumn<>("Country");
-            countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
-
-            TableColumn<Staff, String> emailCol = new TableColumn<>("Email");
-            emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
-
-            staffTableView.getColumns().addAll(staffIdCol, firstNameCol, lastNameCol, nickNameCol, addressCol, zipCodeCol, postalAddressCol, countryCol, emailCol);
-
-            staffTableView.setItems(data);
-        } else {
-            System.out.println("No staff to show.");
-        }
-
-        return staffTableView;
-    }
-
-    private Stage createAddStaffWindow() {
-
-        staffController = new StaffController();
+    // Metoden för att lägga till ny personal
+    private void createAddStaffWindow() {
+        StaffController staffController = new StaffController();
         Stage addStaffStage = new Stage();
         addStaffStage.setTitle("Add New Staff");
 
-
-        // TextFields för att mata in ny personalinformation
-        TextField firstNameField = new TextField();
-        TextField lastNameField = new TextField();
-        TextField nicknameField = new TextField();
-        TextField addressField = new TextField();
-        TextField zipCodeField = new TextField();
-        TextField postalAddressField = new TextField();
-        TextField countryField = new TextField();
+        TextField firstNameField = staffController.createFormattedTextField("[a-zA-Z]+");
+        TextField lastNameField = staffController.createFormattedTextField("[a-zA-Z]+");
+        TextField nicknameField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField addressField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField zipCodeField = staffController.createFormattedTextField("\\d+");
+        TextField postalAddressField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField countryField = staffController.createFormattedTextField("[a-zA-Z]+");
         TextField emailField = new TextField();
 
-        // Regex-mönster för olika typer av inmatning
-        String namePattern = "[a-zA-Z]+"; // Endast bokstäver tillåtna för namn och land
-        String alphanumericPattern = "[a-zA-Z0-9\\s]+"; // Bokstäver och siffror för nickname och adress
-        String zipCodePattern = "\\d+"; // Endast siffror för postnummer
+        StaffController.validateEmailField(emailField);
 
-
-
-        // TextFormatter för att begränsa inmatning enligt specifika mönster
-        TextFormatter<String> firstNameFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> lastNameFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> nicknameFormatter = new TextFormatter<>(change ->
-                change.getControlNewText().isEmpty() || change.getControlNewText().matches(".*") ? change : null);
-
-        TextFormatter<String> addressFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(alphanumericPattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> zipCodeFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(zipCodePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> postalAddressFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(alphanumericPattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> countryFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-
-        // Tillämpa TextFormatter på respektive TextField
-        firstNameField.setTextFormatter(firstNameFormatter);
-        lastNameField.setTextFormatter(lastNameFormatter);
-        nicknameField.setTextFormatter(nicknameFormatter);
-        addressField.setTextFormatter(addressFormatter);
-        zipCodeField.setTextFormatter(zipCodeFormatter);
-        postalAddressField.setTextFormatter(postalAddressFormatter);
-        countryField.setTextFormatter(countryFormatter);
-
-
-        // Lägg till en lyssnare för att validera e-postfältet när användaren försöker lämna det
-        emailField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                String email = emailField.getText();
-                String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-                if (!email.matches(emailRegex)) {
-                    // Visa ett felmeddelande om e-postadressen inte är giltig när användaren försöker lämna fältet
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Please enter a valid email address!");
-                    alert.showAndWait();
-                }
-            }
-        });
-
-
-        // Knapp för att bekräfta och spara ny personal
         Button confirmButton = new Button("Confirm");
         confirmButton.setOnAction(e -> {
-            // Hämta information från textfälten
             String firstName = firstNameField.getText();
             String lastName = lastNameField.getText();
             String nickname = nicknameField.getText();
@@ -355,33 +261,18 @@ public class StaffGraphics extends Application {
             String country = countryField.getText();
             String email = emailField.getText();
 
-            // Kontrollera om något av de obligatoriska fälten är tomt
-            if (firstName.isEmpty() || lastName.isEmpty() || nickname.isEmpty() || address.isEmpty() || zipCode.isEmpty() || postalAddress.isEmpty() || country.isEmpty() || email.isEmpty()) {
-                // Visa ett felmeddelande för användaren om obligatoriska fält saknas
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please fill in all required fields (All fields need to be filled)!");
-                alert.showAndWait();
-            } else {
-                // Alla obligatoriska fält är ifyllda, skapa Staff-objekt och spara
-                Staff newStaff = new Staff(0, firstName, lastName, nickname, address, zipCode, postalAddress, country, email);
-                staffController.save(newStaff);
-
-                staffController.save(newStaff);
-                // Stäng fönstret när du är klar med att lägga till personal
-                addStaffStage.close();
+            boolean staffSaved = staffController.saveStaff(firstName, lastName, nickname, address, zipCode, postalAddress, country, email);
+            if (staffSaved) {
+                addStaffStage.close(); // Stäng addStaffStage efter att personalen har lagts till
                 staffStage.close();
-
-
-                // För att uppdatera listan av personal efter att en ny har lagts till
-                displayAddConfirmation();
+                staffController.displayAddConfirmation();
                 displayStaffUI();
             }
-            });
+        });
 
-        // Skapa en layout för fönstret med alla textfält och bekräftelseknapp
+        // Layout för att lägga till personal
         VBox layout = new VBox(10);
+        layout.getStyleClass().add("vbox-background");
         layout.getChildren().addAll(
                 new Label("First Name:"), firstNameField,
                 new Label("Last Name:"), lastNameField,
@@ -393,195 +284,68 @@ public class StaffGraphics extends Application {
                 new Label("Email:"), emailField,
                 confirmButton
         );
-
         layout.setPadding(new Insets(10));
 
-        // Skapa en scen och lägg till layouten
+        // Skapa scen och lägg till layouten
         Scene scene = new Scene(layout, 400, 600);
+
+        // Lägg till stilklassen från style.css
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
         addStaffStage.setScene(scene);
 
         // Visa fönstret för att lägga till personal
         addStaffStage.show();
-
-        return addStaffStage;
-    }
-    private void displayAddConfirmation() {
-        // Visa en bekräftelsedialog om att personalen har lagts till
-        Alert confirmationAlert = new Alert(Alert.AlertType.INFORMATION);
-        confirmationAlert.setTitle("Add Staff Confirmation");
-        confirmationAlert.setHeaderText(null);
-        confirmationAlert.setContentText("New staff has been successfully added!");
-        confirmationAlert.showAndWait();
     }
 
+
+    // Metoden för att redigera befintlig personal
     private Stage createEditStaffWindow() {
-        editStaffStage = new Stage();
         staffController = new StaffController();
+        editStaffStage = new Stage();
+        editStaffStage.setTitle("Edit Staff");
 
         // TextFields för att visa befintlig personalinformation
         TextField staffIdField = new TextField();
-        TextField firstNameField = new TextField();
-        TextField lastNameField = new TextField();
-        TextField nicknameField = new TextField();
-        TextField addressField = new TextField();
-        TextField zipCodeField = new TextField();
-        TextField postalAddressField = new TextField();
-        TextField countryField = new TextField();
+        TextField firstNameField = staffController.createFormattedTextField("[a-zA-Z]+");
+        TextField lastNameField = staffController.createFormattedTextField("[a-zA-Z]+");
+        TextField nicknameField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField addressField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField zipCodeField = staffController.createFormattedTextField("\\d+");
+        TextField postalAddressField = staffController.createFormattedTextField("[a-zA-Z0-9\\s]+");
+        TextField countryField = staffController.createFormattedTextField("[a-zA-Z]+");
         TextField emailField = new TextField();
 
-        // Regex-mönster för olika typer av inmatning
-        String namePattern = "[a-zA-Z]+"; // Endast bokstäver tillåtna för namn och land
-        String alphanumericPattern = "[a-zA-Z0-9\\s]+"; // Bokstäver och siffror för nickname och adress
-        String zipCodePattern = "\\d+"; // Endast siffror för postnummer
-
-
-        // TextFormatter för att begränsa inmatning enligt specifika mönster
-        TextFormatter<String> firstNameFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> lastNameFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> nicknameFormatter = new TextFormatter<>(change ->
-                change.getControlNewText().isEmpty() || change.getControlNewText().matches(".*") ? change : null);
-
-        TextFormatter<String> addressFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(alphanumericPattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> zipCodeFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(zipCodePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> postalAddressFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(alphanumericPattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-        TextFormatter<String> countryFormatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches(namePattern) || newText.isEmpty()) {
-                return change;
-            }
-            return null;
-        });
-
-
-
-        // Tillämpa TextFormatter på respektive TextField
-        firstNameField.setTextFormatter(firstNameFormatter);
-        lastNameField.setTextFormatter(lastNameFormatter);
-        nicknameField.setTextFormatter(nicknameFormatter);
-        addressField.setTextFormatter(addressFormatter);
-        zipCodeField.setTextFormatter(zipCodeFormatter);
-        postalAddressField.setTextFormatter(postalAddressFormatter);
-        countryField.setTextFormatter(countryFormatter);
-
-
-        // Lägg till en lyssnare för att validera e-postfältet när användaren försöker lämna det
-        emailField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                String email = emailField.getText();
-                String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-                if (!email.matches(emailRegex)) {
-                    // Visa ett felmeddelande om e-postadressen inte är giltig när användaren försöker lämna fältet
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Please enter a valid email address!");
-                    alert.showAndWait();
-                }
-            }
-        });
-
-        // Knapp för att bekräfta och uppdatera personal
+        StaffController.validateEmailField(emailField);
         Button confirmEditButton = new Button("Confirm Edit");
         confirmEditButton.setOnAction(e -> {
             int staffId = Integer.parseInt(staffIdField.getText());
-            Staff existingStaff = staffController.getStaffById(staffId);
+            String newFirstName = firstNameField.getText();
+            String newLastName = lastNameField.getText();
+            String newNickname = nicknameField.getText();
+            String newAddress = addressField.getText();
+            String newZipCode = zipCodeField.getText();
+            String newPostalAddress = postalAddressField.getText();
+            String newCountry = countryField.getText();
+            String newEmail = emailField.getText();
 
-            if (existingStaff != null) {
-                // Uppdatera endast de fält där det finns ny information
-                String newFirstName = firstNameField.getText();
-                if (!newFirstName.isEmpty()) {
-                    existingStaff.setFirstName(newFirstName);
-                }
+            boolean updated = staffController.updateStaffInformation(staffId, newFirstName, newLastName,
+                    newNickname, newAddress, newZipCode, newPostalAddress, newCountry, newEmail);
 
-                String newLastName = lastNameField.getText();
-                if (!newLastName.isEmpty()) {
-                    existingStaff.setLastName(newLastName);
-                }
-
-                String newNickname = nicknameField.getText();
-                if (!newNickname.isEmpty()) {
-                    existingStaff.setNickname(newNickname);
-                }
-
-                String newAddress = addressField.getText();
-                if (!newAddress.isEmpty()) {
-                    existingStaff.setAddress(newAddress);
-                }
-
-                String newZipCode = zipCodeField.getText();
-                if (!newZipCode.isEmpty()) {
-                    existingStaff.setZipCode(newZipCode);
-                }
-
-                String newPostalAddress = postalAddressField.getText();
-                if (!newPostalAddress.isEmpty()) {
-                    existingStaff.setPostalAddress(newPostalAddress);
-                }
-
-                String newCountry = countryField.getText();
-                if (!newCountry.isEmpty()) {
-                    existingStaff.setCountry(newCountry);
-                }
-
-                String newEmail = emailField.getText();
-                if (!newEmail.isEmpty()) {
-                    existingStaff.setEmail(newEmail);
-                }
-
-                boolean updated = staffController.update(existingStaff);
-
-                if (updated) {
-                    editStaffStage.close();
-                    staffStage.close();
-                    displayEditConfirmation();
-                    displayStaffUI();
-                } else {
-                    // Visa meddelande om misslyckad uppdatering
-                    displayUpdateFailure();
-                }
+            if (updated) {
+                editStaffStage.close();
+                staffStage.close();
+                staffController.displayEditConfirmation();
+                displayStaffUI();
             } else {
-                // Visa meddelande om att personalen inte hittades
-                System.out.println("Personalen hittades inte");
+                // Visa meddelande om misslyckad uppdatering
+                staffController.displayUpdateFailure();
             }
         });
 
         // Layout för fönstret för att redigera personal
         VBox layout = new VBox(10);
+        layout.getStyleClass().add("vbox-background");
         layout.getChildren().addAll(
                 new Label("Staff ID to Edit:"), staffIdField,
                 new Label("First Name:"), firstNameField,
@@ -598,6 +362,10 @@ public class StaffGraphics extends Application {
 
         // Skapa scen och lägg till layouten
         Scene scene = new Scene(layout, 400, 600);
+
+        // Lägg till stilklassen från style.css
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
         editStaffStage.setScene(scene);
 
         // Visa fönstret för att redigera personal
@@ -605,30 +373,11 @@ public class StaffGraphics extends Application {
 
         return editStaffStage;
     }
-    private void displayEditConfirmation() {
-        // Visa en bekräftelsedialog om att informationen har ändrats
-        Alert confirmationAlert = new Alert(Alert.AlertType.INFORMATION);
-        confirmationAlert.setTitle("Update Confirmation");
-        confirmationAlert.setHeaderText(null);
-        confirmationAlert.setContentText("Staff information has been successfully updated!");
-        confirmationAlert.showAndWait();
-    }
 
-    private void displayUpdateFailure() {
-        // Visa meddelande om misslyckad uppdatering
-        Alert failureAlert = new Alert(Alert.AlertType.ERROR);
-        failureAlert.setTitle("Update Failure");
-        failureAlert.setHeaderText(null);
-        failureAlert.setContentText("Failed to update staff information. Please try again!");
-        failureAlert.showAndWait();
-    }
-
-    private Stage createDeleteStaffWindow() {
-        staffController = new StaffController();
+    // Metoden för att ta bort personal
+    private void createDeleteStaffWindow() {
         Stage deleteStaffStage = new Stage();
         deleteStaffStage.setTitle("Delete Staff");
-
-
 
         // Textfält för att mata in ID på den personal som ska raderas
         TextField staffIdField = new TextField();
@@ -636,30 +385,46 @@ public class StaffGraphics extends Application {
         // Knapp för att bekräfta och ta bort personal
         Button confirmDeleteButton = new Button("Confirm Delete");
         confirmDeleteButton.setOnAction(e -> {
-            // Hämta ID från textfältet
             int staffId = Integer.parseInt(staffIdField.getText());
 
-            // Anropa en metod för att ta bort personal med det angivna ID:t
-            boolean deleteSuccessful = staffController.delete(staffId);
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+            confirmationAlert.setTitle("Confirmation");
+            confirmationAlert.setHeaderText("Delete Confirmation");
+            confirmationAlert.setContentText("Are you sure you want to delete this staff member?");
 
-            if (deleteSuccessful) {
-            // Stäng fönstret när en person har tagits bort
-                deleteStaffStage.close();
-                staffStage.close();
+            ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-                // Uppdatera listan av personal efter att en person har tagits bort
-                displayStaffUI();
+            confirmationAlert.getButtonTypes().setAll(confirmButtonType, cancelButtonType);
 
-                // Visa en bekräftelse till användaren
-                displayDeleteConfirmation();
-            } else {
-                // Visa ett meddelande om något gick fel med borttagningen
-                displayDeleteFailure();
-            }
+            confirmationAlert.showAndWait().ifPresent(buttonType -> {
+                if (buttonType == confirmButtonType) {
+                    boolean deleteSuccessful = staffController.deleteStaff(staffId);
+                    if (deleteSuccessful) {
+                        // Stäng fönstret när en person har tagits bort
+                        deleteStaffStage.close();
+                        staffStage.close();
+
+                        // Uppdatera listan av personal efter att en person har tagits bort
+                        StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController);
+                        staffGraphics.displayStaffUI();
+                    } else {
+                        // Visa ett meddelande om något gick fel med borttagningen
+                        Alert failureAlert = new Alert(Alert.AlertType.ERROR);
+                        failureAlert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+                        failureAlert.setTitle("Deletion Failure");
+                        failureAlert.setHeaderText("Deletion Failure");
+                        failureAlert.setContentText("Failed to delete staff member. Please try again!");
+                        failureAlert.showAndWait();
+                    }
+                }
+            });
         });
 
         // Skapa layout för fönstret med textfält och bekräftelseknapp
         VBox layout = new VBox(10);
+        layout.getStyleClass().add("vbox-background");
         layout.getChildren().addAll(
                 new Label("Staff ID to Delete:"), staffIdField,
                 confirmDeleteButton
@@ -668,29 +433,13 @@ public class StaffGraphics extends Application {
 
         // Skapa scen och lägg till layouten
         Scene scene = new Scene(layout, 300, 200);
+
+        // Lägg till stilklassen från style.css
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
+
         deleteStaffStage.setScene(scene);
 
         // Visa fönstret för att ta bort personal
         deleteStaffStage.show();
-
-        return deleteStaffStage;
-    }
-
-    private void displayDeleteConfirmation() {
-        // Visa en bekräftelse för användaren efter att en person har tagits bort
-        Alert confirmationAlert = new Alert(Alert.AlertType.INFORMATION);
-        confirmationAlert.setTitle("Deletion Confirmation");
-        confirmationAlert.setHeaderText(null);
-        confirmationAlert.setContentText("Staff member has been successfully deleted!");
-        confirmationAlert.showAndWait();
-    }
-
-    private void displayDeleteFailure() {
-        // Visa ett meddelande om borttagning misslyckades
-        Alert failureAlert = new Alert(Alert.AlertType.ERROR);
-        failureAlert.setTitle("Deletion Failure");
-        failureAlert.setHeaderText(null);
-        failureAlert.setContentText("Failed to delete staff member. Please try again!");
-        failureAlert.showAndWait();
     }
 }

@@ -4,12 +4,13 @@ import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 import com.teamalpha.teamalphapipergames.model.Game;
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
 public class TeamController {
 
-    private EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     // Constructor initializes the EntityManagerFactory
     public TeamController() {
@@ -210,6 +211,46 @@ public class TeamController {
                     transaction.rollback();
                 }
                 throw e; // Rethrowing the exception to be consistent with performDbOperation
+            }
+        });
+    }
+
+    // Bulk save a list of teams to the database
+    public boolean saveAll(Collection<Team> teams) {
+        return performDbOperation(entityManager -> {
+            EntityTransaction transaction = entityManager.getTransaction();
+            try {
+                transaction.begin();
+                for (Team team : teams) {
+                    entityManager.persist(team);
+                }
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw e;
+            }
+        });
+    }
+
+    // Bulk update a list of teams in the database
+    public boolean updateAll(Collection<Team> teams) {
+        return performDbOperation(entityManager -> {
+            EntityTransaction transaction = entityManager.getTransaction();
+            try {
+                transaction.begin();
+                for (Team team : teams) {
+                    entityManager.merge(team);
+                }
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw e;
             }
         });
     }

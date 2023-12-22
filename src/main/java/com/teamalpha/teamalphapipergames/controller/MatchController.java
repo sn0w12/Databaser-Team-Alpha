@@ -84,8 +84,13 @@ public class MatchController {
 
                             match = new Match();
 
+
                             match.addPlayer(player1);
                             match.addPlayer(player2);
+=======
+//                     match.addPlayer(player1);
+//                     match.addPlayer(player2);
+
 
                             player1.addMatch(match);
                             player2.addMatch(match);
