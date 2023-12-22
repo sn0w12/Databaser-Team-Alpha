@@ -20,12 +20,12 @@ public class Menu {
     Map<String, String> teamGameMap = new HashMap<>();
     Map<String, String> playerTeamMap = new HashMap<>();
 
-    public Menu(GameController gameController) {
+    public Menu(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
         this.gameController = gameController;
-        teamController = new TeamController();
-        playerController = new PlayerController();
-        staffController = new StaffController();
-        matchController = new MatchController();
+        this.teamController = teamController;
+        this.playerController = playerController;
+        this.matchController = matchController;
+        this.staffController = staffController;
 
         initializeMaps();
     }
@@ -333,7 +333,6 @@ public class Menu {
                     new Player("Ilias", "Bizriken", "nuc", "11 rue Saint Germain", "92230", "ÎLE-DE-FRANCE", "France", "nuc@bds.com"),
                     new Player("Jus", "Marusic", "Crownshot", "Kolodvorska 56", "6001", "KOPER", "Slovenia", "crownshot@bds.com"),
                     new Player("Labros", "Papoutsakis", "Labrov", "Pomerio 7", "51000", "RIJEKA", "Greece", "labrov@bds.com")));
-
 
             for (Game game : gamesToAdd) {
                 if (gameController.createGame(game.getName())) {

@@ -101,7 +101,7 @@ public class MainWindow extends Application {
 //    TournamentController tournamentController = new TournamentController();
     ChooseEmployee chooseEmployee = new ChooseEmployee(primaryStage, gameController, teamController, playerController, matchController, staffController);
 
-    Menu menu = new Menu(gameController);
+    Menu menu = new Menu(gameController, teamController, playerController, matchController, staffController);
     menu.createStaff();
     menu.createPlayersAndTeamsDataForStaff();
 
