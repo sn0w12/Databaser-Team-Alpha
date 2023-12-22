@@ -197,17 +197,14 @@ public class Menu {
     public void createPlayersAndTeamsDataForStaff() {
         if (gameController.getAllGames(false).isEmpty()) {
             long startTime = System.currentTimeMillis();
-            List<Game> gamesToAdd = new ArrayList<>();
-            List<Team> teamsToAdd = new ArrayList<>();
-            List<Player> playersToAdd = new ArrayList<>();
 
-            gamesToAdd.addAll(List.of(
+            List<Game> gamesToAdd = new ArrayList<>(List.of(
                     // Games
                     new Game("Counter-Strike 2"),
                     new Game("EA Sports FC 24"),
                     new Game("League of Legends")));
 
-            teamsToAdd.addAll(List.of(
+            List<Team> teamsToAdd = new ArrayList<>(List.of(
                     // Teams
                     // Counter-Strike 2
 
@@ -227,7 +224,7 @@ public class Menu {
                     new Team("Team Liquid"), new Team("Team BDS")));
 
 
-            playersToAdd.addAll(List.of(
+            List<Player> playersToAdd = new ArrayList<>(List.of(
                     // Players
                     // Counter-Strike 2
                     // NaVi
@@ -356,7 +353,7 @@ public class Menu {
             for (Team team : teamsToAdd) {
                 String gameName = teamGameMap.get(team.getName());
                 if (gameName != null) {
-                    Game game = cachedGames.computeIfAbsent(gameName, k -> gameController.getGameByName(k));
+                    Game game = cachedGames.computeIfAbsent(gameName, gameController::getGameByName);
                     game.addTeam(team);
                     teamCounter++;
                 }
@@ -368,7 +365,7 @@ public class Menu {
             for (Player player : playersToAdd) {
                 String teamName = playerTeamMap.get(player.getNickName());
                 if (teamName != null) {
-                    Team team = cachedTeams.computeIfAbsent(teamName, k -> teamController.getTeamByName(k));
+                    Team team = cachedTeams.computeIfAbsent(teamName, teamController::getTeamByName);
                     team.addPlayer(player);
                     playerCounter++;
                 }
