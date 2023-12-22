@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 public class PlayerGraphics extends Application {
 
   Stage stage;
-  private GameController gameController;
-  private TeamController teamController;
-  private PlayerController playerController;
-  private MatchController matchController;
-  private StaffController staffController;
+  private final GameController gameController;
+  private final TeamController teamController;
+  private final PlayerController playerController;
+  private final MatchController matchController;
+  private final StaffController staffController;
 //  private TournamentController tournamentController;
 
   // list players table

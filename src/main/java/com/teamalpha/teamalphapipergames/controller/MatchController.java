@@ -174,7 +174,6 @@ public class MatchController {
 
                     match.addPlayer(player1);
                     match.addPlayer(player2);
-                    ;
 
                     player1.addMatch(match);
                     player2.addMatch(match);

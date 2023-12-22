@@ -30,11 +30,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MatchGraphics extends Application {
 
     Stage stage;
-    private GameController gameController;
-    private TeamController teamController;
-    private PlayerController playerController;
-    private MatchController matchController;
-    private StaffController staffController;
+    private final GameController gameController;
+    private final TeamController teamController;
+    private final PlayerController playerController;
+    private final MatchController matchController;
+    private final StaffController staffController;
 
     public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
         this.gameController = gameController;

@@ -17,10 +17,10 @@ import java.util.List;
 
 public class StaffGraphics extends Application {
     Stage stage;
-    private GameController gameController;
-    private TeamController teamController;
-    private PlayerController playerController;
-    private MatchController matchController;
+    private final GameController gameController;
+    private final TeamController teamController;
+    private final PlayerController playerController;
+    private final MatchController matchController;
     private StaffController staffController;
     //  private TournamentController tournamentController;
     private Stage editStaffStage;

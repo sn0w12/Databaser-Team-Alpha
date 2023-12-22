@@ -176,11 +176,7 @@ public class Match {
     }
 
     public boolean getMatchPlayed() {
-        if (matchDate.isBefore(LocalDate.now())) {
-            return true;
-        } else {
-            return false;
-        }
+        return matchDate.isBefore(LocalDate.now());
     }
 
     public void setMatchPlayed(boolean matchPlayed) {

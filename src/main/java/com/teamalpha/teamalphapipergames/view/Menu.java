@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
  * Simple menu, gets the job done
  */
 public class Menu {
-    private GameController gameController;
-    private TeamController teamController;
-    private PlayerController playerController;
-    private StaffController staffController;
-    private MatchController matchController;
+    private final GameController gameController;
+    private final TeamController teamController;
+    private final PlayerController playerController;
+    private final StaffController staffController;
+    private final MatchController matchController;
     Map<String, String> teamGameMap = new HashMap<>();
     Map<String, String> playerTeamMap = new HashMap<>();
 
@@ -171,7 +171,6 @@ public class Menu {
         playerTeamMap.put("Ollelito", "TG NIP");
 
         playerTeamMap.put("Obrun2002", "Team Exeed");
-
     }
 
     // Main menu
@@ -201,7 +200,6 @@ public class Menu {
             List<Game> gamesToAdd = new ArrayList<>();
             List<Team> teamsToAdd = new ArrayList<>();
             List<Player> playersToAdd = new ArrayList<>();
-
 
             gamesToAdd.addAll(List.of(
                     // Games
@@ -421,8 +419,6 @@ public class Menu {
         matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
         matchController.addNewMatch(1, true, 3, 4, LocalDate.of(2020, 5, 5));
     }
-
-
 
     // misc
     private void space() {

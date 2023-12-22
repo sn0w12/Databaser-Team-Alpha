@@ -4,6 +4,7 @@ import com.teamalpha.teamalphapipergames.model.Player;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class PlayerController {
@@ -137,7 +138,7 @@ public class PlayerController {
     }
 
     // Bulk save a list of players to the database
-    public boolean saveAll(List<Player> players) {
+    public boolean saveAll(Collection<Player> players) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {

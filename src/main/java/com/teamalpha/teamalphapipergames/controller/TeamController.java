@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class TeamController {
 
-    private EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     // Constructor initializes the EntityManagerFactory
     public TeamController() {
@@ -216,7 +216,7 @@ public class TeamController {
     }
 
     // Bulk save a list of teams to the database
-    public boolean saveAll(List<Team> teams) {
+    public boolean saveAll(Collection<Team> teams) {
         return performDbOperation(entityManager -> {
             EntityTransaction transaction = entityManager.getTransaction();
             try {
