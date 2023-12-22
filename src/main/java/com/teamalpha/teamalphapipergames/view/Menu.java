@@ -341,38 +341,47 @@ public class Menu {
                 }
             }
 
-            // Bulk save games and teams
+            // Save all team and player objects to the database
             teamController.saveAll(teamsToAdd);
             playerController.saveAll(playersToAdd);
 
-            // Caching games and teams to reduce database calls
+            // Initialize caches for games and teams to optimize database access
             Map<String, Game> cachedGames = new HashMap<>();
             Map<String, Team> cachedTeams = new HashMap<>();
 
             int teamCounter = 0;
+            // Iterate through each team in the list to add
             for (Team team : teamsToAdd) {
+                // Retrieve the game name associated with the team
                 String gameName = teamGameMap.get(team.getName());
                 if (gameName != null) {
+                    // Get or create a game from the cache, and add the team to the game
                     Game game = cachedGames.computeIfAbsent(gameName, gameController::getGameByName);
                     game.addTeam(team);
                     teamCounter++;
                 }
             }
-            gameController.updateAll(cachedGames.values()); // Bulk update
+            // Bulk update the games with their newly added teams
+            gameController.updateAll(cachedGames.values());
             System.out.println(teamCounter + " teams added");
 
             int playerCounter = 0;
+            // Iterate through each player in the list to add
             for (Player player : playersToAdd) {
+                // Retrieve the team name associated with the player
                 String teamName = playerTeamMap.get(player.getNickName());
                 if (teamName != null) {
+                    // Get or create a team from the cache, and add the player to the team
                     Team team = cachedTeams.computeIfAbsent(teamName, teamController::getTeamByName);
                     team.addPlayer(player);
                     playerCounter++;
                 }
             }
-            teamController.updateAll(cachedTeams.values()); // Bulk update
+            // Bulk update the teams with their newly added players
+            teamController.updateAll(cachedTeams.values());
             System.out.println(playerCounter + " players added");
 
+            // Rename a specific team (Cloud9LOL) if it exists
             Team cloud9LoLTeam = teamController.getTeamByName("Cloud9LOL");
             if (cloud9LoLTeam != null) {
                 cloud9LoLTeam.setName("Cloud9");
@@ -380,12 +389,14 @@ public class Menu {
                 System.out.println("Team renamed to Cloud9");
             }
 
+            // Prepare a mapping of players by the game they are associated with
             Map<Integer, List<Integer>> playersByGame = new HashMap<>();
             for (Player player : playersToAdd) {
                 int gameId = player.getTeam().getGame().getGame_id();
                 playersByGame.computeIfAbsent(gameId, k -> new ArrayList<>()).add(player.getId());
             }
 
+            // Add players to their respective games in bulk
             for (Map.Entry<Integer, List<Integer>> entry : playersByGame.entrySet()) {
                 int gameId = entry.getKey();
                 List<Integer> playerIds = entry.getValue();
