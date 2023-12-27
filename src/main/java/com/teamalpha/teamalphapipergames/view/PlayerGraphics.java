@@ -32,15 +32,16 @@ public class PlayerGraphics extends Application {
   private final PlayerController playerController;
   private final MatchController matchController;
   private final StaffController staffController;
-//  private TournamentController tournamentController;
+  private TournamentController tournamentController;
 
   // list players table
-  public PlayerGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+  public PlayerGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
     this.gameController = gameController;
     this.teamController = teamController;
     this.playerController = playerController;
     this.matchController = matchController;
     this.staffController = staffController;
+    this.tournamentController = tournamentController;
   }
 
   @Override
@@ -221,7 +222,7 @@ public class PlayerGraphics extends Application {
     backButton.setOnAction(event -> {
       System.out.println("Back to Staff Main Menu");
 
-      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
+      StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
       // start stage
       try {

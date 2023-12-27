@@ -98,10 +98,10 @@ public class MainWindow extends Application {
     PlayerController playerController = new PlayerController();
     MatchController matchController = new MatchController();
     StaffController staffController = new StaffController();
-//    TournamentController tournamentController = new TournamentController();
-    ChooseEmployee chooseEmployee = new ChooseEmployee(primaryStage, gameController, teamController, playerController, matchController, staffController);
+    TournamentController tournamentController = new TournamentController();
+    ChooseEmployee chooseEmployee = new ChooseEmployee(primaryStage, gameController, teamController, playerController, matchController, staffController, tournamentController);
 
-    Menu menu = new Menu(gameController, teamController, playerController, matchController, staffController);
+    Menu menu = new Menu(gameController, teamController, playerController, matchController, staffController, tournamentController);
     menu.createStaff();
     menu.createPlayersAndTeamsDataForStaff();
 
@@ -157,20 +157,20 @@ class ChooseEmployee {
   private final PlayerController playerController;
   private final MatchController matchController;
   private final StaffController staffController;
-//  private final TournamentController tournamentController;
+  private final TournamentController tournamentController;
   private final Stage stage;
 
   // Constructor
 
 
-  public ChooseEmployee(Stage stage, GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+  public ChooseEmployee(Stage stage, GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
     this.stage = stage;
     this.gameController = gameController;
     this.teamController = teamController;
     this.playerController = playerController;
     this.matchController = matchController;
     this.staffController = staffController;
-//    this.tournamentController = tournamentController;
+    this.tournamentController = tournamentController;
   }
 
   void showEmployeeMenu(List<Staff> staffList) {
@@ -215,7 +215,7 @@ class ChooseEmployee {
           String selectedEmployee = employeeComboBox.getSelectionModel().getSelectedItem();
           if (selectedEmployee != null && !selectedEmployee.isEmpty()) {
             System.out.println("Logged in");
-            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
+            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
             // Start next stage
             staffMainMenu.start(stage);
             stage.close();
