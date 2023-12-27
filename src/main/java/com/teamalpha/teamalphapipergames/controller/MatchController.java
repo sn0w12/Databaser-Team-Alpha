@@ -6,7 +6,6 @@ import com.teamalpha.teamalphapipergames.model.Player;
 import com.teamalpha.teamalphapipergames.model.Team;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -193,36 +192,7 @@ public class MatchController {
         return false;
     }
 
-    public boolean updateGameInMatch(Match match, int gameId) {
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = null;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
 
-            Match macthToUpdate = match;
-            Optional<Game> possiblyAGame = Optional.ofNullable(entityManager.find(Game.class, gameId));
-
-            if (possiblyAGame.isPresent()) {
-                Game newGame = possiblyAGame.get();
-                macthToUpdate.setGame(newGame);
-            } else {
-                return false;
-            }
-
-            entityManager.merge(match);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
-        return false;
-    }
 
     public boolean removePlayerOrTeamFromMatch(int matchId) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -284,69 +254,6 @@ public class MatchController {
         return false;
     }
 
-    public boolean replaceOnePlayerOrTeamFromMatch(int matchId, int playerOrTeamToRemoveIndex, int playerOrTeamIdToChangeTo) {
-
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = null;
-
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-
-            // Find the match
-            Match match = entityManager.find(Match.class, matchId);
-
-            if (match.getTeamGame()) {
-                //Find the teams
-                Team teamToRemove = entityManager.find(Team.class, match.getTeams().get(playerOrTeamToRemoveIndex).getId());
-                Team teamToChangeTo = entityManager.find(Team.class, playerOrTeamIdToChangeTo);
-
-                if (teamToRemove != null && teamToChangeTo != null) {
-                    if (teamToChangeTo.getGame().equals(teamToRemove.getGame())) {
-                        //Remove old team from the match list and add the new team. Change in the match from old team to new team
-                        teamToChangeTo.getMatches().add(match);
-                        teamToRemove.getMatches().remove(match);
-                        match.setTeamsByIndexInTeamsList(playerOrTeamToRemoveIndex, teamToChangeTo);
-                        entityManager.merge(match);
-                        entityManager.merge(teamToRemove);
-                        entityManager.merge(teamToChangeTo);
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-
-
-            } else {
-                //Find the players
-                Player playerToRemove = entityManager.find(Player.class, match.getPlayers().get(playerOrTeamToRemoveIndex).getId());
-                Player playerToChangeTo = entityManager.find(Player.class, playerOrTeamIdToChangeTo);
-                if (playerToRemove != null && playerToChangeTo != null) {
-                    // //Remove old player from the match list and add the new player. Change in the match from old player to new player
-                    playerToChangeTo.getMatches().add(match);
-                    playerToRemove.getMatches().remove(match);
-                    match.setPlayersByIndexInPlayersList(playerOrTeamToRemoveIndex, playerToChangeTo);
-
-                    entityManager.merge(playerToRemove);
-                    entityManager.merge(playerToChangeTo);
-                    entityManager.merge(match);
-                } else {
-                    return false;
-                }
-            }
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
-        return false;
-    }
 
     public boolean alterMatch(int matchId, int playerOrTeam1IdToChangeTo, int playerOrTeam2IdToChangeTo, int newGameId, String date) {
 
