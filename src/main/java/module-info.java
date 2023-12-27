@@ -13,4 +13,5 @@ module com.teamalpha.teamalphapipergames {
 
     // opens application to javafx.graphics, javafx.base;       //Det tyckte någon att man skulle skriva in, jag ändrade till det som är under
     opens com.teamalpha.teamalphapipergames.model to org.hibernate.orm.core, javafx.graphics, javafx.base;
+    opens com.teamalpha.teamalphapipergames.view to javafx.base, javafx.graphics, org.hibernate.orm.core;
 }
