@@ -17,15 +17,17 @@ public class Menu {
     private final PlayerController playerController;
     private final StaffController staffController;
     private final MatchController matchController;
+    private final TournamentController tournamentController;
     Map<String, String> teamGameMap = new HashMap<>();
     Map<String, String> playerTeamMap = new HashMap<>();
 
-    public Menu(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+    public Menu(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
         this.gameController = gameController;
         this.teamController = teamController;
         this.playerController = playerController;
         this.matchController = matchController;
         this.staffController = staffController;
+        this.tournamentController = tournamentController;
 
         initializeMaps();
     }

@@ -35,13 +35,15 @@ public class MatchGraphics extends Application {
     private final PlayerController playerController;
     private final MatchController matchController;
     private final StaffController staffController;
+    private final TournamentController tournamentController;
 
-    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+    public MatchGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
         this.gameController = gameController;
         this.teamController = teamController;
         this.playerController = playerController;
         this.matchController = matchController;
         this.staffController = staffController;
+        this.tournamentController = tournamentController;
     }
 
     @Override
@@ -127,7 +129,7 @@ public class MatchGraphics extends Application {
 
         Button buttonBack = new Button("Back");
         buttonBack.setOnAction(event -> {
-            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
+            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
             try {
                 staffMainMenu.start(stage);
             } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.teamalpha.teamalphapipergames.view;
 
 import com.teamalpha.teamalphapipergames.controller.*;
 import com.teamalpha.teamalphapipergames.model.Staff;
+import com.teamalpha.teamalphapipergames.model.Tournament;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -31,18 +32,19 @@ public class StaffGraphics extends Application {
     private final PlayerController playerController;
     private final MatchController matchController;
     private StaffController staffController;
-    //  private TournamentController tournamentController;
+      private TournamentController tournamentController;
     private Stage editStaffStage;
     Stage staffStage = new Stage();
     private FilteredList<Staff> filteredStaff;
 
 
-    public StaffGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController) {
+    public StaffGraphics(GameController gameController, TeamController teamController, PlayerController playerController, MatchController matchController, StaffController staffController, TournamentController tournamentController) {
         this.gameController = gameController;
         this.teamController = teamController;
         this.playerController = playerController;
         this.matchController = matchController;
         this.staffController = staffController;
+        this.tournamentController = tournamentController;
     }
 
     @Override
@@ -114,7 +116,7 @@ public class StaffGraphics extends Application {
 
         backButton.setOnAction(event -> {
             Stage staffMainMenuStage = new Stage();
-            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController);
+            StaffMainMenu staffMainMenu = new StaffMainMenu(gameController, teamController, playerController, matchController, staffController, tournamentController);
 
             // Skapa en instans av StaffMainMenu och öppna den
             try {
@@ -407,7 +409,7 @@ public class StaffGraphics extends Application {
                         staffStage.close();
 
                         // Uppdatera listan av personal efter att en person har tagits bort
-                        StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController);
+                        StaffGraphics staffGraphics = new StaffGraphics(gameController, teamController, playerController, matchController, staffController, tournamentController);
                         staffGraphics.displayStaffUI();
                     } else {
                         // Visa ett meddelande om något gick fel med borttagningen
