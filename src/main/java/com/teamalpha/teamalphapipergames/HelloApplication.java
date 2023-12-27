@@ -23,26 +23,8 @@ import java.text.SimpleDateFormat;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-//kör bara matcher
-//        GameController gameController = new GameController();
-//        TeamController teamController = new TeamController();
-//        PlayerController playerController = new PlayerController();
-//        MatchController matchController = new MatchController();
-//        StaffController staffController = new StaffController();
-//        MatchGraphics matchGraphics = new MatchGraphics(gameController, teamController, playerController, matchController, staffController);
-//        matchGraphics.start(stage);
-
-//
-//        //kör hela från början
         MainWindow mainWindow = new MainWindow();
         mainWindow.start(new Stage());
-
-
-
-        //         start for menu to test in console while coding
-//        GameController controller = new GameController();
-//        Menu menu = new Menu(controller);
-//        menu.showMainMenu();
     }
 
     public static void main(String[] args) {
